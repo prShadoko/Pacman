@@ -7,35 +7,50 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
 namespace pacman
-{
+{/*
     public class Pacman : Actor
     {
         private Direction _nextDirection;
 
-        public Pacman(Texture2D texture) : base(texture)
+        public Pacman() : base()
+        {
+            Initialize();
+        }
+
+        //TODO
+        public override void Initialize()
         {
             _direction = Direction.LEFT;
             _nextDirection = Direction.LEFT;
         }
-
+        
+        public override void LoadContent(ContentManager content)
+        {
+            _texture = content.Load<Texture2D>("pacman.png");
+        }
         //TODO
-        public void Initialize();
+        public override void Update(GameTime gameTime)
+        {
+            return;
+        }
         //TODO
-        public void LoadContent(ContentManager content);
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            return;
+        }
         //TODO
-        public void Update(GameTime gameTime);
-        //TODO
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch);
-        //TODO
-        public void UnloadContent(ContentManager content);
-
+        public override void UnloadContent(ContentManager content)
+        {
+            return;
+        }
+        
         public Direction NextDirection
         {
             get { return _nextDirection; }
             set { _nextDirection = value; }
         }
-        /*
-        public override void move()
+        
+        public void move()
         {
             if (_direction != _nextDirection)
             {
@@ -88,6 +103,6 @@ namespace pacman
                 }
             }
         }
-        // */
     }
+    // */
 }
