@@ -21,8 +21,8 @@ namespace pacman
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Tile _wall;
-        private Tile _gum;
+        private GameElement _wall;
+        private GameElement _gum;
         private Pacman _pacman;
         private Map _map;
 
