@@ -10,26 +10,25 @@ namespace pacman
 {
     public class Map
     {
-        private SpriteBatch _spriteBatch;
         private const int _mapW = 28;
         private const int _mapH = 31;
         private byte[,] _map;
+
         private Texture2D _wall;
         public Texture2D Wall
         {
-            get;
-            set;
+            get { return _wall; }
+            set { _wall = value; }
         }
         private Texture2D _gum;
         public Texture2D Gum
         {
-            get;
-            set;
+            get { return _gum; }
+            set { _gum = value; }
         }
 
-        public Map(SpriteBatch spriteBatch)
+        public Map()
         {
-            _spriteBatch = spriteBatch;
             // TODO: set wall & gum textures
             _map = _map = new byte[_mapH, _mapW] {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -71,7 +70,7 @@ namespace pacman
             return _map[y, x] == 0;
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
             for (int y = 0; y < _mapH; ++y)
             {
@@ -81,12 +80,12 @@ namespace pacman
                     {
                         case 0:
                         {
-                            _spriteBatch.Draw(_wall, new Vector2(x * _wall.Width, y * _wall.Height), Color.White);
+                            spriteBatch.Draw(_wall, new Vector2(x * _wall.Width, y * _wall.Height), Color.White);
                             break;
                         }
                         case 1:
                         {
-                            _spriteBatch.Draw(_gum, new Vector2(x * _gum.Width, y * _gum.Height), Color.White);
+                            spriteBatch.Draw(_gum, new Vector2(x * _gum.Width, y * _gum.Height), Color.White);
                             break;
                         }
                     }

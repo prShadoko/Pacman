@@ -32,7 +32,7 @@ namespace pacman
             Content.RootDirectory = "Content";
 
             _pacman = new Pacman(_map);
-            _map = new Map(_spriteBatch);
+            _map = new Map();
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace pacman
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
-            _map.Draw();
+            _map.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

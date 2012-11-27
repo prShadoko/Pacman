@@ -31,22 +31,22 @@ namespace pacman
                 {
                     case Direction.LEFT:
                     {
-                        --_x;
+                        --_px;
                         break;
                     }
                     case Direction.RIGHT:
                     {
-                        ++_x;
+                        ++_px;
                         break;
                     }
                     case Direction.UP:
                     {
-                        --_y;
+                        --_py;
                         break;
                     }
                     case Direction.DOWN:
                     {
-                        ++_y;
+                        ++_py;
                         break;
                     }
                 }
@@ -56,22 +56,22 @@ namespace pacman
             {
                 case Direction.LEFT:
                 {
-                    --_x;
+                    --_px;
                     break;
                 }
                 case Direction.RIGHT:
                 {
-                    ++_x;
+                    ++_px;
                     break;
                 }
                 case Direction.UP:
                 {
-                    --_y;
+                    --_py;
                     break;
                 }
                 case Direction.DOWN:
                 {
-                    ++_y;
+                    ++_py;
                     break;
                 }
             }

@@ -8,15 +8,25 @@ namespace pacman
 {
     public abstract class Actor
     {
-        protected int _x;
-        public int X
+        protected int _px;
+        public int Px
         {
             get;
             set;
         }
 
-        protected int _y;
+        public int X
+        {
+            get { return _px / _texture.Width; }
+        }
+
         public int Y
+        {
+            get { return _py / _texture.Height; }
+        }
+
+        protected int _py;
+        public int Py
         {
             get;
             set;
