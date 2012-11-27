@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
-    public class Pacman : Actor
+   /* public class Pacman : Actor
     {
         private Direction _nextDirection;
 
@@ -89,5 +89,5 @@ namespace pacman
             }
         }
         // */
-    }
+    //
 }

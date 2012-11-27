@@ -14,21 +14,21 @@ namespace pacman
         protected Direction _direction;
         //protected String _name;
 
-        public Actor(Texture2D texture) : base(texture, new Vector2(28, 28))
+        public Actor(Texture2D texture) : base(new Vector2(28, 28))
         {
 
         }
 
         //TODO
-        public void Initialize();
+        /*public override void Initialize();
         //TODO
-        public void LoadContent(ContentManager content);
+        public override void LoadContent(ContentManager content);
         //TODO
-        public void Update(GameTime gameTime);
+        public override void Update(GameTime gameTime);
         //TODO
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch);
         //TODO
-        public void UnloadContent(ContentManager content);
+        public override void UnloadContent(ContentManager content);*/
 
         public Vector2 Position
         {

@@ -21,9 +21,7 @@ namespace pacman
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private GameElement _wall;
-        private GameElement _gum;
-        private Pacman _pacman;
+        //private Pacman _pacman;
         private Map _map;
 
         public Game1()
@@ -45,7 +43,7 @@ namespace pacman
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _pacman = new Pacman(_map);
+           // _pacman = new Pacman(_map);
             _map = new Map();
 
             base.Initialize();
@@ -62,10 +60,9 @@ namespace pacman
 
 
             // loading textures
-            _map.Wall = Content.Load<Texture2D>("wall");
-            _map.Gum = Content.Load<Texture2D>("gum");
+            _map.LoadContent(Content);
 
-            _pacman.Texture = Content.Load<Texture2D>("pacman");
+            //_pacman.Texture = Content.Load<Texture2D>("pacman");
         }
 
         /// <summary>
@@ -85,7 +82,7 @@ namespace pacman
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            KeyboardState keyboard = Keyboard.GetState();
+            /*KeyboardState keyboard = Keyboard.GetState();
             if (keyboard.IsKeyDown(Keys.Right))
             {
                 _pacman.NextDirection = Direction.RIGHT;
@@ -103,7 +100,7 @@ namespace pacman
                 _pacman.NextDirection = Direction.DOWN;
             }
 
-            _pacman.move();
+            _pacman.move();*/
 
             base.Update(gameTime);
         }
@@ -116,7 +113,7 @@ namespace pacman
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
-            _map.Draw(_spriteBatch);
+            _map.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

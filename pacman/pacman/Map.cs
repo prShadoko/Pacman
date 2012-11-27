@@ -14,13 +14,18 @@ namespace pacman
         private byte[,] _map;
 
         private Texture2D _tiles;
+
+        // --- temp ---
+        private Texture2D _wall;
+        private Texture2D _gum;
+
         public Texture2D Tiles
         {
             get { return _tiles; }
             set { _tiles = value; }
         }
 
-        public Map(Texture2D texture) : base(texture, new Vector2(16, 16))
+        public Map() : base(new Vector2(16, 16))
         {
             _map = _map = new byte[31, 28] {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -68,13 +73,23 @@ namespace pacman
         }
 
         //TODO
-        public void Initialize();
-        //TODO
-        public void LoadContent(ContentManager content);
-        //TODO
-        public void Update(GameTime gameTime);
+        public override void Initialize()
+        {
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        }
+
+        public override void LoadContent(ContentManager content)
+        {
+            _wall = content.Load<Texture2D>("wall");
+            _gum = content.Load<Texture2D>("gum");
+        }
+        //TODO
+        public override void Update(GameTime gameTime)
+        {
+            return;
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             for (int y = 0; y < _map.GetLength(0); ++y)
             {
@@ -85,12 +100,12 @@ namespace pacman
                     {
                         case 0:
                         {
-                            //spriteBatch.Draw(_wall, new Vector2(x * _wall.Width, y * _wall.Height), Color.White);
+                            spriteBatch.Draw(_wall, new Vector2(x * _wall.Width, y * _wall.Height), Color.White);
                             break;
                         }
                         case 1:
                         {
-                            //spriteBatch.Draw(_gum, new Vector2(x * _gum.Width, y * _gum.Height), Color.White);
+                            spriteBatch.Draw(_gum, new Vector2(x * _gum.Width, y * _gum.Height), Color.White);
                             break;
                         }
                     }
@@ -99,6 +114,9 @@ namespace pacman
         }
 
         //TODO
-        public void UnloadContent(ContentManager content);
+        public override void UnloadContent(ContentManager content)
+        {
+            return;
+        }
     }
 }

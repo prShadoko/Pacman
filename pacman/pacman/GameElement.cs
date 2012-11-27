@@ -13,9 +13,8 @@ namespace pacman
         protected Texture2D _texture;
         protected Vector2 _spriteSize;
 
-        public GameElement(Texture2D texture, Vector2 spriteSize)
+        public GameElement(Vector2 spriteSize)
         {
-            this._texture = texture;
             this._spriteSize = spriteSize;
         }
 
