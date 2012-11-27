@@ -30,9 +30,11 @@ namespace pacman
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            // changing th back buffer size changes the window size (when in windowed mode)
+            _graphics.PreferredBackBufferWidth = 448;
+            _graphics.PreferredBackBufferHeight = 576;
+            _graphics.ApplyChanges();
 
-            _pacman = new Pacman(_map);
-            _map = new Map(_spriteBatch);
         }
 
         /// <summary>
@@ -44,6 +46,8 @@ namespace pacman
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _pacman = new Pacman(_map);
+            _map = new Map(_spriteBatch);
 
             base.Initialize();
         }
@@ -57,16 +61,10 @@ namespace pacman
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // changing th back buffer size changes the window size (when in windowed mode)
-            _graphics.PreferredBackBufferWidth = 448;
-            _graphics.PreferredBackBufferHeight = 576;
-            _graphics.ApplyChanges();
 
             // loading textures
             _map.Wall = Content.Load<Texture2D>("wall");
             _map.Gum = Content.Load<Texture2D>("gum");
-            //_wall = new Tile(wall, new Vector2(0f, 0f), new Vector2(16f, 16f));
-            //_gum = new Tile(gum, new Vector2(0f, 0f), new Vector2(16f, 16f));
 
             _pacman.Texture = Content.Load<Texture2D>("pacman");
         }
@@ -78,6 +76,7 @@ namespace pacman
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+		Content.Unload();
         }
 
         /// <summary>
