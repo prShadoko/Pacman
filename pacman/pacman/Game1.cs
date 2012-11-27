@@ -21,16 +21,14 @@ namespace pacman
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private GameElement _wall;
-        private GameElement _gum;
-        private Pacman _pacman;
+        //private Pacman _pacman;
         private Map _map;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            // changing th back buffer size changes the window size (when in windowed mode)
+
+            _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferredBackBufferWidth = 448;
             _graphics.PreferredBackBufferHeight = 576;
             _graphics.ApplyChanges();
@@ -45,7 +43,13 @@ namespace pacman
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _pacman = new Pacman(_map);
+            /*
+            _blinky = new Ghost();
+            _inky = new Ghost();
+            _pinky = new Ghost();
+            _clyde = new Ghost();
+            //*/
+            //_pacman = new Pacman();
             _map = new Map();
 
             base.Initialize();
@@ -60,12 +64,9 @@ namespace pacman
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
             // loading textures
-            _map.Wall = Content.Load<Texture2D>("wall");
-            _map.Gum = Content.Load<Texture2D>("gum");
-
-            _pacman.Texture = Content.Load<Texture2D>("pacman");
+            _map.LoadContent(Content);
+            //_pacman.LoadContent(Content);
         }
 
         /// <summary>
@@ -74,8 +75,7 @@ namespace pacman
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
-		Content.Unload();
+		    Content.Unload();
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace pacman
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {
+        {/*
             KeyboardState keyboard = Keyboard.GetState();
             if (keyboard.IsKeyDown(Keys.Right))
             {
@@ -103,8 +103,8 @@ namespace pacman
                 _pacman.NextDirection = Direction.DOWN;
             }
 
-            _pacman.move();
-
+            _pacman.Update(gameTime);
+            //*/
             base.Update(gameTime);
         }
 
@@ -116,7 +116,7 @@ namespace pacman
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
-            _map.Draw(_spriteBatch);
+            _map.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
