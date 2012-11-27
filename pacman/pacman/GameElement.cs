@@ -16,6 +16,7 @@ namespace pacman
         public GameElement(Vector2 spriteSize)
         {
             this._spriteSize = spriteSize;
+            Initialize();
         }
 
         abstract public void Initialize();

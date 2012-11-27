@@ -23,6 +23,7 @@ namespace pacman
 
         //private Pacman _pacman;
         private Map _map;
+        private Ghost[] _ghosts;
 
         public Game1()
         {
@@ -46,6 +47,10 @@ namespace pacman
            // _pacman = new Pacman(_map);
             _map = new Map();
 
+            _ghosts = new Ghost[] {
+                new Blinky()
+            };
+
             base.Initialize();
         }
 
@@ -62,6 +67,12 @@ namespace pacman
             // loading textures
             _map.LoadContent(Content);
 
+            foreach (Ghost g in _ghosts)
+            {
+                g.LoadContent(Content);
+            }
+
+
             //_pacman.Texture = Content.Load<Texture2D>("pacman");
         }
 
@@ -71,8 +82,7 @@ namespace pacman
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
-		Content.Unload();
+		    Content.Unload();
         }
 
         /// <summary>
@@ -101,6 +111,10 @@ namespace pacman
             }
 
             _pacman.move();*/
+            foreach (Ghost g in _ghosts)
+            {
+                g.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -113,7 +127,13 @@ namespace pacman
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
+
             _map.Draw(gameTime, _spriteBatch);
+            foreach (Ghost g in _ghosts)
+            {
+                g.Draw(gameTime, _spriteBatch);
+            }
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }

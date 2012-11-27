@@ -108,6 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actor.cs" />
+    <Compile Include="Blinky.cs" />
+    <Compile Include="Ghost.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="GameElement.cs" />
     <Compile Include="Pacman.cs" />

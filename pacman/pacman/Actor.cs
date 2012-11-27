@@ -14,7 +14,7 @@ namespace pacman
         protected Direction _direction;
         //protected String _name;
 
-        public Actor(Texture2D texture) : base(new Vector2(28, 28))
+        public Actor() : base(new Vector2(28, 28))
         {
 
         }
