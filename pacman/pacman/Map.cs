@@ -12,18 +12,7 @@ namespace pacman
     public class Map : GameElement
     {
         private byte[,] _map;
-
         private Texture2D _tiles;
-
-        // --- temp ---
-        private Texture2D _wall;
-        private Texture2D _gum;
-
-        public Texture2D Tiles
-        {
-            get { return _tiles; }
-            set { _tiles = value; }
-        }
 
         public Map() : base(new Vector2(16, 16))
         {
@@ -109,5 +98,11 @@ namespace pacman
             return;
         }
         //*/
+
+        public Texture2D Tiles
+        {
+            get { return _tiles; }
+            set { _tiles = value; }
+        }
     }
 }
