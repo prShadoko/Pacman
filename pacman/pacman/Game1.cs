@@ -23,6 +23,7 @@ namespace pacman
 
         //private Pacman _pacman;
         private Map _map;
+        private Ghost[] _ghosts;
 
         public Game1()
         {
@@ -43,14 +44,12 @@ namespace pacman
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            /*
-            _blinky = new Ghost();
-            _inky = new Ghost();
-            _pinky = new Ghost();
-            _clyde = new Ghost();
-            //*/
             //_pacman = new Pacman();
             _map = new Map();
+
+            _ghosts = new Ghost[] {
+                new Blinky()
+            };
 
             base.Initialize();
         }
@@ -66,7 +65,13 @@ namespace pacman
 
             // loading textures
             _map.LoadContent(Content);
+
             //_pacman.LoadContent(Content);
+
+            foreach (Ghost g in _ghosts)
+            {
+                g.LoadContent(Content);
+            }
         }
 
         /// <summary>
@@ -84,8 +89,9 @@ namespace pacman
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {/*
+        {
             KeyboardState keyboard = Keyboard.GetState();
+            /*
             if (keyboard.IsKeyDown(Keys.Right))
             {
                 _pacman.NextDirection = Direction.RIGHT;
@@ -105,6 +111,11 @@ namespace pacman
 
             _pacman.Update(gameTime);
             //*/
+            foreach (Ghost g in _ghosts)
+            {
+                g.Update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 
@@ -116,7 +127,13 @@ namespace pacman
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
+
             _map.Draw(gameTime, _spriteBatch);
+            foreach (Ghost g in _ghosts)
+            {
+                g.Draw(gameTime, _spriteBatch);
+            }
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
