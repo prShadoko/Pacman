@@ -14,6 +14,11 @@ namespace pacman
         private byte[,] _map;
 
         private Texture2D _tiles;
+
+        // --- temp ---
+        private Texture2D _wall;
+        private Texture2D _gum;
+
         public Texture2D Tiles
         {
             get { return _tiles; }
