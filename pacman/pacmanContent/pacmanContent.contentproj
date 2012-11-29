@@ -42,13 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="pacman.png">
-      <Name>pacman</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="mapTexture.png">
       <Name>mapTexture</Name>
       <Importer>TextureImporter</Importer>
@@ -56,8 +49,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blinky.png">
-      <Name>blinky</Name>
+    <Compile Include="actorsTexture.png">
+      <Name>actorsTexture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
