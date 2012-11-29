@@ -10,8 +10,7 @@ namespace pacman
 {
 	class Blinky : Ghost
 	{
-		public Blinky(Map map)
-			: base(map)
+		public Blinky(Map map) : base(map)
 		{
 			_textureOffset = new Vector2(0, 0);
 		}
@@ -20,9 +19,29 @@ namespace pacman
 		{
 			base.Initialize();
 
-			// TODO: demander a la map
+
 			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
 			_direction = Direction.LEFT;
 		}
+
+        public override void targeting()
+        {
+            switch (_mode)
+            {
+                case GhostMode.CHASE:
+                    {
+                        break;
+                    }
+                case GhostMode.SCATTER:
+                    {
+                        _target = new Vector2(0, 0);
+                        break;
+                    }
+                case GhostMode.FRIGHT:
+                    {
+                        break;
+                    }
+            }
+        }
 	}
 }

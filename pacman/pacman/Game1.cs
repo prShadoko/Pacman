@@ -23,6 +23,8 @@ namespace pacman
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
 
+        private int counter;
+
 		public Game1()
 		{
 			Content.RootDirectory = "Content";
@@ -43,9 +45,23 @@ namespace pacman
 		{
 			_map = new Map();
 			_pacman = new Pacman(_map);
-			_ghosts = new Ghost[] {
+            _ghosts = new Ghost[] {
+				new Blinky(_map),
+				new Blinky(_map),
+				new Blinky(_map),
 				new Blinky(_map)
 			};
+
+            _ghosts[0].Position = new Vector2(10 * 16 + 16 / 2, 11 * 16 + 16 / 2);
+            _ghosts[0].Speed = 0.85f;
+            _ghosts[1].Position = new Vector2(2 * 16 + 16 / 2, 1 * 16 + 16 / 2);
+            _ghosts[1].Speed = 0.80f;
+            _ghosts[2].Position = new Vector2(26 * 16 + 16 / 2, 26 * 16 + 16 / 2);
+            _ghosts[2].Speed = 0.75f;
+            _ghosts[3].Position = new Vector2(2 * 16 + 16 / 2, 28 * 16 + 16 / 2);
+            _ghosts[3].Speed = 0.5f;
+            counter = 0;
+
 			base.Initialize();
 		}
 
@@ -84,30 +100,16 @@ namespace pacman
 		protected override void Update(GameTime gameTime)
 		{
 			KeyboardState keyboard = Keyboard.GetState();
-			/*
-			if (keyboard.IsKeyDown(Keys.Right))
-			{
-				_pacman.NextDirection = Direction.RIGHT;
-			}
-			else if (keyboard.IsKeyDown(Keys.Left))
-			{
-				_pacman.NextDirection = Direction.LEFT;
-			}
-			else if (keyboard.IsKeyDown(Keys.Up))
-			{
-				_pacman.NextDirection = Direction.UP;
-			}
-			else if (keyboard.IsKeyDown(Keys.Down))
-			{
-				_pacman.NextDirection = Direction.DOWN;
-			}
-			//*/
-
-			_pacman.Update(gameTime);
+            
+			//_pacman.Update(gameTime);
 			foreach (Ghost g in _ghosts)
 			{
-				g.Update(gameTime);
+                g.Update(gameTime, counter);
 			}
+
+
+            ++counter;
+            if (counter % 60 == 0) counter = 0;
 
 			base.Update(gameTime);
 		}

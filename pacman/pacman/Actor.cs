@@ -25,6 +25,27 @@ namespace pacman
 			_map = map;
 		}
 
+        public static Direction ReverseDirection(Direction d)
+        {
+            switch (d)
+            {
+                case Direction.UP:
+                    d = Direction.DOWN;
+                    break;
+                case Direction.DOWN:
+                    d = Direction.UP;
+                    break;
+                case Direction.LEFT:
+                    d = Direction.RIGHT;
+                    break;
+                case Direction.RIGHT:
+                    d = Direction.LEFT;
+                    break;
+            }
+
+            return d;
+        }
+
 		public override void LoadContent(ContentManager content)
 		{
 			_texture = content.Load<Texture2D>("actorsTexture");
@@ -82,5 +103,11 @@ namespace pacman
 			get { return _direction; }
 			set { _direction = value; }
 		}
+
+        public float Speed
+        {
+            get { return _speed; }
+            set { _speed = value; }
+        }
 	}
 }
