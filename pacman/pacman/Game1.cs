@@ -11,131 +11,125 @@ using Microsoft.Xna.Framework.Media;
 
 namespace pacman
 {
-    public enum Direction { UP, DOWN, LEFT, RIGHT };
+	/// <summary>
+	/// This is the main type for your game
+	/// </summary>
+	public class Game1 : Microsoft.Xna.Framework.Game
+	{
+		private GraphicsDeviceManager _graphics;
+		private SpriteBatch _spriteBatch;
 
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
-    {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+		private Map _map;
+		private Pacman _pacman;
+		private Ghost[] _ghosts;
 
-        //private Pacman _pacman;
-        private Map _map;
-        private Ghost[] _ghosts;
+		public Game1()
+		{
+			Content.RootDirectory = "Content";
 
-        public Game1()
-        {
-            Content.RootDirectory = "Content";
+			_graphics = new GraphicsDeviceManager(this);
+			_graphics.PreferredBackBufferWidth = 448;
+			_graphics.PreferredBackBufferHeight = 576;
+			_graphics.ApplyChanges();
+		}
 
-            _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 448;
-            _graphics.PreferredBackBufferHeight = 576;
-            _graphics.ApplyChanges();
-        }
+		/// <summary>
+		/// Allows the game to perform any initialization it needs to before starting to run.
+		/// This is where it can query for any required services and load any non-graphic
+		/// related content.  Calling base.Initialize will enumerate through any components
+		/// and initialize them as well.
+		/// </summary>
+		protected override void Initialize()
+		{
+			_map = new Map();
+			_pacman = new Pacman(_map);
+			_ghosts = new Ghost[] {
+				new Blinky(_map)
+			};
+			base.Initialize();
+		}
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
-            //_pacman = new Pacman();
-            _map = new Map();
+		/// <summary>
+		/// LoadContent will be called once per game and is the place to load
+		/// all of your content.
+		/// </summary>
+		protected override void LoadContent()
+		{
+			// Create a new SpriteBatch, which can be used to draw textures.
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _ghosts = new Ghost[] {
-                new Blinky()
-            };
+			// loading textures
+			_map.LoadContent(Content);
+			_pacman.LoadContent(Content);
+			foreach (Ghost g in _ghosts)
+			{
+				g.LoadContent(Content);
+			}
+		}
 
-            base.Initialize();
-        }
+		/// <summary>
+		/// UnloadContent will be called once per game and is the place to unload
+		/// all content.
+		/// </summary>
+		protected override void UnloadContent()
+		{
+			Content.Unload();
+		}
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+		/// <summary>
+		/// Allows the game to run logic such as updating the world,
+		/// checking for collisions, gathering input, and playing audio.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Update(GameTime gameTime)
+		{
+			KeyboardState keyboard = Keyboard.GetState();
+			/*
+			if (keyboard.IsKeyDown(Keys.Right))
+			{
+				_pacman.NextDirection = Direction.RIGHT;
+			}
+			else if (keyboard.IsKeyDown(Keys.Left))
+			{
+				_pacman.NextDirection = Direction.LEFT;
+			}
+			else if (keyboard.IsKeyDown(Keys.Up))
+			{
+				_pacman.NextDirection = Direction.UP;
+			}
+			else if (keyboard.IsKeyDown(Keys.Down))
+			{
+				_pacman.NextDirection = Direction.DOWN;
+			}
+			//*/
 
-            // loading textures
-            _map.LoadContent(Content);
+			_pacman.Update(gameTime);
+			foreach (Ghost g in _ghosts)
+			{
+				g.Update(gameTime);
+			}
 
-            //_pacman.LoadContent(Content);
+			base.Update(gameTime);
+		}
 
-            foreach (Ghost g in _ghosts)
-            {
-                g.LoadContent(Content);
-            }
-        }
+		/// <summary>
+		/// This is called when the game should draw itself.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Draw(GameTime gameTime)
+		{
+			GraphicsDevice.Clear(Color.Black);
+			_spriteBatch.Begin();
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-		    Content.Unload();
-        }
+			_map.Draw(gameTime, _spriteBatch);
+			_pacman.Draw(gameTime, _spriteBatch);
+			foreach (Ghost g in _ghosts)
+			{
+				g.Draw(gameTime, _spriteBatch);
+			}
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
-            KeyboardState keyboard = Keyboard.GetState();
-            /*
-            if (keyboard.IsKeyDown(Keys.Right))
-            {
-                _pacman.NextDirection = Direction.RIGHT;
-            }
-            else if (keyboard.IsKeyDown(Keys.Left))
-            {
-                _pacman.NextDirection = Direction.LEFT;
-            }
-            else if (keyboard.IsKeyDown(Keys.Up))
-            {
-                _pacman.NextDirection = Direction.UP;
-            }
-            else if (keyboard.IsKeyDown(Keys.Down))
-            {
-                _pacman.NextDirection = Direction.DOWN;
-            }
-
-            _pacman.Update(gameTime);
-            //*/
-            foreach (Ghost g in _ghosts)
-            {
-                g.Update(gameTime);
-            }
-
-            base.Update(gameTime);
-        }
-
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Black);
-            _spriteBatch.Begin();
-
-            _map.Draw(gameTime, _spriteBatch);
-            foreach (Ghost g in _ghosts)
-            {
-                g.Draw(gameTime, _spriteBatch);
-            }
-
-            _spriteBatch.End();
-            base.Draw(gameTime);
-        }
-    }
+			_spriteBatch.End();
+			base.Draw(gameTime);
+		}
+	}
 }

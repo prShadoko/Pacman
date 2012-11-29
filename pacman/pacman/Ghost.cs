@@ -8,57 +8,43 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
-    public enum GhostMode {CHASE, SCATTER, FRIGHT};
+	public enum GhostMode { CHASE, SCATTER, FRIGHT };
 
-    abstract class Ghost : Actor
-    {
-        // --- attributes --- //
-        protected Vector2 _target;
-        protected GhostMode _mode = GhostMode.SCATTER;
+	abstract class Ghost : Actor
+	{
+		// --- attributes --- //
+		protected Vector2 _target;
+		protected GhostMode _mode = GhostMode.SCATTER;
 
-        protected int _cpt;
+		protected int _cpt;
 
-        public Ghost() : base()
-        {
+		public Ghost(Map map)
+			: base(map)
+		{
 
-        }
+		}
 
-        public override void Initialize()
-        {
-            _position = new Vector2(0, 0);
-            _direction = Direction.RIGHT;
+		public override void Initialize()
+		{
+			_cpt = 0;
+			_speed = 0.20f;
+		}
 
-            _cpt = 0;
+		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+		{
+			Vector2 pos = _position - _spriteSize / 2;
+			Rectangle clipping = new Rectangle(
+					((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
+					(0 + (int)_textureOffset.Y) * (int)_spriteSize.Y, // TODO: use gameTime to alternate the two positions of the ghost
+					(int)_spriteSize.X,
+					(int)_spriteSize.Y);
 
-        }
+			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+		}
 
-        // TODO:
-        // public override void LoadContent(ContentManager content);
-
-        public override void Update(GameTime gameTime)
-        {
-            //if(_cpt % 4 != 0)
-            _position.X += 2;
-
-            //++_cpt;
-            
-        }
-
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            Vector2 pos = _position - _spriteSize / 2;
-
-            spriteBatch.Draw(_texture, pos, Color.White);
-        }
-        /*
-        public override void UnloadContent(ContentManager content)
-        {
-            
-        }
-        //*/
-        public virtual void InitializeScatterMode()
-        {
-            _mode = GhostMode.SCATTER;
-        }
-    }
+		public virtual void InitializeScatterMode()
+		{
+			_mode = GhostMode.SCATTER;
+		}
+	}
 }

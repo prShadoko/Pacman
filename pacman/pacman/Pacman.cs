@@ -8,102 +8,43 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
-    /*
-    public class Pacman : Actor
-    {
-        private Direction _nextDirection;
+	public class Pacman : Actor
+	{
+		private Direction _nextDirection;
 
-        public Pacman() : base()
-        {
-            Initialize();
-        }
+		public Pacman(Map map)
+			: base(map)
+		{
+			_textureOffset = new Vector2(0, 10);
+			Initialize();
+		}
 
-        //TODO
-        public override void Initialize()
-        {
-            _direction = Direction.LEFT;
-            _nextDirection = Direction.LEFT;
-        }
-        
-        public override void LoadContent(ContentManager content)
-        {
-            _texture = content.Load<Texture2D>("pacman.png");
-        }
-        //TODO
-        public override void Update(GameTime gameTime)
-        {
-            return;
-        }
-        //TODO
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            return;
-        }
-        //TODO
-        public override void UnloadContent(ContentManager content)
-        {
-            return;
-        }
-        
-        public Direction NextDirection
-        {
-            get { return _nextDirection; }
-            set { _nextDirection = value; }
-        }
-        
-        public void move()
-        {
-            if (_direction != _nextDirection)
-            {
-                switch (_nextDirection)
-                {
-                    case Direction.LEFT:
-                    {
-                        --_px;
-                        break;
-                    }
-                    case Direction.RIGHT:
-                    {
-                        ++_px;
-                        break;
-                    }
-                    case Direction.UP:
-                    {
-                        --_py;
-                        break;
-                    }
-                    case Direction.DOWN:
-                    {
-                        ++_py;
-                        break;
-                    }
-                }
-            }
+		//TODO
+		public override void Initialize()
+		{
+			// TODO: demander a la map
+			_position = new Vector2(14 * 16 + 16 / 2, 23 * 16 + 16 / 2);
+			_direction = Direction.LEFT;
+			_nextDirection = Direction.LEFT;
+			_speed = 0.016f;//0.25f;
+		}
 
-            switch (_direction)
-            {
-                case Direction.LEFT:
-                {
-                    --_px;
-                    break;
-                }
-                case Direction.RIGHT:
-                {
-                    ++_px;
-                    break;
-                }
-                case Direction.UP:
-                {
-                    --_py;
-                    break;
-                }
-                case Direction.DOWN:
-                {
-                    ++_py;
-                    break;
-                }
-            }
-        }
-    }
-    //*/
+		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+		{
+			Vector2 pos = _position - _spriteSize / 2;
+			Rectangle clipping = new Rectangle(
+					((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
+					(0 + (int)_textureOffset.Y) * (int)_spriteSize.Y, // TODO: use gameTime to alternate the three positions of pacman
+					(int)_spriteSize.X,
+					(int)_spriteSize.Y);
+
+			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+		}
+
+		public Direction NextDirection
+		{
+			get { return _nextDirection; }
+			set { _nextDirection = value; }
+		}
+	}
 }

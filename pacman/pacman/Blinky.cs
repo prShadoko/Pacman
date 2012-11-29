@@ -8,26 +8,21 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
-    class Blinky : Ghost
-    {
-        public Blinky() : base ()
-        {
+	class Blinky : Ghost
+	{
+		public Blinky(Map map)
+			: base(map)
+		{
+			_textureOffset = new Vector2(0, 0);
+		}
 
+		public override void Initialize()
+		{
+			base.Initialize();
 
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            // TODO: demander a la map
-            _position = new Vector2(42, 26);
-            _direction = Direction.LEFT;
-        }
-
-        public override void LoadContent(ContentManager content)
-        {
-            _texture = content.Load<Texture2D>("blinky");
-        }
-    }
+			// TODO: demander a la map
+			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
+			_direction = Direction.LEFT;
+		}
+	}
 }
