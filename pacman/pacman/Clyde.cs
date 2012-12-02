@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 namespace pacman
 {
-	class Blinky : Ghost
-	{
+    class Clyde : Ghost
+    {
         // -- attributes --- //
 
         // --- methods --- //
-        public Blinky(Map map, Pacman pacman)
+        public Clyde(Map map, Pacman pacman)
             : base(map, pacman)
 		{
 		}
 
 		public override void Initialize()
         {
-            _textureOffset = new Vector2(0, 0);
+            _textureOffset = new Vector2(0, 6);
 
-            _scatterTarget = new Vector2(25, -3);
+            _scatterTarget = new Vector2(0, 31);
 			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
             _direction = Direction.LEFT;
 
@@ -35,9 +33,16 @@ namespace pacman
             {
                 case GhostMode.CHASE:
                     {
-                        _target = _map.WinToMap(_pacman.Position);
-                        break;
+                        if (pacmanEuclideanDistance() < 8)
+                        {
+                            _target = _scatterTarget;
+                        }
+                        else
+                        {
+                            _target = _map.WinToMap(_pacman.Position);
+                        }
                     }
+                    break;
                 case GhostMode.SCATTER:
                     {
                         _target = _scatterTarget;
@@ -50,5 +55,12 @@ namespace pacman
                     }
             }
         }
-	}
+
+        public int pacmanEuclideanDistance()
+        {
+            Vector2 vec = _map.WinToMap(_pacman.Position - _position);
+
+            return (int)Math.Sqrt( vec.X * vec.X + vec.Y * vec.Y );
+        }
+    }
 }

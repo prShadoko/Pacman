@@ -112,6 +112,9 @@
   <ItemGroup>
     <Compile Include="Actor.cs" />
     <Compile Include="Blinky.cs" />
+    <Compile Include="Clyde.cs" />
+    <Compile Include="Inky.cs" />
+    <Compile Include="Pinky.cs" />
     <Compile Include="Ghost.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="GameElement.cs" />

@@ -23,7 +23,7 @@ namespace pacman
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
 
-        private int counter;
+        private int _counter;
 
 		public Game1()
 		{
@@ -45,11 +45,17 @@ namespace pacman
 		{
 			_map = new Map();
 			_pacman = new Pacman(_map);
+
+            Blinky blinky = new Blinky(_map, _pacman);
+            Pinky  pinky  = new Pinky (_map, _pacman);
+            Inky   inky   = new Inky  (_map, _pacman, blinky);
+            Clyde  clyde  = new Clyde (_map, _pacman);
+            
             _ghosts = new Ghost[] {
-				new Blinky(_map),
-				new Blinky(_map),
-				new Blinky(_map),
-				new Blinky(_map)
+				blinky,
+				pinky,
+				inky,
+				clyde
 			};
 
             _ghosts[0].Position = new Vector2(10 * 16 + 16 / 2, 11 * 16 + 16 / 2);
@@ -60,7 +66,7 @@ namespace pacman
             _ghosts[2].Speed = 0.75f;
             _ghosts[3].Position = new Vector2(2 * 16 + 16 / 2, 28 * 16 + 16 / 2);
             _ghosts[3].Speed = 0.5f;
-            counter = 0;
+            _counter = 0;
 
 			base.Initialize();
 		}
@@ -104,12 +110,12 @@ namespace pacman
 			//_pacman.Update(gameTime);
 			foreach (Ghost g in _ghosts)
 			{
-                g.Update(gameTime, counter);
+                g.Update(gameTime, _counter);
 			}
 
 
-            ++counter;
-            if (counter % 60 == 0) counter = 0;
+            ++_counter;
+            if (_counter % 60 == 0) _counter = 0;
 
 			base.Update(gameTime);
 		}

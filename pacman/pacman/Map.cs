@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 
 namespace pacman
@@ -19,7 +20,15 @@ namespace pacman
 
 		public bool isWall(Vector2 coordinates)
 		{
-			return _map[(int)coordinates.Y, (int)coordinates.X] <= 11;
+            try
+            {
+                return _map[(int)coordinates.Y, (int)coordinates.X] <= 11;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
 		}
 
 		public Vector2 WinToMap(Vector2 coordinates)

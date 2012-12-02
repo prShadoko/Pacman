@@ -8,21 +8,21 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
-	class Blinky : Ghost
-	{
+    class Pinky : Ghost
+    {
         // -- attributes --- //
 
         // --- methods --- //
-        public Blinky(Map map, Pacman pacman)
+        public Pinky(Map map, Pacman pacman)
             : base(map, pacman)
 		{
 		}
 
 		public override void Initialize()
         {
-            _textureOffset = new Vector2(0, 0);
+            _textureOffset = new Vector2(0, 2);
 
-            _scatterTarget = new Vector2(25, -3);
+            _scatterTarget = new Vector2(2, -3);
 			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
             _direction = Direction.LEFT;
 
@@ -36,6 +36,22 @@ namespace pacman
                 case GhostMode.CHASE:
                     {
                         _target = _map.WinToMap(_pacman.Position);
+                        switch (_pacman.Direction)
+                        {
+                            case Direction.UP:
+                                _target.X -= 4;
+                                _target.Y -= 4;
+                                break;
+                            case Direction.DOWN:
+                                _target.Y += 4;
+                                break;
+                            case Direction.RIGHT:
+                                _target.X += 4;
+                                break;
+                            case Direction.LEFT:
+                                _target.X -= 4;
+                                break;
+                        }
                         break;
                     }
                 case GhostMode.SCATTER:
@@ -50,5 +66,5 @@ namespace pacman
                     }
             }
         }
-	}
+    }
 }
