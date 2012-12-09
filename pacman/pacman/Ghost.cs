@@ -174,7 +174,22 @@ namespace pacman
 		{
 			Vector2 mapPosition = _map.WinToMap(_position);
 
-			if (_mode == GhostMode.HOUSE)
+			_direction = _map.getDirectionInHouse(mapPosition, _mode, _direction);
+
+			if (_mode == GhostMode.OUTGOING)
+			{
+				if (_map.isInSpecialZone(mapPosition) == true)
+				{
+					Mode = getCurrentMode();
+					Think();
+					_thinkCounter = (int)_map.TileSize.X / 2;
+					if (_direction == Direction.LEFT)
+					{
+						_thinkCounter -= _SPEEDUNIT;
+					}
+				}
+			}
+			/*if (_mode == GhostMode.HOUSE)
 			{
 				if (_direction != Direction.UP && _direction != Direction.DOWN)
 				{
@@ -219,7 +234,7 @@ namespace pacman
 				{
 					_direction = getDirectionInHouse(mapPosition, _direction);
 				}
-			}
+			}*/
 
 			
 		}

@@ -35,7 +35,7 @@ namespace pacman
 		{
 			try
 			{
-				Console.WriteLine(_map[(int)coordinates.Y, (int)coordinates.X] < -1);
+				//Console.WriteLine(_map[(int)coordinates.Y, (int)coordinates.X] < -1);
 				return _map[(int)coordinates.Y, (int)coordinates.X] < -1;
 			}
 			catch (Exception e)
@@ -58,6 +58,46 @@ namespace pacman
 			}
 		}
 
+		public Direction getDirectionInHouse(Vector2 coordinates, GhostMode mode, Direction dir)
+		{
+			Direction res = dir;
+
+			try
+			{
+				if (_map[(int)coordinates.Y, (int)coordinates.X] == -2 ||
+					 mode == GhostMode.OUTGOING && ( _map[(int)coordinates.Y, (int)coordinates.X] == -8 ||
+													 _map[(int)coordinates.Y, (int)coordinates.X] == -6 ))
+				{
+					res = Direction.UP;
+				}
+				else if (mode == GhostMode.HOUSE && _map[(int)coordinates.Y, (int)coordinates.X] == -8 ||
+													_map[(int)coordinates.Y, (int)coordinates.X] == -4)
+				{
+					res = Direction.DOWN;
+				}
+				else if (mode == GhostMode.OUTGOING && _map[(int)coordinates.Y, (int)coordinates.X] == -3)
+				{
+					res = Direction.RIGHT;
+				}
+				else if (mode == GhostMode.OUTGOING && _map[(int)coordinates.Y, (int)coordinates.X] == -5)
+				{
+					res = Direction.LEFT;
+				}
+				/*else if (mode == GhostMode.HOUSE && ( _map[(int)coordinates.Y, (int)coordinates.X] == -3 ||
+													  _map[(int)coordinates.Y, (int)coordinates.X] == -5 ||
+													  _map[(int)coordinates.Y, (int)coordinates.X] == -6 ))
+				{
+					res = dir;
+				}*/
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return Direction.UP;
+			}
+
+			return res;
+		}
 
 		public Direction getDirectionOfInitPosition(Vector2 coordinates)
 		{
@@ -208,9 +248,9 @@ namespace pacman
                 {14, 14, 14, 14, 14,  3, 12,  2,  8,  0,  0,  7, 14,  6,  7, 14,  6,  0,  0,  9,  3, 12,  2, 14, 14, 14, 14, 14},
                 {14, 14, 14, 14, 14,  3, 12,  2,  3, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,  2,  3, 12,  2, 14, 14, 14, 14, 14},
                 {14, 14, 14, 14, 14,  3, 12,  2,  3, 14,  4,  1,  1, -1, -1,  1,  1,  5, 14,  2,  3, 12,  2, 14, 14, 14, 14, 14},
-                { 0,  0,  0,  0,  0,  7, 12,  6,  7, 14,  2, -3, -3, -2, -2, -4, -4,  3, 14,  6,  7, 12,  6,  0,  0,  0,  0,  0},
-                {14, 14, 14, 14, 14, 14, 12, 14, 14, 14,  2, -3, -5, -2, -6, -4, -7,  3, 14, 14, 14, 12, 14, 14, 14, 14, 14, 14},
-                { 1,  1,  1,  1,  1,  5, 12,  4,  5, 14,  2, -3, -3, -2, -2, -4, -4,  3, 14,  4,  5, 12,  4,  1,  1,  1,  1,  1},
+                { 0,  0,  0,  0,  0,  7, 12,  6,  7, 14,  2, -4, -4, -8, -8, -4, -4,  3, 14,  6,  7, 12,  6,  0,  0,  0,  0,  0},
+                {14, 14, 14, 14, 14, 14, 12, 14, 14, 14,  2, -7, -3, -7, -6, -7, -5,  3, 14, 14, 14, 12, 14, 14, 14, 14, 14, 14},
+                { 1,  1,  1,  1,  1,  5, 12,  4,  5, 14,  2, -2, -2, -2, -2, -2, -2,  3, 14,  4,  5, 12,  4,  1,  1,  1,  1,  1},
                 {14, 14, 14, 14, 14,  3, 12,  2,  3, 14,  6,  0,  0,  0,  0,  0,  0,  7, 14,  2,  3, 12,  2, 14, 14, 14, 14, 14},
                 {14, 14, 14, 14, 14,  3, 12,  2,  3, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,  2,  3, 12,  2, 14, 14, 14, 14, 14},
                 {14, 14, 14, 14, 14,  3, 12,  2,  3, 14,  4,  1,  1,  1,  1,  1,  1,  5, 14,  2,  3, 12,  2, 14, 14, 14, 14, 14},
