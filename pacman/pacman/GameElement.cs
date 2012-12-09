@@ -21,7 +21,7 @@ namespace pacman
 
 		abstract public void Initialize();
 		abstract public void LoadContent(ContentManager content);
-		abstract public void Update(GameTime gameTime);
+		abstract public void Update(int counter);
 		abstract public void Draw(GameTime gameTime, SpriteBatch spriteBatch);
 		//abstract public void UnloadContent(ContentManager content);
 

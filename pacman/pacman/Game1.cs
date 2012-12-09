@@ -107,10 +107,10 @@ namespace pacman
 		{
 			KeyboardState keyboard = Keyboard.GetState();
             
-			//_pacman.Update(gameTime);
+			_pacman.Update(_counter);
 			foreach (Ghost g in _ghosts)
 			{
-                g.Update(gameTime, _counter);
+                g.Update(_counter);
 			}
 
 

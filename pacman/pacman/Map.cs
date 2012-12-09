@@ -33,7 +33,7 @@ namespace pacman
 
 		public Vector2 WinToMap(Vector2 coordinates)
 		{
-			return coordinates / _spriteSize;
+			return new Vector2((int)(coordinates.X / _spriteSize.X), (int)(coordinates.Y / _spriteSize.Y));
 		}
 
         public Direction[] getDirectionWalkable(Vector2 coordinates)
@@ -102,7 +102,7 @@ namespace pacman
 			_texture = content.Load<Texture2D>("mapTexture");
 		}
 		//TODO
-		public override void Update(GameTime gameTime)
+		public override void Update(int counter)
 		{
 			return;
 		}

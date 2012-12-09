@@ -14,8 +14,6 @@ namespace pacman
 	{
         // --- attributes --- //
 
-        public const int SPEEDUNIT = 2; // Unité de déplacement
-
         protected Pacman _pacman;
 
         protected Vector2 _scatterTarget = new Vector2(0, 0);
@@ -26,30 +24,12 @@ namespace pacman
         protected int _thinkCounter; // Permet de savoir quand le fantome est au milieu d'une case
         protected bool _canThink;   // Dans le cas ou le fantome ne bouge pas sur la 1ere frame du compteur, on l'empèche de penser
 
-        protected int _drawCounter;
-
         // --- methods --- //
 		public Ghost(Map map, Pacman pacman)
 			: base(map)
 		{
             _pacman = pacman;
             _mode = GhostMode.CHASE;
-        }
-
-        public bool MustMove(int counter)
-        {
-            if (_speed == 1f ||
-                _speed == 0.90f && counter % 10 != 0 ||
-                _speed == 0.85f && ( counter % 6 != 0 || counter % 60 == 0) ||
-                _speed == 0.80f && counter % 5 != 0 ||
-                _speed == 0.75f && counter % 4 != 0 ||
-                _speed == 0.5f && counter % 2 != 0
-                )
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private void Think()
@@ -170,7 +150,7 @@ namespace pacman
             targeting();
 		}
 
-        public void Update(GameTime gameTime, int counter)
+        public override void Update(int counter)
         {
             if (_thinkCounter == 0 && _canThink)
             {
@@ -180,41 +160,40 @@ namespace pacman
 
             if (MustMove(counter))
             {
-                _thinkCounter += SPEEDUNIT;
+                _thinkCounter += _SPEEDUNIT;
                 _canThink = true;
                 switch (_direction)
                 {
                     case Direction.UP:
                         {
-                            _position.Y -= SPEEDUNIT;
+                            _position.Y -= _SPEEDUNIT;
                             if (_thinkCounter % _map.TileSize.Y == 0) _thinkCounter = 0;
                             break;
                         }
 
                     case Direction.DOWN:
                         {
-                            _position.Y += SPEEDUNIT;
+                            _position.Y += _SPEEDUNIT;
                             if (_thinkCounter % _map.TileSize.Y == 0) _thinkCounter = 0;
                             break;
                         }
 
                     case Direction.LEFT:
                         {
-                            _position.X -= SPEEDUNIT;
+                            _position.X -= _SPEEDUNIT;
                             if (_thinkCounter % _map.TileSize.X == 0) _thinkCounter = 0;
                             break;
                         }
 
                     case Direction.RIGHT:
                         {
-                            _position.X += SPEEDUNIT;
+                            _position.X += _SPEEDUNIT;
                             if (_thinkCounter % _map.TileSize.X == 0) _thinkCounter = 0;
                             break;
                         }
                 }
             }
         }
-
 
 		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{

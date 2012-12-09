@@ -12,17 +12,34 @@ namespace pacman
 
 	public abstract class Actor : GameElement
 	{
+		protected const int _SPEEDUNIT = 2; // Unité de déplacement
 		protected Vector2 _position;
 		protected Direction _direction;
 		protected Vector2 _textureOffset;   // Offset in the texture map for this actor
 		protected float _speed;
 		protected Map _map;
-		//protected String _name;
+		protected int _drawCounter;
 
 		public Actor(Map map)
 			: base(new Vector2(28, 28))
 		{
 			_map = map;
+		}
+
+		public bool MustMove(int counter)
+		{
+			if (_speed == 1f ||
+				_speed == 0.90f && counter % 10 != 0 ||
+				_speed == 0.85f && (counter % 6 != 0 || counter % 60 == 0) ||
+				_speed == 0.80f && counter % 5 != 0 ||
+				_speed == 0.75f && counter % 4 != 0 ||
+				_speed == 0.5f && counter % 2 != 0
+				)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
         public static Direction ReverseDirection(Direction d)
@@ -49,47 +66,6 @@ namespace pacman
 		public override void LoadContent(ContentManager content)
 		{
 			_texture = content.Load<Texture2D>("actorsTexture");
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			Vector2 nextPos = new Vector2();
-			Vector2 testPos = new Vector2();
-			switch (_direction)
-			{
-				case Direction.UP:
-				{
-					nextPos = _position - new Vector2(0, _speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds);
-					testPos = nextPos - new Vector2(0, _spriteSize.Y / 2);
-					break;
-				}
-
-				case Direction.DOWN:
-				{
-					nextPos = _position + new Vector2(0, _speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds);
-					testPos = nextPos + new Vector2(0, _spriteSize.Y / 2);
-					break;
-				}
-
-				case Direction.LEFT:
-				{
-					nextPos = _position - new Vector2(_speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0);
-					testPos = nextPos - new Vector2(_spriteSize.X / 2, 0);
-					break;
-				}
-
-				case Direction.RIGHT:
-				{
-					nextPos = _position + new Vector2(_speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds, 0);
-					testPos = nextPos + new Vector2(_spriteSize.X / 2, 0);
-					break;
-				}
-			}
-			Console.WriteLine("_position: " + _position.ToString() + " ; nextPos: " + nextPos.ToString() + " ; testPos: " + testPos.ToString() + " ; WinToMap(testPos): " + _map.WinToMap(testPos).ToString());
-			if (!_map.isWall(_map.WinToMap(testPos)))
-			{
-				_position = nextPos;
-			}
 		}
 
 		public Vector2 Position
