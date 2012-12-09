@@ -23,7 +23,8 @@ namespace pacman
             _textureOffset = new Vector2(0, 2);
 
             _scatterTarget = new Vector2(2, -3);
-			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
+			//_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
+			_position = new Vector2(0, 0);
             _direction = Direction.LEFT;
 
             base.Initialize();
@@ -59,7 +60,7 @@ namespace pacman
                         _target = _scatterTarget;
                         break;
                     }
-                case GhostMode.FRIGHT:
+                case GhostMode.FRIGHTENED:
                     {
                         targetingFrightMode();
                         break;
