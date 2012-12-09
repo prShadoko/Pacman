@@ -10,45 +10,48 @@ namespace pacman
 {
 	class Blinky : Ghost
 	{
-        // -- attributes --- //
+		// -- attributes --- //
 
-        // --- methods --- //
-        public Blinky(Map map, Pacman pacman)
-            : base(map, pacman)
+		// --- methods --- //
+		public Blinky(Map map, Pacman pacman)
+			: base(map, pacman)
 		{
 		}
 
 		public override void Initialize()
-        {
-            _textureOffset = new Vector2(0, 0);
+		{
+			base.Initialize();
 
-            _scatterTarget = new Vector2(25, -3);
-			_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2);
-            _direction = Direction.LEFT;
+			_textureOffset = new Vector2(0, 0);
 
-            base.Initialize();
+			_scatterTarget = new Vector2(25, -3);
+			//_position = _map.MapToWin(new Vector2(14, 11));
+			_position = new Vector2(0, 0);
+			_direction = Direction.LEFT;
+
+			_mode = GhostMode.OUTGOING;
 		}
 
-        public override void targeting()
-        {
-            switch (_mode)
-            {
-                case GhostMode.CHASE:
-                    {
-                        _target = _map.WinToMap(_pacman.Position);
-                        break;
-                    }
-                case GhostMode.SCATTER:
-                    {
-                        _target = _scatterTarget;
-                        break;
-                    }
-                case GhostMode.FRIGHT:
-                    {
-                        targetingFrightMode();
-                        break;
-                    }
-            }
-        }
+		public override void targeting()
+		{
+			switch (_mode)
+			{
+				case GhostMode.CHASE:
+					{
+						_target = _map.WinToMap(_pacman.Position);
+						break;
+					}
+				case GhostMode.SCATTER:
+					{
+						_target = _scatterTarget;
+						break;
+					}
+				case GhostMode.FRIGHTENED:
+					{
+						targetingFrightMode();
+						break;
+					}
+			}
+		}
 	}
 }
