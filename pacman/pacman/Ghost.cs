@@ -31,12 +31,14 @@ namespace pacman
         protected int _thinkCounter; // Permet de savoir quand le fantome est au milieu d'une case
         protected bool _canThink;   // Dans le cas ou le fantome ne bouge pas sur la 1ere frame du compteur, on l'empèche de penser
 
-        private int[,] _timeModes;
+        private int[,] _modesTime;
         private int _indexCurrentMode;
 
         private int _level; // niveau en cours
         private int _indexModeLevel; // index relatif au niveau pour le tableau des modes
         private int _indexSpeedLevel; // index relatif au niveau pour le tableau des vitesses
+
+		private int _modeCounter;
 
         private float[,] _speedByLevels;
         // --- methods --- //
@@ -329,21 +331,22 @@ namespace pacman
 
             _level = 1;
 
-            _timeModes = new int[3, 7] {
-            { 7000, 20000, 7000, 20000, 5000, 20000,   5000 },
-            { 7000, 20000, 7000, 20000, 5000, 1033000, 15 },
-            { 7000, 20000, 7000, 20000, 5000, 1037000, 15 }
+            _modesTime = new int[3, 7] {
+            { 420, 1200, 420, 1200, 300, 1200,  300 },
+            { 420, 1200, 420, 1200, 300, 61980, 1 },
+            { 420, 1200, 420, 1200, 300, 62220, 1 }
             };
 
             _indexCurrentMode = 0;
-            for (int l = 0; l < _timeModes.GetLength(0); ++l)
+            for (int l = 0; l < _modesTime.GetLength(0); ++l)
             {
-                for (int t = 1; t < _timeModes.GetLength(1); ++t)
+                for (int t = 1; t < _modesTime.GetLength(1); ++t)
                 {
-                    _timeModes[l, t] += _timeModes[l, t - 1];
+                    _modesTime[l, t] += _modesTime[l, t - 1];
                 }
             }
 
+			_modeCounter = 0;
             _indexSpeedLevel = 0;
             _indexModeLevel = 0;
             if (_level > 1)
@@ -376,9 +379,10 @@ namespace pacman
 
             //Console.WriteLine(_mode);
             // Gestion des différents changement de modes.
+			++_modeCounter;
 
 			//TODO: Se passer du gameTime
-            if (_indexCurrentMode < _timeModes.GetLength(1) && _timeModes[_indexModeLevel, _indexCurrentMode] < gameTime.TotalGameTime.TotalMilliseconds)
+			if (_indexCurrentMode < _modesTime.GetLength(1) && _modesTime[_indexModeLevel, _indexCurrentMode] < _modeCounter)
             {
 				++_indexCurrentMode;
 
