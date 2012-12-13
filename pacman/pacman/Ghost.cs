@@ -20,7 +20,6 @@ namespace pacman
     abstract class Ghost : Actor
     {
         // --- attributes --- //
-
         protected Pacman _pacman;
 
         protected Vector2 _scatterTarget = new Vector2(0, 0);
@@ -56,7 +55,7 @@ namespace pacman
             if (_map.isInTunnel(mapPosition))
             {
                 Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.TUNNEL];
-                mapPosition = _map.mustTeleportation(mapPosition);
+                mapPosition = _map.mustTeleport(mapPosition);
                 Position = _map.MapToWin(mapPosition);
             }
             else if (_mode == GhostMode.FRIGHTENED)
@@ -340,6 +339,7 @@ namespace pacman
             _thinkCounter = 0;
             _canThink = true;
             _drawCounter = 0;
+			_blinkInterval = 16;
 			_mode = GhostMode.HOUSE;
             targeting();
 
@@ -467,11 +467,11 @@ namespace pacman
 		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{
             ++_drawCounter;
-            _drawCounter %= 8;
+            _drawCounter %= _blinkInterval;
             Vector2 pos = _position - _spriteSize / 2;
             Rectangle clipping = new Rectangle(
                     ((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
-                    (0 + (int)_textureOffset.Y + _drawCounter / 4) * (int)_spriteSize.Y,
+                    ((int)_textureOffset.Y + 2 * _drawCounter / _blinkInterval) * (int)_spriteSize.Y,
                     (int)_spriteSize.X,
                     (int)_spriteSize.Y);
 

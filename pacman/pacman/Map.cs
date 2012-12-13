@@ -168,7 +168,7 @@ namespace pacman
         /// </summary>
         /// <param name="coordinates">Coordinates in the map</param>
         /// <returns>return true if the ghost must teleport himself, else false</returns>
-        public Vector2 mustTeleportation(Vector2 coordinates)
+        public Vector2 mustTeleport(Vector2 coordinates)
         {
             Vector2 result = coordinates;
             if ((int)result.X == -1 && (int)result.Y == 14)

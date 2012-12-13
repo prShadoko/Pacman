@@ -12,6 +12,7 @@ namespace pacman
 	{
 		protected Texture2D _texture;
 		protected Vector2 _spriteSize;
+		protected int _blinkInterval;
 
 		public GameElement(Vector2 spriteSize)
 		{

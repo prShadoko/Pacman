@@ -28,6 +28,8 @@ namespace pacman
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
 			_thinkCounter = 0;
+			_drawCounter = 0;
+			_blinkInterval = 8;
 		}
 		
 		public override void Update(int counter)
@@ -40,7 +42,6 @@ namespace pacman
 				{
 					_direction = Direction.UP;
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-					System.Console.WriteLine(TileSize);
 				}
 				_nextDirection = Direction.UP;
 			}
@@ -50,7 +51,6 @@ namespace pacman
 				{
 					_direction = Direction.LEFT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
-					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.LEFT;
 			}
@@ -60,7 +60,6 @@ namespace pacman
 				{
 					_direction = Direction.DOWN;
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.DOWN;
 			}
@@ -70,7 +69,6 @@ namespace pacman
 				{
 					_direction = Direction.RIGHT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
-					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.RIGHT;
 			}
@@ -95,6 +93,8 @@ namespace pacman
 					_thinkCounter += _SPEEDUNIT;
 					_thinkCounter %= (int)_map.TileSize.X;
 					_position = nextPos;
+					++_drawCounter;
+					_drawCounter %= _blinkInterval;
 				}
 			}
 		}
@@ -138,11 +138,13 @@ namespace pacman
 		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;
+			int stateOffset = 3 * _drawCounter / _blinkInterval;
+
 			Rectangle clipping = new Rectangle(
-					((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
-					(0 + (int)_textureOffset.Y) * (int)_spriteSize.Y, // TODO: use gameTime to alternate the three positions of pacman
-					(int)_spriteSize.X,
-					(int)_spriteSize.Y);
+				((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
+				((int)_textureOffset.Y + stateOffset) * (int)_spriteSize.Y,
+				(int)_spriteSize.X,
+				(int)_spriteSize.Y);
 
 			spriteBatch.Draw(_texture, pos, clipping, Color.White);
 		}
