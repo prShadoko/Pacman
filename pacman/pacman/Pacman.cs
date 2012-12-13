@@ -27,51 +27,7 @@ namespace pacman
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
-		}
-
-		private bool move(Direction dir)
-		{
-			Vector2 nextPos = new Vector2();
-			Vector2 testOffset = new Vector2();
-			switch (dir)
-			{
-				case Direction.UP:
-				{
-					nextPos = _position - new Vector2(0, _SPEEDUNIT);
-					testOffset.Y -= _spriteSize.Y / 2;
-					break;
-				}
-
-				case Direction.DOWN:
-				{
-					nextPos = _position + new Vector2(0, _SPEEDUNIT);
-					testOffset.Y += _spriteSize.Y / 2;
-					break;
-				}
-
-				case Direction.LEFT:
-				{
-					nextPos = _position - new Vector2(_SPEEDUNIT, 0);
-					testOffset.X -= _spriteSize.X / 2;
-					break;
-				}
-
-				case Direction.RIGHT:
-				{
-					nextPos = _position + new Vector2(_SPEEDUNIT, 0);
-					testOffset.X += _spriteSize.X / 2;
-					break;
-				}
-			}
-			//System.Console.WriteLine((nextPos - _position).ToString());
-			System.Console.WriteLine(_map.WinToMap(_position).ToString() + "\t" + (nextPos + testOffset).ToString() + "\t" + _map.WinToMap(nextPos + testOffset).ToString());
-
-			if (!_map.isWall(_map.WinToMap(nextPos + testOffset)))
-			{
-				_position = nextPos;
-				return true;
-			}
-			return false;
+			_thinkCounter = 0;
 		}
 		
 		public override void Update(int counter)
@@ -83,6 +39,8 @@ namespace pacman
 				if (_direction == Direction.DOWN)
 				{
 					_direction = Direction.UP;
+					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					System.Console.WriteLine(TileSize);
 				}
 				_nextDirection = Direction.UP;
 			}
@@ -91,6 +49,8 @@ namespace pacman
 				if (_direction == Direction.RIGHT)
 				{
 					_direction = Direction.LEFT;
+					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
+					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.LEFT;
 			}
@@ -99,6 +59,8 @@ namespace pacman
 				if (_direction == Direction.UP)
 				{
 					_direction = Direction.DOWN;
+					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.DOWN;
 			}
@@ -107,27 +69,72 @@ namespace pacman
 				if (_direction == Direction.LEFT)
 				{
 					_direction = Direction.RIGHT;
+					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
+					System.Console.WriteLine(_thinkCounter);
 				}
 				_nextDirection = Direction.RIGHT;
 			}
 
 			if (MustMove(counter))
 			{
-				if (move(_direction))
+				Vector2 nextCell;
+				Vector2 nextPos;
+
+
+				Think(_nextDirection, out nextCell, out nextPos);
+
+				if (_thinkCounter == 0 && !_map.isWall(nextCell))
 				{
-					System.Console.WriteLine("move 1");
 					_direction = _nextDirection;
 				}
-				/*
-				if (_direction != _nextDirection)
+
+				Think(_direction, out nextCell, out nextPos);
+
+				if (!_map.isWall(nextCell) || _thinkCounter != 0)
 				{
-					System.Console.WriteLine("move 2");
-					move(_nextDirection);
+					_thinkCounter += _SPEEDUNIT;
+					_thinkCounter %= (int)_map.TileSize.X;
+					_position = nextPos;
 				}
-				//*/
 			}
 		}
-		
+
+		private void Think(Direction dir, out Vector2 nextCell, out Vector2 nextPos)
+		{
+			nextCell = _map.WinToMap(_position);
+			nextPos = _position;
+			switch (dir)
+			{
+				case Direction.UP:
+				{
+					nextCell.Y--;
+					nextPos.Y -= _SPEEDUNIT;
+					break;
+				}
+
+				case Direction.DOWN:
+				{
+					nextCell.Y++;
+					nextPos.Y += _SPEEDUNIT;
+					break;
+				}
+
+				case Direction.LEFT:
+				{
+					nextCell.X--;
+					nextPos.X -= _SPEEDUNIT;
+					break;
+				}
+
+				case Direction.RIGHT:
+				{
+					nextCell.X++;
+					nextPos.X += _SPEEDUNIT;
+					break;
+				}
+			}
+		}
+
 		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;

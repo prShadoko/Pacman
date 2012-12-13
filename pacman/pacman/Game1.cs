@@ -115,7 +115,7 @@ namespace pacman
         {
 
             //Console.WriteLine(gameTime.TotalGameTime.TotalMilliseconds);
-			//*
+			
             KeyboardState keyboard = Keyboard.GetState();
 			if (keyboard.IsKeyDown(Keys.F))
 			{
@@ -123,13 +123,15 @@ namespace pacman
 				_ghosts[2].Mode = GhostMode.OUTGOING;
 				_ghosts[3].Mode = GhostMode.OUTGOING;
 			}
-			//*/
+			
 
-			//_pacman.Update(_counter);
+			_pacman.Update(_counter);
+			
 			foreach (Ghost g in _ghosts)
 			{
                 g.Update(_counter);
 			}
+			
 
             ++_counter;
             if (_counter % 60 == 0) _counter = 0;

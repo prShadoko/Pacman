@@ -28,7 +28,6 @@ namespace pacman
         protected Vector2 _target;
         protected GhostMode _mode;
 
-        protected int _thinkCounter; // Permet de savoir quand le fantome est au milieu d'une case
         protected bool _canThink;   // Dans le cas ou le fantome ne bouge pas sur la 1ere frame du compteur, on l'empèche de penser
 
         private int[,] _modesTime;
@@ -435,37 +434,32 @@ namespace pacman
                 switch (_direction)
                 {
                     case Direction.UP:
-                        {
-
-                            _position.Y -= _SPEEDUNIT;
-                            if (_thinkCounter % _map.TileSize.Y == 0)
-                                _thinkCounter = 0;
-                            break;
-                        }
+                    {
+                        _position.Y -= _SPEEDUNIT;
+						_thinkCounter %= (int)_map.TileSize.Y;
+                        break;
+                    }
 
                     case Direction.DOWN:
-                        {
-                            _position.Y += _SPEEDUNIT;
-                            if (_thinkCounter % _map.TileSize.Y == 0)
-								_thinkCounter = 0;
-                            break;
-                        }
+                    {
+						_position.Y += _SPEEDUNIT;
+						_thinkCounter %= (int)_map.TileSize.Y;
+                        break;
+                    }
 
                     case Direction.LEFT:
-                        {
-                            _position.X -= _SPEEDUNIT;
-                            if (_thinkCounter % _map.TileSize.X == 0)
-                                _thinkCounter = 0;
-                            break;
-                        }
+                    {
+						_position.X -= _SPEEDUNIT;
+						_thinkCounter %= (int)_map.TileSize.X;
+                        break;
+                    }
 
                     case Direction.RIGHT:
-                        {
-                            _position.X += _SPEEDUNIT;
-                            if (_thinkCounter % _map.TileSize.X == 0)
-                                _thinkCounter = 0;
-                            break;
-                        }
+                    {
+						_position.X += _SPEEDUNIT;
+						_thinkCounter %= (int)_map.TileSize.X;
+                        break;
+                    }
                 }
             }
         }

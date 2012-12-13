@@ -31,6 +31,11 @@ namespace pacman
             }
 		}
 
+		public Tuple<bool, bool> isCenter(Vector2 coordinates)
+		{
+			return new Tuple<bool, bool>(coordinates.X % TileSize.X == TileSize.X / 2, coordinates.Y % TileSize.Y == TileSize.Y / 2);
+		}
+
 		public bool isHouse(Vector2 coordinates)
 		{
 			try
