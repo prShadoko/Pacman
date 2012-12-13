@@ -29,12 +29,17 @@ namespace pacman
 
 		public bool MustMove(int counter)
 		{
+
 			if (_speed == 1f ||
+				_speed == 0.95f && counter % 20 != 0 ||
 				_speed == 0.90f && counter % 10 != 0 ||
 				_speed == 0.85f && (counter % 6 != 0 || counter % 60 == 0) ||
 				_speed == 0.80f && counter % 5 != 0 ||
 				_speed == 0.75f && counter % 4 != 0 ||
-				_speed == 0.5f && counter % 2 != 0
+				_speed == 0.55f && counter % 2 != 0 && counter % 20 != 1 ||
+				_speed == 0.5f && counter % 2 != 0 ||
+				_speed == 0.45f && counter % 5 != 0 && counter % 5 != 2 && counter % 20 != 19 ||
+				_speed == 0.4f && counter % 5 != 0 && counter % 5 != 2
 				)
 			{
 				return true;

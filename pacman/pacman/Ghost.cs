@@ -40,7 +40,8 @@ namespace pacman
 		private int _modeCounter;
 
         private float[,] _speedByLevels;
-        // --- methods --- //
+        
+		// --- methods --- //
         public Ghost(Map map, Pacman pacman)
             : base(map)
         {
@@ -428,7 +429,8 @@ namespace pacman
             }
 
             if (MustMove(counter))
-            {
+			{
+				//Console.Write("ok");
                 _thinkCounter += _SPEEDUNIT;
                 _canThink = true;
                 switch (_direction)
