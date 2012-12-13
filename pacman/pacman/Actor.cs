@@ -18,7 +18,6 @@ namespace pacman
 		protected Vector2 _textureOffset;   // Offset in the texture map for this actor
 		protected float _speed;
 		protected Map _map;
-		protected int _drawCounter;
 		protected int _thinkCounter; // Permet de savoir quand l'acteur est au milieu d'une case
 
 		public Actor(Map map)

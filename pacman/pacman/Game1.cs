@@ -148,11 +148,11 @@ namespace pacman
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
 
-            _map.Draw(gameTime, _spriteBatch);
-            _pacman.Draw(gameTime, _spriteBatch);
+            _map.Draw(_spriteBatch);
+            _pacman.Draw(_spriteBatch);
             foreach (Ghost g in _ghosts)
             {
-                g.Draw(gameTime, _spriteBatch);
+                g.Draw(_spriteBatch);
             }
 
             _spriteBatch.End();

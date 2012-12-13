@@ -12,6 +12,7 @@ namespace pacman
 	{
 		protected Texture2D _texture;
 		protected Vector2 _spriteSize;
+		protected int _drawCounter;
 		protected int _blinkInterval;
 
 		public GameElement(Vector2 spriteSize)
@@ -24,7 +25,7 @@ namespace pacman
 		abstract public void Initialize();
 		abstract public void LoadContent(ContentManager content);
 		abstract public void Update(int counter);
-		abstract public void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+		abstract public void Draw(SpriteBatch spriteBatch);
 		//abstract public void UnloadContent(ContentManager content);
 
 		public Texture2D Texture

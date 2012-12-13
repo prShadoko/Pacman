@@ -135,7 +135,7 @@ namespace pacman
 			}
 		}
 
-		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+		public override void Draw(SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;
 			int stateOffset = 3 * _drawCounter / _blinkInterval;

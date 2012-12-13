@@ -236,9 +236,10 @@ namespace pacman
             return directionWalkable.ToArray();
         }
 
-		//TODO
 		public override void Initialize()
 		{
+			_drawCounter = 0;
+			_blinkInterval = 24;
 			_map = new sbyte[31, 28] {
                 { 8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9},
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2,  3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
@@ -273,25 +274,27 @@ namespace pacman
                 {10,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 11}
             };
 		}
-		//TODO
+
 		public override void LoadContent(ContentManager content)
 		{
 			_texture = content.Load<Texture2D>("mapTexture");
 		}
-		//TODO
+		
 		public override void Update(int counter)
 		{
 			return;
 		}
 
-		public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+		public override void Draw(SpriteBatch spriteBatch)
 		{
+			++_drawCounter;
+			_drawCounter %= _blinkInterval;
 			for (int y = 0; y < _map.GetLength(0); ++y)
 			{
 				for (int x = 0; x < _map.GetLength(1); ++x)
 				{
 
-					if (_map[y, x] < 14 && _map[y, x] >= 0)
+					if ((_map[y, x] < 13 && _map[y, x] >= 0) || (_map[y, x] == 13 && 2 * _drawCounter / _blinkInterval == 0))
 					{
 						Vector2 pos = new Vector2(x, y) * _spriteSize;
 						Rectangle clipping = new Rectangle(
