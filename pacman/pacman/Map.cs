@@ -31,6 +31,40 @@ namespace pacman
             }
 		}
 
+		public bool isGum(Vector2 coordinates)
+		{
+			try
+			{
+				return _map[(int)coordinates.Y, (int)coordinates.X] == 12 || _map[(int)coordinates.Y, (int)coordinates.X] == 13;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return false;
+			}
+		}
+
+		public void eatGum(Vector2 coordinates)
+		{
+			try
+			{
+				if (_map[(int)coordinates.Y, (int)coordinates.X] == 12) // Regular gum
+				{
+					//TODO: Increase the score
+					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+				}
+				if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
+				{
+					//TODO: Set ghosts to fright mode
+					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
+		}
+
 		public Tuple<bool, bool> isCenter(Vector2 coordinates)
 		{
 			return new Tuple<bool, bool>(coordinates.X % TileSize.X == TileSize.X / 2, coordinates.Y % TileSize.Y == TileSize.Y / 2);

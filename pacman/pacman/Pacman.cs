@@ -12,6 +12,7 @@ namespace pacman
 	public class Pacman : Actor
 	{
 		private Direction _nextDirection;
+		private bool _isEating;
 
 		public Pacman(Map map)
 			: base(map)
@@ -30,6 +31,7 @@ namespace pacman
 			_thinkCounter = 0;
 			_drawCounter = 0;
 			_blinkInterval = 8;
+			_isEating = false;
 		}
 		
 		public override void Update(int counter)
@@ -73,30 +75,49 @@ namespace pacman
 				_nextDirection = Direction.RIGHT;
 			}
 
+			if (!_isEating && _thinkCounter == 0 && _map.isGum(_map.WinToMap(_position)))
+			{
+				_isEating = !_isEating;
+			}
+
 			if (MustMove(counter))
 			{
-				Vector2 nextCell;
-				Vector2 nextPos;
 
-
-				Think(_nextDirection, out nextCell, out nextPos);
-
-				if (_thinkCounter == 0 && !_map.isWall(nextCell))
+				if (_isEating)
 				{
-					_direction = _nextDirection;
+					_isEating = false;
+					_map.eatGum(_map.WinToMap(_position));
+					//TODO: compter les points
+					System.Console.WriteLine("		Pill");
 				}
-
-				Think(_direction, out nextCell, out nextPos);
-
-				if (!_map.isWall(nextCell) || _thinkCounter != 0)
+				else
 				{
-					_thinkCounter += _SPEEDUNIT;
-					_thinkCounter %= (int)_map.TileSize.X;
-					_position = nextPos;
-					++_drawCounter;
-					_drawCounter %= _blinkInterval;
+					System.Console.WriteLine("Move");
+					Vector2 nextCell;
+					Vector2 nextPos;
+
+					Think(_nextDirection, out nextCell, out nextPos);
+					if (_thinkCounter == 0 && !_map.isWall(nextCell))
+					{
+						_direction = _nextDirection;
+					}
+					else
+					{
+						Think(_direction, out nextCell, out nextPos);
+					}
+
+					if (!_map.isWall(nextCell) || _thinkCounter != 0)
+					{
+						_thinkCounter += _SPEEDUNIT;
+						_thinkCounter %= (int)_map.TileSize.X;
+						_position = nextPos;
+						++_drawCounter;
+						_drawCounter %= _blinkInterval;
+					}
 				}
 			}
+			else
+				System.Console.WriteLine("	Stay");
 		}
 
 		private void Think(Direction dir, out Vector2 nextCell, out Vector2 nextPos)
