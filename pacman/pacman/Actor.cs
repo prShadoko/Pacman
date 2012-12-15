@@ -85,10 +85,15 @@ namespace pacman
 			set { _direction = value; }
 		}
 
-        public float Speed
-        {
-            get { return _speed; }
-            set { _speed = value; }
-        }
+		public float Speed
+		{
+			get { return _speed; }
+			set { _speed = value; }
+		}
+
+		public float SpeedUnit
+		{
+			get { return _SPEEDUNIT; }
+		}
 	}
 }

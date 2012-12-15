@@ -12,6 +12,9 @@ namespace pacman
 		private sbyte[,] _map;
 		private Texture2D _tiles;
 
+		private Vector2 _targetIncomingMode;
+		private Vector2 _respawn;
+
 		public Map()
 			: base(new Vector2(16, 16))
 		{
@@ -202,18 +205,21 @@ namespace pacman
         /// </summary>
         /// <param name="coordinates">Coordinates in the map</param>
         /// <returns>return true if the ghost must teleport himself, else false</returns>
-        public Vector2 mustTeleport(Vector2 coordinates)
+        public bool mustTeleportation(Vector2 coordinates, out Vector2 teleportation)
         {
-            Vector2 result = coordinates;
-            if ((int)result.X == -1 && (int)result.Y == 14)
+			teleportation = coordinates;
+			bool boolean = false;
+			if ((int)coordinates.X == -1 && (int)coordinates.Y == 14)
             {
-                coordinates.X = 28;
+				boolean = true;
+				teleportation.X = 28;
             }
-            else if ((int)result.X == 28 && (int)result.Y == 14)
+			else if ((int)coordinates.X == 28 && (int)coordinates.Y == 14)
             {
-                result.X = -1;
+				boolean = true;
+				teleportation.X = -1;
             }
-            return result;
+			return boolean;
         }
 
         /// <summary>
@@ -274,6 +280,10 @@ namespace pacman
 		{
 			_drawCounter = 0;
 			_blinkInterval = 24;
+
+			_targetIncomingMode = new Vector2(14, 11);
+			_respawn = new Vector2(14, 14);
+
 			_map = new sbyte[31, 28] {
                 { 8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9},
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2,  3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
@@ -347,6 +357,22 @@ namespace pacman
 		{
 			get { return _tiles; }
 			set { _tiles = value; }
+		}
+
+		public Vector2 TargetIncomingMode
+		{
+			get
+			{
+				return _targetIncomingMode;
+			}
+		}
+
+		public Vector2 Respawn
+		{
+			get
+			{
+				return _respawn;
+			}
 		}
 	}
 }

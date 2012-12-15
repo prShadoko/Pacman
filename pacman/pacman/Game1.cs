@@ -27,6 +27,8 @@ namespace pacman
 
         private int _counter;
 
+		private int _outgoingCounter;
+
         public Game1()
         {
             Content.RootDirectory = "Content";
@@ -55,8 +57,7 @@ namespace pacman
             Inky inky = new Inky(_map, _pacman, blinky);
             Clyde clyde = new Clyde(_map, _pacman);
 
-			blinky.Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2, 0);
-			//blinky.ThinkCounter = 3;
+			blinky.Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2 - blinky.SpeedUnit, 0);
 			pinky.Position = _map.MapToWin(new Vector2(14, 14)) - new Vector2(_map.TileSize.X / 2, 0);
 			inky.Position = _map.MapToWin(new Vector2(12, 14)) - new Vector2(_map.TileSize.X / 2, 0);
 			clyde.Position = _map.MapToWin(new Vector2(16, 14)) - new Vector2(_map.TileSize.X / 2, 0);
@@ -73,6 +74,8 @@ namespace pacman
 			};
 
             _counter = 0;
+
+			_outgoingCounter = 0;
 
             _level = 1;
 
@@ -114,19 +117,53 @@ namespace pacman
         protected override void Update(GameTime gameTime)
         {
 
-            //Console.WriteLine(gameTime.TotalGameTime.TotalMilliseconds);
-			
-            KeyboardState keyboard = Keyboard.GetState();
+
+			KeyboardState keyboard = Keyboard.GetState();
 			if (keyboard.IsKeyDown(Keys.F))
 			{
-				_ghosts[1].Mode = GhostMode.OUTGOING;
-				_ghosts[2].Mode = GhostMode.OUTGOING;
-				_ghosts[3].Mode = GhostMode.OUTGOING;
+				_ghosts[0].Mode = GhostMode.FRIGHTENED;
+				_ghosts[1].Mode = GhostMode.FRIGHTENED;
+				_ghosts[2].Mode = GhostMode.FRIGHTENED;
+				_ghosts[3].Mode = GhostMode.FRIGHTENED;
 			}
+			else if (keyboard.IsKeyDown(Keys.S))
+			{
+				_ghosts[0].Mode = GhostMode.SCATTER;
+				_ghosts[1].Mode = GhostMode.SCATTER;
+				_ghosts[2].Mode = GhostMode.SCATTER;
+				_ghosts[3].Mode = GhostMode.SCATTER;
+			}
+			else if (keyboard.IsKeyDown(Keys.C))
+			{
+				_ghosts[0].Mode = GhostMode.CHASE;
+				_ghosts[1].Mode = GhostMode.CHASE;
+				_ghosts[2].Mode = GhostMode.CHASE;
+				_ghosts[3].Mode = GhostMode.CHASE;
+			}
+			else if (keyboard.IsKeyDown(Keys.I))
+			{
+				_ghosts[0].Mode = GhostMode.INCOMING;
+				_ghosts[1].Mode = GhostMode.INCOMING;
+				_ghosts[2].Mode = GhostMode.INCOMING;
+				_ghosts[3].Mode = GhostMode.INCOMING;
+			}
+			Console.WriteLine(_ghosts[0].Mode);
+			Console.WriteLine(_ghosts[1].Mode);
+			Console.WriteLine(_ghosts[2].Mode);
+			Console.WriteLine(_ghosts[3].Mode);
+			Console.WriteLine("");
 			
 
 			_pacman.Update(_counter);
-			
+
+			if (_outgoingCounter < _ghosts.Length - 1)
+			{
+				if( _ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING )
+				{
+					++_outgoingCounter;
+					_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
+				}
+			}
 			foreach (Ghost g in _ghosts)
 			{
                 g.Update(_counter);

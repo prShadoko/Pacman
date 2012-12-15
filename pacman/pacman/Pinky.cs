@@ -64,7 +64,12 @@ namespace pacman
                     {
                         targetingFrightMode();
                         break;
-                    }
+					}
+				case GhostMode.INCOMING:
+					{
+						targetingIncomingMode();
+						break;
+					}
             }
         }
     }

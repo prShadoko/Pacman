@@ -38,6 +38,13 @@ namespace pacman
 
 		private int _modeCounter;
 
+		private int[] _frightModeCounters;
+		private int _frightModeCounter;
+		private int[] _flashesCounters;
+		private int _flashesCounter;
+		private int _flashOffset;
+
+
         private float[,] _speedByLevels;
         
 		// --- methods --- //
@@ -56,8 +63,12 @@ namespace pacman
             if (_map.isInTunnel(mapPosition))
             {
                 Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.TUNNEL];
-                mapPosition = _map.mustTeleport(mapPosition);
-                Position = _map.MapToWin(mapPosition);
+
+				Vector2 teleportation;
+				if (_map.mustTeleportation(mapPosition, out teleportation))
+				{
+					Position = _map.MapToWin(teleportation);
+				}
             }
             else if (_mode == GhostMode.FRIGHTENED)
             {
@@ -71,7 +82,16 @@ namespace pacman
             // on récupère un tableau de directions possibles
             Direction[] dir = _map.getDirectionWalkable(mapPosition);
 
-            if (dir.Length == 2) // 2 directions -> pas le choix on avance.
+			/*if (_mode == GhostMode.INCOMING && _map.WinToMap(_position) == _map.TargetIncomingMode && _thinkCounter != 0)
+			{
+				_direction = Direction.DOWN;
+			}
+			else*/ if (_mode == GhostMode.INCOMING && _map.WinToMap(_position) == _map.Respawn)
+			{
+				_direction = Direction.UP;
+				Mode = GhostMode.OUTGOING;
+			}
+            else if (dir.Length == 2) // 2 directions -> pas le choix on avance.
             {
                 if (Array.IndexOf(dir, Actor.ReverseDirection(_direction)) == 0)
                 {
@@ -238,7 +258,72 @@ namespace pacman
 			
 		}
 
+		private void ThinkToIncoming()
+		{
+			_direction = Direction.DOWN;
+			_thinkCounter = 0;
+		}
+
         abstract public void targeting();
+
+		public void targetingIncomingMode()
+		{
+			_target = _map.TargetIncomingMode;
+		}
+
+		public void targetingFrightMode()
+		{
+			Direction[] directions = _map.getDirectionWalkable(_map.WinToMap(_position));
+			Random rand = new Random();
+			int r = rand.Next(0, 4);
+			Direction nextDirection;
+			Direction originDirection = Actor.ReverseDirection(_direction);
+			Direction[] directionOrder = new Direction[] { Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT };
+
+			int index = Array.IndexOf(directions, (Direction)r);
+			if (index != -1 && originDirection != directions[index])
+			{
+				nextDirection = directions[index];
+			}
+			else
+			{
+				index = Array.IndexOf(directionOrder, (Direction)r);
+				nextDirection = originDirection;
+
+				for (int i = 0; i < 4; ++i)
+				{
+					++index;
+					if (index % 4 == 0) index = 0;
+					if (Array.IndexOf(directions, directionOrder[index]) != -1 && originDirection != directionOrder[index])
+					{
+						nextDirection = directionOrder[index];
+						break;
+					}
+				}
+			}
+			/*while (nextDirection == originDirection)
+			{
+				r = rand.Next(0, 4);
+				nextDirection = directions[r];
+			}*/
+
+			_target = _map.WinToMap(_position);
+			switch (nextDirection)
+			{
+				case Direction.UP:
+					--_target.Y;
+					break;
+				case Direction.DOWN:
+					++_target.Y;
+					break;
+				case Direction.LEFT:
+					--_target.X;
+					break;
+				case Direction.RIGHT:
+					++_target.X;
+					break;
+			}
+		}
 
         public GhostMode Mode   // the Name property
         {
@@ -249,7 +334,7 @@ namespace pacman
             set
             {
                 _mode = value;
-                if (_mode == GhostMode.SCATTER)
+				if (_mode == GhostMode.SCATTER || _mode == GhostMode.INCOMING)
                 {
                     Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
                     targeting();
@@ -261,6 +346,17 @@ namespace pacman
                 else if (_mode == GhostMode.FRIGHTENED)
                 {
                     Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.FRIGHT];
+					_frightModeCounter = 0;
+					_flashOffset = 0;
+
+					// faire attention que _level ne depasse pas la longueur du tableau
+					int lvl = _level;
+					if (_level > _flashesCounters.Length - 1)
+					{
+						lvl = _flashesCounters.Length - 1;
+					}
+
+					_flashesCounter = _flashesCounters[lvl];
                 }
             }
         }
@@ -278,61 +374,6 @@ namespace pacman
 			}
 			return m;
 		}
-
-        // I tried to respect original pacman ghosts moves logic
-        public void targetingFrightMode()
-        {
-            Direction[] directions = _map.getDirectionWalkable(_map.WinToMap(_position));
-            Random rand = new Random();
-            int r = rand.Next(0, 4);
-            Direction nextDirection;
-            Direction originDirection = Actor.ReverseDirection(_direction);
-            Direction[] directionOrder = new Direction[] { Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT };
-
-            int index = Array.IndexOf(directions, (Direction)r);
-            if (index != -1 && originDirection != directions[index])
-            {
-                nextDirection = directions[index];
-            }
-            else
-            {
-                index = Array.IndexOf(directionOrder, (Direction)r);
-                nextDirection = originDirection;
-
-                for (int i = 0; i < 4; ++i)
-                {
-                    ++index;
-                    if (index % 4 == 0) index = 0;
-                    if (Array.IndexOf(directions, directionOrder[index]) != -1 && originDirection != directionOrder[index])
-                    {
-                        nextDirection = directionOrder[index];
-                        break;
-                    }
-                }
-            }
-            /*while (nextDirection == originDirection)
-            {
-                r = rand.Next(0, 4);
-                nextDirection = directions[r];
-            }*/
-
-            _target = _map.WinToMap(_position);
-            switch (nextDirection)
-            {
-                case Direction.UP:
-                    --_target.Y;
-                    break;
-                case Direction.DOWN:
-                    ++_target.Y;
-                    break;
-                case Direction.LEFT:
-                    --_target.X;
-                    break;
-                case Direction.RIGHT:
-                    ++_target.X;
-                    break;
-            }
-        }
 
         public override void Initialize()
         {
@@ -387,37 +428,88 @@ namespace pacman
             };
 
             Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+
+			_frightModeCounters = new int[] {
+				6,5,4,3,2,5,2,2,1,5,2,1,1,3,1,1,1
+			};
+
+			for(int i = 0; i < _frightModeCounters.Length; ++i)
+			{
+				_frightModeCounters[i] *= 60;
+			}
+			
+			_frightModeCounter = 0;
+
+			_flashesCounters = new int[] {
+				5,5,5,5,5,5,5,5,3,5,5,3,3,5,3,3,3
+			};
+			_flashesCounter = 0;
+			_flashOffset = 0;
+			/*for (int i = 0; i < _flashesCounters.Length; ++i)
+			{
+				_flashesCounters[i] = _frightModeCounters[i] - _flashesCounters[i] * ;
+			}*/
         }
 
         public override void Update(int counter)
         {
 
-            //Console.WriteLine(_mode);
             // Gestion des différents changement de modes.
-			++_modeCounter;
+			if (_mode != GhostMode.FRIGHTENED)
+			{
+				++_modeCounter;
 
-			//TODO: Se passer du gameTime
-			if (_indexCurrentMode < _modesTime.GetLength(1) && _modesTime[_indexModeLevel, _indexCurrentMode] < _modeCounter)
-            {
-				++_indexCurrentMode;
-
-				if (_mode != GhostMode.OUTGOING && _mode != GhostMode.INCOMING && _mode != GhostMode.HOUSE)
+				if (_indexCurrentMode < _modesTime.GetLength(1) &&
+					_modesTime[_indexModeLevel, _indexCurrentMode] < _modeCounter)
 				{
+					++_indexCurrentMode;
+
+					if (_mode != GhostMode.OUTGOING && _mode != GhostMode.INCOMING && _mode != GhostMode.HOUSE)
+					{
+						Mode = getCurrentMode();
+					}
+					/*if (_mode == GhostMode.SCATTER)
+					{
+						Mode = GhostMode.CHASE;
+					}
+					else if (_mode == GhostMode.CHASE)
+					{
+						Mode = GhostMode.SCATTER;
+					}*/
+				}
+			}
+			else
+			{
+				++_frightModeCounter;
+				int lvl = _level;
+
+				// faire attention que _level ne depasse pas la longueur du tableau
+				if (_level > _frightModeCounters.Length - 1)
+				{
+					lvl = _frightModeCounters.Length - 1;
+				}
+
+				if (_frightModeCounter >= _frightModeCounters[lvl])
+				{
+					_frightModeCounter = 0;
 					Mode = getCurrentMode();
 				}
-                /*if (_mode == GhostMode.SCATTER)
-                {
-                    Mode = GhostMode.CHASE;
-                }
-                else if (_mode == GhostMode.CHASE)
-                {
-                    Mode = GhostMode.SCATTER;
-                }*/
-            }
+			}
 
-            if (_thinkCounter == 0 && _canThink)
+			Vector2 targetIncomingMode = _map.MapToWin(_map.TargetIncomingMode);
+			targetIncomingMode.X -= (int)_map.TileSize.X / 2;
+
+			/*if (_thinkCounter == 0 && _canThink ||
+				_canThink && _mode == GhostMode.INCOMING && (_thinkCounter == (int)_map.TileSize.X / 2 ||
+												 _thinkCounter == (int)_map.TileSize.X / 2 - _SPEEDUNIT )
+				)*/
+			if (_canThink && _mode == GhostMode.INCOMING && _position == targetIncomingMode )
 			{
-				if ((int)_mode < 3)
+				ThinkToIncoming();
+			}
+			else if(_canThink && _thinkCounter == 0 )
+			{ 
+				if ((int)_mode < 4)
 				{
 					Think();
 				}
@@ -425,8 +517,8 @@ namespace pacman
 				{
 					ThinkInHouse();
 				}
-                _canThink = false;
-            }
+				_canThink = false;
+			}
 
             if (MustMove(counter))
 			{
@@ -468,14 +560,60 @@ namespace pacman
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-            ++_drawCounter;
-            _drawCounter %= _blinkInterval;
-            Vector2 pos = _position - _spriteSize / 2;
-            Rectangle clipping = new Rectangle(
-                    ((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
-                    ((int)_textureOffset.Y + 2 * _drawCounter / _blinkInterval) * (int)_spriteSize.Y,
-                    (int)_spriteSize.X,
-                    (int)_spriteSize.Y);
+			Rectangle clipping;
+
+			++_drawCounter;
+			_drawCounter %= 8;
+
+			if (_mode == GhostMode.INCOMING)
+			{
+				Vector2 textureOffset = new Vector2(0, 9);
+
+				clipping = new Rectangle(
+						((int)_direction + (int)textureOffset.X) * (int)_spriteSize.X,
+						(0 + (int)textureOffset.Y) * (int)_spriteSize.Y,
+						(int)_spriteSize.X,
+						(int)_spriteSize.Y);
+			}
+			else if (_mode == GhostMode.FRIGHTENED)
+			{
+				Vector2 textureOffset = new Vector2(0, 8);
+				//_flashOffset = 0;
+				
+				// faire attention que _level ne depasse pas la longueur du tableau
+				int lvl = _level;
+				if (_level > _frightModeCounters.Length - 1)
+				{
+					lvl = _frightModeCounters.Length - 1;
+				}
+
+				
+				if (_frightModeCounter >= _frightModeCounters[lvl] - _flashesCounter * 16)
+				{
+					if (_flashOffset == 0)
+						_flashOffset = 2;
+					else
+						_flashOffset = 0;
+					--_flashesCounter;
+				}
+
+				clipping = new Rectangle(
+						((int)textureOffset.X + _drawCounter / 4 + _flashOffset) * (int)_spriteSize.X,
+						(0 + (int)textureOffset.Y) * (int)_spriteSize.Y,
+						(int)_spriteSize.X,
+						(int)_spriteSize.Y);
+			}
+			else
+			{
+
+				clipping = new Rectangle(
+						((int)_direction + (int)_textureOffset.X) * (int)_spriteSize.X,
+						(0 + (int)_textureOffset.Y + _drawCounter / 4) * (int)_spriteSize.Y,
+						(int)_spriteSize.X,
+						(int)_spriteSize.Y);
+			}
+
+			Vector2 pos = _position - _spriteSize / 2;
 
             spriteBatch.Draw(_texture, pos, clipping, Color.White);
         }

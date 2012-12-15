@@ -23,7 +23,7 @@ namespace pacman
             _textureOffset = new Vector2(0, 4);
 
             _scatterTarget = new Vector2(27, 31);
-			//_position = new Vector2(14 * 16 + 16 / 2, 11 * 16 + 16 / 2)
+
 			_position = new Vector2(0, 0);
             _direction = Direction.LEFT;
 
@@ -67,7 +67,12 @@ namespace pacman
                     {
                         targetingFrightMode();
                         break;
-                    }
+					}
+				case GhostMode.INCOMING:
+					{
+						targetingIncomingMode();
+						break;
+					}
             }
         }
     }
