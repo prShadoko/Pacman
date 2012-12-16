@@ -37,7 +37,7 @@ namespace pacman
 	/// <summary>
 	/// Define the Ghost class. This class implement the logic and display of a ghost.
 	/// </summary>
-    abstract class Ghost : Actor
+    public abstract class Ghost : Actor
     {
         // --- attributes --- //
         protected Pacman _pacman;
@@ -427,6 +427,10 @@ namespace pacman
 
 				if (_mode == GhostMode.SCATTER || _mode == GhostMode.INCOMING)
                 {
+					if (_mode == GhostMode.INCOMING)
+					{
+						_isFrightened = false;
+					}
                     Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
                     targeting();
                 }
