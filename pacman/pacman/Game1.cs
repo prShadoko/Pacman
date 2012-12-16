@@ -24,6 +24,7 @@ namespace pacman
         private Ghost[] _ghosts;
 
         private int _level;
+		private int _live;
 
         private int _counter;
 
@@ -37,6 +38,9 @@ namespace pacman
             _graphics.PreferredBackBufferWidth = 448;
             _graphics.PreferredBackBufferHeight = 576;
             _graphics.ApplyChanges();
+
+
+			_live = 3;
         }
 
         /// <summary>
@@ -147,11 +151,11 @@ namespace pacman
 				_ghosts[2].Mode = GhostMode.INCOMING;
 				_ghosts[3].Mode = GhostMode.INCOMING;
 			}
-			Console.WriteLine(_ghosts[0].Mode);
+			/*Console.WriteLine(_ghosts[0].Mode);
 			Console.WriteLine(_ghosts[1].Mode);
 			Console.WriteLine(_ghosts[2].Mode);
 			Console.WriteLine(_ghosts[3].Mode);
-			Console.WriteLine("");
+			Console.WriteLine("");*/
 			
 
 			_pacman.Update(_counter);
@@ -168,7 +172,23 @@ namespace pacman
 			{
                 g.Update(_counter);
 			}
-			
+
+			if (clash())
+			{
+
+				--_live;
+
+				Console.Write(_live);
+				if (_live <= 0)
+				{
+					//TODO: Game Over
+					gameOver();
+				}
+				else
+				{
+					Initialize();
+				}
+			}
 
             ++_counter;
             if (_counter % 60 == 0) _counter = 0;
@@ -195,5 +215,29 @@ namespace pacman
             _spriteBatch.End();
             base.Draw(gameTime);
         }
+
+		/// <summary>
+		/// Test if pacman clash ghost.
+		/// </summary>
+		/// <returns>True if pacman clash ghost, else return false.</returns>
+		protected bool clash()
+		{
+			bool isClashed = false;
+
+			foreach (Ghost g in _ghosts)
+			{
+				if ( _map.WinToMap(_pacman.Position) == _map.WinToMap(g.Position) )
+				{
+					isClashed = true;
+				}
+			}
+
+			return isClashed;
+		}
+
+		protected void gameOver()
+		{
+			Exit();
+		}
     }
 }
