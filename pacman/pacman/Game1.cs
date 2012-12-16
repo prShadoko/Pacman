@@ -57,7 +57,7 @@ namespace pacman
             Inky inky = new Inky(_map, _pacman, blinky);
             Clyde clyde = new Clyde(_map, _pacman);
 
-			blinky.Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2 - blinky.SpeedUnit, 0);
+			blinky.Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2, 0);
 			pinky.Position = _map.MapToWin(new Vector2(14, 14)) - new Vector2(_map.TileSize.X / 2, 0);
 			inky.Position = _map.MapToWin(new Vector2(12, 14)) - new Vector2(_map.TileSize.X / 2, 0);
 			clyde.Position = _map.MapToWin(new Vector2(16, 14)) - new Vector2(_map.TileSize.X / 2, 0);

@@ -8,15 +8,35 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
+	/// <summary>
+	/// Enum the different ghost mode :
+	///		- CHASE : ghost chase the pacman.
+	///		- SCATTER : ghost scatter in the maze.
+	///		- FRIGHT : ghost is frightened by pacman.
+	///		- INCOMING : ghost return in the Monster Pen after has been eaten by pacman.
+	///		- OUTGOING : ghost leaves the Monster House.
+	///		- HOUSE : ghost wait in the Monster House.
+	/// </summary>
 	public enum GhostMode {
-		CHASE		= 0,
-		SCATTER		= 1,
-		FRIGHTENED	= 2,
-		INCOMING	= 3,
-		OUTGOING	= 4,
-		HOUSE		= 5 };
+		CHASE			= 0,
+		SCATTER			= 1,
+		FRIGHTENED		= 2,
+		INCOMING		= 3,
+		OUTGOING		= 4,
+		HOUSE			= 5
+	};
+
+	/// <summary>
+	/// Enum the different ghost speed :
+	///		- NORM : the normal speed.
+	///		- FRIGHT : the frightened speed.
+	///		- TUNNEL : the speed in the tunnel.
+	/// </summary>
     public enum GhostSpeed { NORM = 0, FRIGHT = 1, TUNNEL = 2 };
 
+	/// <summary>
+	/// Define the Ghost class. This class implement the logic and display of a ghost.
+	/// </summary>
     abstract class Ghost : Actor
     {
         // --- attributes --- //
@@ -28,6 +48,8 @@ namespace pacman
         protected GhostMode _mode;
 
         protected bool _canThink;   // Dans le cas ou le fantome ne bouge pas sur la 1ere frame du compteur, on l'empèche de penser
+		protected bool _modeChanged;
+		protected bool _isFrightened;
 
         private int[,] _modesTime;
         private int _indexCurrentMode;
@@ -48,6 +70,11 @@ namespace pacman
         private float[,] _speedByLevels;
         
 		// --- methods --- //
+		/// <summary>
+		/// Constructor of Ghost class.
+		/// </summary>
+		/// <param name="map">Map of the pcamne game.</param>
+		/// <param name="pacman">The pacman evolving in the map.</param>
         public Ghost(Map map, Pacman pacman)
             : base(map)
         {
@@ -55,6 +82,9 @@ namespace pacman
             //_mode = GhostMode.FRIGHTENED;
         }
 
+		/// <summary>
+		/// Allows ghost to choose a valid direction in the maze.
+		/// </summary>
         private void Think()
 		{
 
@@ -91,7 +121,7 @@ namespace pacman
 				_direction = Direction.UP;
 				Mode = GhostMode.OUTGOING;
 			}
-            else if (dir.Length == 2) // 2 directions -> pas le choix on avance.
+            else if (dir.Length == 2 && !_modeChanged) // 2 directions et le mode ne change pas -> pas le choix on avance.
             {
                 if (Array.IndexOf(dir, Actor.ReverseDirection(_direction)) == 0)
                 {
@@ -102,7 +132,7 @@ namespace pacman
                     _direction = dir[0];
                 }
             }
-            else // Plus de 2 directions -> Là il faut réfléchir
+            else // Plus de 2 directions ou changement de mode -> Là il faut réfléchir
             {
                 if (_mode == GhostMode.CHASE || _mode == GhostMode.FRIGHTENED) // MàJ de la cible si il faut suivre le Pacman ou fuir
                 {
@@ -122,7 +152,7 @@ namespace pacman
                 foreach (Direction d in dir)
                 {
                     // si c'est la direction dans laquelle on vient, ça sert a rien de tester on y retournera pas
-                    if (!(Actor.ReverseDirection(_direction) == d))
+                    if (Actor.ReverseDirection(_direction) != d || _modeChanged)
                     {
                         int r = 3;
 
@@ -159,9 +189,16 @@ namespace pacman
                 }
                 _direction = nextDir;
             }
+			_modeChanged = false;
         }
 
-		private Direction getDirectionInHouse(Vector2 coordinates, Direction dir)
+		/// <summary>
+		/// Return the only possible direction when the ghost is in the Monster House.
+		/// </summary>
+		/// <param name="coordinates">Ghost position.</param>
+		/// <param name="dir">Ghost direction.</param>
+		/// <returns>the only possible direction when the ghost is in the Monster House.</returns>
+		/*private Direction getDirectionInHouse(Vector2 coordinates, Direction dir)
 		{
 			Direction res = Direction.UP;
 
@@ -187,8 +224,11 @@ namespace pacman
 				}
 			}
 			return res;
-		}
+		}*/
 
+		/// <summary>
+		/// Allows ghost to choose a valid direction in the Monster House.
+		/// </summary>
 		private void ThinkInHouse()
 		{
 			Vector2 mapPosition = _map.WinToMap(_position);
@@ -199,13 +239,22 @@ namespace pacman
 			{
 				if (_map.isInSpecialZone(mapPosition) == true)
 				{
-					Mode = getCurrentMode();
-					Think();
+					if (_isFrightened)
+					{
+						_mode = GhostMode.FRIGHTENED;
+					}
+					else
+					{
+						Mode = getCurrentMode();
+					}
+
+					//Think();
+					_direction = Direction.LEFT;
 					_thinkCounter = (int)_map.TileSize.X / 2;
-					if (_direction == Direction.LEFT)
+					/*if (_direction == Direction.LEFT)
 					{
 						_thinkCounter -= _SPEEDUNIT;
-					}
+					}*/
 				}
 			}
 			/*if (_mode == GhostMode.HOUSE)
@@ -258,19 +307,31 @@ namespace pacman
 			
 		}
 
+		/// <summary>
+		/// Allows ghost to choose a valid direction when he is incoming to the Monster House.
+		/// </summary>
 		private void ThinkToIncoming()
 		{
 			_direction = Direction.DOWN;
 			_thinkCounter = 0;
 		}
 
+		/// <summary>
+		/// Update the ghost target. It must be reimplemented by differents ghosts with their strategy.
+		/// </summary>
         abstract public void targeting();
 
+		/// <summary>
+		/// Update the ghost target when ghost is in INCOMING mode.
+		/// </summary>
 		public void targetingIncomingMode()
 		{
 			_target = _map.TargetIncomingMode;
 		}
 
+		/// <summary>
+		/// Update the ghost target when ghost is in FRIGHT mode.
+		/// </summary>
 		public void targetingFrightMode()
 		{
 			Direction[] directions = _map.getDirectionWalkable(_map.WinToMap(_position));
@@ -325,7 +386,10 @@ namespace pacman
 			}
 		}
 
-        public GhostMode Mode   // the Name property
+		/// <summary>
+		/// Accessor of ghost mode.
+		/// </summary>
+        public GhostMode Mode
         {
             get
             {
@@ -333,19 +397,13 @@ namespace pacman
             }
             set
             {
-                _mode = value;
-				if (_mode == GhostMode.SCATTER || _mode == GhostMode.INCOMING)
-                {
-                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
-                    targeting();
-                }
-				else if (_mode == GhostMode.CHASE || _mode == GhostMode.HOUSE || _mode == GhostMode.INCOMING || _mode == GhostMode.OUTGOING)
-                {
-                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
-                }
-                else if (_mode == GhostMode.FRIGHTENED)
-                {
-                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.FRIGHT];
+				if (_mode != GhostMode.OUTGOING)
+				{
+					_modeChanged = true;
+				}
+				if (value == GhostMode.FRIGHTENED)
+				{
+					_isFrightened = true;
 					_frightModeCounter = 0;
 					_flashOffset = 0;
 
@@ -357,10 +415,36 @@ namespace pacman
 					}
 
 					_flashesCounter = _flashesCounters[lvl];
+					if (_mode == GhostMode.OUTGOING || _mode == GhostMode.HOUSE)
+					{
+						value = _mode;
+					}
+				}
+
+				_mode = value;
+				//Console.WriteLine(_mode);
+
+
+				if (_mode == GhostMode.SCATTER || _mode == GhostMode.INCOMING)
+                {
+                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+                    targeting();
                 }
+                else if (_mode == GhostMode.FRIGHTENED)
+                {
+                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.FRIGHT];
+				}
+				else //if (_mode == GhostMode.CHASE || _mode == GhostMode.HOUSE || _mode == GhostMode.INCOMING || _mode == GhostMode.OUTGOING)
+				{
+					Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+				}
             }
         }
 
+		/// <summary>
+		/// Get ghost mode (SCATTER or CHASE) relative to predeterminated intervals.
+		/// </summary>
+		/// <returns>Ghost mode (SCATTER or CHASE).</returns>
 		private GhostMode getCurrentMode()
 		{
 			GhostMode m;
@@ -375,11 +459,16 @@ namespace pacman
 			return m;
 		}
 
+		/// <summary>
+		/// Initialize ghost.
+		/// </summary>
         public override void Initialize()
         {
             _speed = 1f;
             _thinkCounter = 0;
             _canThink = true;
+			_modeChanged = false;
+			_isFrightened = false;
             _drawCounter = 0;
 			_blinkInterval = 16;
 			_mode = GhostMode.HOUSE;
@@ -451,11 +540,15 @@ namespace pacman
 			}*/
         }
 
+		/// <summary>
+		/// Update ghost with the move logic and ghost strategy.
+		/// </summary>
+		/// <param name="counter">The frame counter (from 0 to 60).</param>
         public override void Update(int counter)
         {
-
+			//Console.WriteLine(_isFrightened);
             // Gestion des différents changement de modes.
-			if (_mode != GhostMode.FRIGHTENED)
+			if (_mode != GhostMode.FRIGHTENED && !_isFrightened)
 			{
 				++_modeCounter;
 
@@ -492,6 +585,7 @@ namespace pacman
 				if (_frightModeCounter >= _frightModeCounters[lvl])
 				{
 					_frightModeCounter = 0;
+					_isFrightened = false;
 					Mode = getCurrentMode();
 				}
 			}
@@ -558,6 +652,10 @@ namespace pacman
             }
         }
 
+		/// <summary>
+		/// Draw ghost.
+		/// </summary>
+		/// <param name="spriteBatch"></param>
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			Rectangle clipping;
@@ -575,7 +673,7 @@ namespace pacman
 						(int)_spriteSize.X,
 						(int)_spriteSize.Y);
 			}
-			else if (_mode == GhostMode.FRIGHTENED)
+			else if (_mode == GhostMode.FRIGHTENED || _isFrightened)
 			{
 				Vector2 textureOffset = new Vector2(0, 8);
 				//_flashOffset = 0;
@@ -594,8 +692,10 @@ namespace pacman
 						_flashOffset = 2;
 					else
 						_flashOffset = 0;
+
 					--_flashesCounter;
 				}
+				//Console.WriteLine(_frightModeCounter);
 
 				clipping = new Rectangle(
 						((int)textureOffset.X + _drawCounter / 4 + _flashOffset) * (int)_spriteSize.X,
@@ -618,6 +718,9 @@ namespace pacman
             spriteBatch.Draw(_texture, pos, clipping, Color.White);
         }
 
+		/// <summary>
+		/// Accesssor of think counter.
+		/// </summary>
 		public int ThinkCounter
 		{
 			set
