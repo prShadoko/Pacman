@@ -322,6 +322,7 @@ namespace pacman
 			{
 				directionWalkable.Add(Direction.LEFT);
 			}
+
 			return directionWalkable.ToArray();
 		}
 

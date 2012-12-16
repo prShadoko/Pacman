@@ -121,7 +121,7 @@ namespace pacman
 				_direction = Direction.UP;
 				Mode = GhostMode.OUTGOING;
 			}
-            else if (dir.Length == 2 && !_modeChanged) // 2 directions et le mode ne change pas -> pas le choix on avance.
+            else if (dir.Length == 2 && !_modeChanged && !_map.isInSpecialZone(mapPosition)) // 2 directions et le mode ne change pas -> pas le choix on avance.
             {
                 if (Array.IndexOf(dir, Actor.ReverseDirection(_direction)) == 0)
                 {
@@ -250,6 +250,7 @@ namespace pacman
 
 					//Think();
 					_direction = Direction.LEFT;
+					_modeChanged = false;
 					_thinkCounter = (int)_map.TileSize.X / 2;
 					/*if (_direction == Direction.LEFT)
 					{
