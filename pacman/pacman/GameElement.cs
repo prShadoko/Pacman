@@ -19,7 +19,7 @@ namespace pacman
 		{
 			this._spriteSize = spriteSize;
 
-			Initialize();
+			//Initialize();
 		}
 
 		abstract public void Initialize();

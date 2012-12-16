@@ -173,5 +173,16 @@ namespace pacman
 
 			spriteBatch.Draw(_texture, pos, clipping, Color.White);
 		}
+
+		/// <summary>
+		/// Accessor of the map.
+		/// </summary>
+		public Map Map
+		{
+			set
+			{
+				_map = value;
+			}
+		}
 	}
 }

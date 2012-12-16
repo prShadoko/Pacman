@@ -24,6 +24,9 @@ namespace pacman
         private Ghost[] _ghosts;
 
         private int _level;
+		private int _live;
+
+		private int _pause;
 
         private int _counter;
 
@@ -37,6 +40,25 @@ namespace pacman
             _graphics.PreferredBackBufferWidth = 448;
             _graphics.PreferredBackBufferHeight = 576;
             _graphics.ApplyChanges();
+
+			_ghosts = new Ghost[4];
+
+			_map = new Map(_ghosts);
+			_pacman = new Pacman(_map);
+
+			Blinky blinky = new Blinky(_map, _pacman);
+			Pinky pinky = new Pinky(_map, _pacman);
+			Inky inky = new Inky(_map, _pacman, blinky);
+			Clyde clyde = new Clyde(_map, _pacman);
+
+			_ghosts[0] = blinky;
+			_ghosts[1] = pinky;
+			_ghosts[2] = inky;
+			_ghosts[3] = clyde;
+			
+
+			_live = 30;
+			this.IsMouseVisible = true;
         }
 
         /// <summary>
@@ -47,35 +69,38 @@ namespace pacman
         /// </summary>
         protected override void Initialize()
         {
-			this.IsMouseVisible = true;
-            _map = new Map();
-            _pacman = new Pacman(_map);
           //  _pacman.Position = _map.MapToWin(new Vector2(27, 14));
 
-            Blinky blinky = new Blinky(_map, _pacman);
-            Pinky pinky = new Pinky(_map, _pacman);
-            Inky inky = new Inky(_map, _pacman, blinky);
-            Clyde clyde = new Clyde(_map, _pacman);
+			_map.Initialize();
 
-			blinky.Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2 - blinky.SpeedUnit, 0);
-			pinky.Position = _map.MapToWin(new Vector2(14, 14)) - new Vector2(_map.TileSize.X / 2, 0);
-			inky.Position = _map.MapToWin(new Vector2(12, 14)) - new Vector2(_map.TileSize.X / 2, 0);
-			clyde.Position = _map.MapToWin(new Vector2(16, 14)) - new Vector2(_map.TileSize.X / 2, 0);
+			_pacman.Initialize();
 
-			pinky.Direction = Direction.DOWN;
-			inky.Direction = Direction.UP;
-			clyde.Direction = Direction.UP;
+			_ghosts[0].Initialize();
+			_ghosts[1].Initialize();
+			_ghosts[2].Initialize();
+			_ghosts[3].Initialize();
 
-            _ghosts = new Ghost[] {
-				blinky,
-				pinky,
-				inky,
-				clyde
-			};
+			_ghosts[0].Position = _map.MapToWin(new Vector2(14, 11)) - new Vector2(_map.TileSize.X / 2, 0);
+			_ghosts[1].Position = _map.MapToWin(new Vector2(14, 14)) - new Vector2(_map.TileSize.X / 2, 0);
+			_ghosts[2].Position = _map.MapToWin(new Vector2(12, 14)) - new Vector2(_map.TileSize.X / 2, 0);
+			_ghosts[3].Position = _map.MapToWin(new Vector2(16, 14)) - new Vector2(_map.TileSize.X / 2, 0);
+
+			_ghosts[0].Direction = Direction.LEFT;
+			_ghosts[1].Direction = Direction.DOWN;
+			_ghosts[2].Direction = Direction.UP;
+			_ghosts[3].Direction = Direction.UP;
+
+			_ghosts[0].level = _level;
+			_ghosts[1].level = _level;
+			_ghosts[2].level = _level;
+			_ghosts[3].level = _level;
+
 
             _counter = 0;
 
 			_outgoingCounter = 0;
+
+			_pause = 0;
 
             _level = 1;
 
@@ -119,7 +144,7 @@ namespace pacman
 
 
 			KeyboardState keyboard = Keyboard.GetState();
-			if (keyboard.IsKeyDown(Keys.F))
+			/*if (keyboard.IsKeyDown(Keys.F))
 			{
 				_ghosts[0].Mode = GhostMode.FRIGHTENED;
 				_ghosts[1].Mode = GhostMode.FRIGHTENED;
@@ -154,9 +179,11 @@ namespace pacman
 			Console.WriteLine(_ghosts[3].Mode);
 			Console.WriteLine("");
 			//*/
-			
 
-			_pacman.Update(_counter);
+			if (_pause == 0) 
+			{
+				_pacman.Update(_counter);
+			}
 
 			if (_outgoingCounter < _ghosts.Length - 1)
 			{
@@ -168,10 +195,47 @@ namespace pacman
 			}
 			foreach (Ghost g in _ghosts)
 			{
-                g.Update(_counter);
+				if (_pause == 0 || g.Mode == GhostMode.INCOMING)
+				{
+					g.Update(_counter);
+				}
 			}
-			
 
+
+			if (_map.isEmpty())
+			{
+				win();
+			}
+
+			int ghostIndex;
+			GhostMode mode;
+			if (clash(out ghostIndex, out mode))
+			{
+				if (mode == GhostMode.FRIGHTENED)
+				{
+					_pause = 60;
+					_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
+				}
+				else if (mode != GhostMode.INCOMING)
+				{
+					--_live;
+					if (_live <= 0)
+					{
+						//TODO: Game Over
+						gameOver();
+					}
+					else
+					{
+						Initialize();
+					}
+				}
+			}
+
+
+			if (_pause > 0)
+			{
+				--_pause;
+			}
             ++_counter;
             if (_counter % 60 == 0) _counter = 0;
 
@@ -197,5 +261,45 @@ namespace pacman
             _spriteBatch.End();
             base.Draw(gameTime);
         }
+
+		/// <summary>
+		/// Test if pacman clash ghost.
+		/// </summary>
+		/// <returns>True if pacman clash ghost, else return false.</returns>
+		protected bool clash(out int ghostIndex, out GhostMode mode)
+		{
+			bool isClashed = false;
+			ghostIndex = 0;
+			mode = GhostMode.SCATTER;
+
+			for(int i = 0; i<_ghosts.Length; ++i)
+			{
+				if (_map.WinToMap(_pacman.Position) == _map.WinToMap(_ghosts[i].Position))
+				{
+					isClashed = true;
+					ghostIndex = i;
+					mode = _ghosts[i].Mode;
+				}
+			}
+
+			return isClashed;
+		}
+
+		protected void gameOver()
+		{
+			Exit();
+		}
+
+		protected void win()
+		{
+			//Console.WriteLine("win");
+			_map = new Map(_ghosts);
+			_pacman.Map = _map;
+			foreach (Ghost g in _ghosts)
+			{
+				g.Map = _map;
+			}
+			Initialize();
+		}
     }
 }
