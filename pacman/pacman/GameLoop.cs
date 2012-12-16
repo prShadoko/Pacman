@@ -14,7 +14,7 @@ namespace pacman
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class GameLoop : Microsoft.Xna.Framework.Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -32,7 +32,7 @@ namespace pacman
 
 		private int _outgoingCounter;
 
-        public Game1()
+        public GameLoop()
         {
             Content.RootDirectory = "Content";
 
