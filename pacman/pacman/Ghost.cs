@@ -425,15 +425,17 @@ namespace pacman
 				//Console.WriteLine(_mode);
 
 
-				if (_mode == GhostMode.SCATTER || _mode == GhostMode.INCOMING)
+				if (_mode == GhostMode.SCATTER)
                 {
-					if (_mode == GhostMode.INCOMING)
-					{
-						_isFrightened = false;
-					}
                     Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
                     targeting();
                 }
+				else if(_mode == GhostMode.INCOMING)
+				{
+					Speed = 1f;
+					_isFrightened = false;
+					targeting();
+				}
                 else if (_mode == GhostMode.FRIGHTENED)
                 {
                     Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.FRIGHT];
@@ -461,6 +463,28 @@ namespace pacman
 				m = GhostMode.CHASE;
 			}
 			return m;
+		}
+
+		/// <summary>
+		/// Accessor of ghost level.
+		/// </summary>
+		public int level
+		{
+			set
+			{
+				_level = value;
+			}
+		}
+
+		/// <summary>
+		/// Accessor of the map.
+		/// </summary>
+		public Map Map
+		{
+			set
+			{
+				_map = value;
+			}
 		}
 
 		/// <summary>

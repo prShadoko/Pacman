@@ -88,11 +88,11 @@ namespace pacman
 					_isEating = false;
 					_map.eatGum(_map.WinToMap(_position));
 					//TODO: compter les points
-					System.Console.WriteLine("		Pill");
+					//System.Console.WriteLine("		Pill");
 				}
 				else
 				{
-					System.Console.WriteLine("Move");
+					//System.Console.WriteLine("Move");
 					Vector2 nextCell;
 					Vector2 nextPos;
 
@@ -116,8 +116,8 @@ namespace pacman
 					}
 				}
 			}
-			else
-				System.Console.WriteLine("	Stay");
+			//else
+				//System.Console.WriteLine("	Stay");
 		}
 
 		private void Think(Direction dir, out Vector2 nextCell, out Vector2 nextPos)
@@ -174,6 +174,17 @@ namespace pacman
 		{
 			get { return _nextDirection; }
 			set { _nextDirection = value; }
+		}
+
+		/// <summary>
+		/// Accessor of the map.
+		/// </summary>
+		public Map Map
+		{
+			set
+			{
+				_map = value;
+			}
 		}
 	}
 }

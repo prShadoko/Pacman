@@ -26,6 +26,8 @@ namespace pacman
         private int _level;
 		private int _live;
 
+		private int _pause;
+
         private int _counter;
 
 		private int _outgoingCounter;
@@ -55,7 +57,7 @@ namespace pacman
 			_ghosts[3] = clyde;
 			
 
-			_live = 3;
+			_live = 30;
 			this.IsMouseVisible = true;
         }
 
@@ -88,10 +90,17 @@ namespace pacman
 			_ghosts[2].Direction = Direction.UP;
 			_ghosts[3].Direction = Direction.UP;
 
+			_ghosts[0].level = _level;
+			_ghosts[1].level = _level;
+			_ghosts[2].level = _level;
+			_ghosts[3].level = _level;
+
 
             _counter = 0;
 
 			_outgoingCounter = 0;
+
+			_pause = 0;
 
             _level = 1;
 
@@ -135,7 +144,7 @@ namespace pacman
 
 
 			KeyboardState keyboard = Keyboard.GetState();
-			if (keyboard.IsKeyDown(Keys.F))
+			/*if (keyboard.IsKeyDown(Keys.F))
 			{
 				_ghosts[0].Mode = GhostMode.FRIGHTENED;
 				_ghosts[1].Mode = GhostMode.FRIGHTENED;
@@ -163,14 +172,16 @@ namespace pacman
 				_ghosts[2].Mode = GhostMode.INCOMING;
 				_ghosts[3].Mode = GhostMode.INCOMING;
 			}
-			/*Console.WriteLine(_ghosts[0].Mode);
+			Console.WriteLine(_ghosts[0].Mode);
 			Console.WriteLine(_ghosts[1].Mode);
 			Console.WriteLine(_ghosts[2].Mode);
 			Console.WriteLine(_ghosts[3].Mode);
 			Console.WriteLine("");*/
-			
 
-			_pacman.Update(_counter);
+			if (_pause == 0) 
+			{
+				_pacman.Update(_counter);
+			}
 
 			if (_outgoingCounter < _ghosts.Length - 1)
 			{
@@ -182,7 +193,16 @@ namespace pacman
 			}
 			foreach (Ghost g in _ghosts)
 			{
-                g.Update(_counter);
+				if (_pause == 0 || g.Mode == GhostMode.INCOMING)
+				{
+					g.Update(_counter);
+				}
+			}
+
+
+			if (_map.isEmpty())
+			{
+				win();
 			}
 
 			int ghostIndex;
@@ -191,6 +211,7 @@ namespace pacman
 			{
 				if (mode == GhostMode.FRIGHTENED)
 				{
+					_pause = 60;
 					_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
 				}
 				else if (mode != GhostMode.INCOMING)
@@ -208,6 +229,11 @@ namespace pacman
 				}
 			}
 
+
+			if (_pause > 0)
+			{
+				--_pause;
+			}
             ++_counter;
             if (_counter % 60 == 0) _counter = 0;
 
@@ -260,6 +286,18 @@ namespace pacman
 		protected void gameOver()
 		{
 			Exit();
+		}
+
+		protected void win()
+		{
+			//Console.WriteLine("win");
+			_map = new Map(_ghosts);
+			_pacman.Map = _map;
+			foreach (Ghost g in _ghosts)
+			{
+				g.Map = _map;
+			}
+			Initialize();
 		}
     }
 }

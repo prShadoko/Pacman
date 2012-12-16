@@ -17,11 +17,14 @@ namespace pacman
 
 		private Ghost[] _ghosts;
 
+		private int _nbGum;
+
 		public Map(Ghost[] ghosts)
 			: base(new Vector2(16, 16))
 		{
 			_ghosts = ghosts;
 
+			_nbGum = 10; // 244
 			_map = new sbyte[31, 28] {
                 { 8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9},
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2,  3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
@@ -55,6 +58,9 @@ namespace pacman
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
                 {10,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 11}
             };
+
+			//Console.WriteLine("\t" + _map[23, 11]);
+			//Console.WriteLine(_map[23,6]);
 		}
 
 		public bool isWall(Vector2 coordinates)
@@ -72,6 +78,7 @@ namespace pacman
 
 		public bool isGum(Vector2 coordinates)
 		{
+			//Console.WriteLine(_map[23,11]);
 			try
 			{
 				return _map[(int)coordinates.Y, (int)coordinates.X] == 12 || _map[(int)coordinates.Y, (int)coordinates.X] == 13;
@@ -90,11 +97,14 @@ namespace pacman
 				if (_map[(int)coordinates.Y, (int)coordinates.X] == 12) // Regular gum
 				{
 					//TODO: Increase the score
+					--_nbGum;
 					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
 				}
 				else if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
 				{
 					//TODO: Set ghosts to fright mode
+					//TODO: Increase the score
+					--_nbGum;
 					foreach (Ghost g in _ghosts)
 					{
 						g.Mode = GhostMode.FRIGHTENED;
@@ -106,6 +116,15 @@ namespace pacman
 			{
 				Console.WriteLine(e.Message);
 			}
+		}
+
+		/// <summary>
+		/// Check if the map has still gum.
+		/// </summary>
+		/// <returns>Return true if it founds gum, else return false.</returns>
+		public bool isEmpty()
+		{
+			return _nbGum == 0;
 		}
 
 		public Tuple<bool, bool> isCenter(Vector2 coordinates)
@@ -323,8 +342,6 @@ namespace pacman
 
 			_targetIncomingMode = new Vector2(14, 11);
 			_respawn = new Vector2(14, 14);
-
-			
 		}
 
 		public override void LoadContent(ContentManager content)
