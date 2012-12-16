@@ -55,9 +55,10 @@ namespace pacman
 			_ghosts[1] = pinky;
 			_ghosts[2] = inky;
 			_ghosts[3] = clyde;
-			
 
-			_live = 30;
+
+			_live = 3;
+			_level = 1;
 			this.IsMouseVisible = true;
         }
 
@@ -101,8 +102,6 @@ namespace pacman
 			_outgoingCounter = 0;
 
 			_pause = 0;
-
-            _level = 1;
 
             base.Initialize();
         }
@@ -171,14 +170,15 @@ namespace pacman
 				_ghosts[1].Mode = GhostMode.INCOMING;
 				_ghosts[2].Mode = GhostMode.INCOMING;
 				_ghosts[3].Mode = GhostMode.INCOMING;
-			}
-			/*
-			Console.WriteLine(_ghosts[0].Mode);
-			Console.WriteLine(_ghosts[1].Mode);
-			Console.WriteLine(_ghosts[2].Mode);
-			Console.WriteLine(_ghosts[3].Mode);
+			}*/
+			Console.Clear();
+			Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
+			Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
+			Console.WriteLine("Inky\t: " + _ghosts[2].Mode);
+			Console.WriteLine("Clyde\t: " + _ghosts[3].Mode);
 			Console.WriteLine("");
-			//*/
+			Console.WriteLine("vie\t: " + _live);
+			Console.WriteLine("Niveau\t: " + _level);
 
 			if (_pause == 0) 
 			{
@@ -198,6 +198,10 @@ namespace pacman
 				if (_pause == 0 || g.Mode == GhostMode.INCOMING)
 				{
 					g.Update(_counter);
+					if (g.Mode == GhostMode.INCOMING)
+					{
+						g.Update(_counter);
+					}
 				}
 			}
 
@@ -299,7 +303,9 @@ namespace pacman
 			{
 				g.Map = _map;
 			}
+			++_level;
 			Initialize();
+			
 		}
     }
 }
