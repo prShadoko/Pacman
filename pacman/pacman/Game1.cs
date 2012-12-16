@@ -147,11 +147,13 @@ namespace pacman
 				_ghosts[2].Mode = GhostMode.INCOMING;
 				_ghosts[3].Mode = GhostMode.INCOMING;
 			}
+			/*
 			Console.WriteLine(_ghosts[0].Mode);
 			Console.WriteLine(_ghosts[1].Mode);
 			Console.WriteLine(_ghosts[2].Mode);
 			Console.WriteLine(_ghosts[3].Mode);
 			Console.WriteLine("");
+			//*/
 			
 
 			_pacman.Update(_counter);

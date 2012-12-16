@@ -65,9 +65,9 @@ namespace pacman
                 Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.TUNNEL];
 
 				Vector2 teleportation;
-				if (_map.mustTeleportation(mapPosition, out teleportation))
+				if (_map.mustTeleport(_position, out teleportation))
 				{
-					Position = _map.MapToWin(teleportation);
+					_position = teleportation;
 				}
             }
             else if (_mode == GhostMode.FRIGHTENED)

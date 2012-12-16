@@ -23,15 +23,15 @@ namespace pacman
 
 		public bool isWall(Vector2 coordinates)
 		{
-            try
-            {
-                return _map[(int)coordinates.Y, (int)coordinates.X] <= 11;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
+			try
+			{
+				return _map[(int)coordinates.Y, (int)coordinates.X] <= 11;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return false;
+			}
 		}
 
 		public bool isGum(Vector2 coordinates)
@@ -68,11 +68,6 @@ namespace pacman
 			}
 		}
 
-		public Tuple<bool, bool> isCenter(Vector2 coordinates)
-		{
-			return new Tuple<bool, bool>(coordinates.X % TileSize.X == TileSize.X / 2, coordinates.Y % TileSize.Y == TileSize.Y / 2);
-		}
-
 		public bool isHouse(Vector2 coordinates)
 		{
 			try
@@ -107,8 +102,8 @@ namespace pacman
 			try
 			{
 				if (_map[(int)coordinates.Y, (int)coordinates.X] == -2 ||
-					 mode == GhostMode.OUTGOING && ( _map[(int)coordinates.Y, (int)coordinates.X] == -8 ||
-													 _map[(int)coordinates.Y, (int)coordinates.X] == -6 ))
+					 mode == GhostMode.OUTGOING && (_map[(int)coordinates.Y, (int)coordinates.X] == -8 ||
+													 _map[(int)coordinates.Y, (int)coordinates.X] == -6))
 				{
 					res = Direction.UP;
 				}
@@ -167,114 +162,109 @@ namespace pacman
 			}
 		}
 
-        /// <summary>
-        /// Allow to know if the ghost is in the tunnel
-        /// </summary>
-        /// <param name="coordinates">Coordinates in the map</param>
-        /// <returns>return true if the ghost is in the tunnel, else false</returns>
-        public bool isInTunnel(Vector2 coordinates)
-        {
-            if ((int)coordinates.Y == 14 &&
-                ( coordinates.X < 6 ||
-                  coordinates.X > 22 ) )
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Allow to know if the ghost is in the special zone. In the special zone, ghosts can't turn upward
-        /// </summary>
-        /// <param name="coordinates">Coordinates in the map</param>
-        /// <returns>return true if the ghost is in the special zone, else false</returns>
-        public bool isInSpecialZone(Vector2 coordinates)
-        {
-            if (coordinates.X > 10 &&
-                coordinates.X < 17 &&
-                ( (int)coordinates.Y == 11 ||
-                  (int)coordinates.Y == 23))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Allow to know if the ghost must teleport himself
-        /// </summary>
-        /// <param name="coordinates">Coordinates in the map</param>
-        /// <returns>return true if the ghost must teleport himself, else false</returns>
-        public bool mustTeleportation(Vector2 coordinates, out Vector2 teleportation)
-        {
-			teleportation = coordinates;
-			bool boolean = false;
-			if ((int)coordinates.X == -1 && (int)coordinates.Y == 14)
-            {
-				boolean = true;
-				teleportation.X = 28;
-            }
-			else if ((int)coordinates.X == 28 && (int)coordinates.Y == 14)
-            {
-				boolean = true;
-				teleportation.X = -1;
-            }
-			return boolean;
-        }
-
-        /// <summary>
-        /// Convert window coordinates to map coordinates
-        /// </summary>
-        /// <param name="coordinates">Window coordinates</param>
-        /// <returns>Map coordinates</returns>
-		public Vector2 WinToMap(Vector2 coordinates)
+		/// <summary>
+		/// Allow to know if the ghost is in the tunnel
+		/// </summary>
+		/// <param name="coordinates">Coordinates in the map</param>
+		/// <returns>return true if the ghost is in the tunnel, else false</returns>
+		public bool isInTunnel(Vector2 coordinates)
 		{
-			return new Vector2((int)(coordinates.X / _spriteSize.X), (int)(coordinates.Y / _spriteSize.Y));
+			return (int)coordinates.Y == 14 && (coordinates.X < 6 || coordinates.X > 22);
 		}
 
-        /// <summary>
-        /// Convert map coordinates to window coordinates
-        /// </summary>
-        /// <param name="coordinates">map coordinates</param>
-        /// <returns>Window coordinates</returns>
-        public Vector2 MapToWin(Vector2 coordinates)
-        {
-            Vector2 result;
-            result.X = (int)coordinates.X;
-            result.Y = (int)coordinates.Y;
-            return result * _spriteSize + _spriteSize / 2;
-        }
+		/// <summary>
+		/// Allow to know if the ghost is in the special zone. In the special zone, ghosts can't turn upward
+		/// </summary>
+		/// <param name="coordinates">Coordinates in the map</param>
+		/// <returns>return true if the ghost is in the special zone, else false</returns>
+		public bool isInSpecialZone(Vector2 coordinates)
+		{
+			if (coordinates.X > 10 &&
+				coordinates.X < 17 &&
+				((int)coordinates.Y == 11 ||
+				  (int)coordinates.Y == 23))
+			{
+				return true;
+			}
+			return false;
+		}
 
-        public Direction[] getDirectionWalkable(Vector2 coordinates)
-        {
-            List<Direction> directionWalkable = new List<Direction>();
+		/// <summary>
+		/// Allow to know if the ghost must teleport himself
+		/// </summary>
+		/// <param name="coordinates">Coordinates in the window</param>
+		/// <returns>return true if the actor must teleport himself, else false</returns>
+		public bool mustTeleport(Vector2 coordinates, out Vector2 teleportation)
+		{
+			teleportation = coordinates;
+			bool boolean = false;
+			if (coordinates.Y == 14.5f * TileSize.Y)
+			{
+				if(coordinates.X == (int)(-0.5f * TileSize.X))
+				{
+					teleportation.X = (int)(28.5f * TileSize.X);
+					boolean = true;
+				}
+				else if(coordinates.X == (int)(28.5f * TileSize.X))
+				{
+					teleportation.X = (int)(-0.5f * TileSize.X);
+					boolean = true;
+				}
+			}
+			return boolean;
+		}
 
-            if (isInTunnel(coordinates))
-            {
-                directionWalkable.Add(Direction.RIGHT);
-                directionWalkable.Add(Direction.LEFT);
-                return directionWalkable.ToArray();
-            }
+		/// <summary>
+		/// Convert window coordinates to map coordinates
+		/// </summary>
+		/// <param name="coordinates">Window coordinates</param>
+		/// <returns>Map coordinates</returns>
+		public Vector2 WinToMap(Vector2 coordinates)
+		{
+			return new Vector2((int)coordinates.X / (int)TileSize.X, (int)coordinates.Y / (int)TileSize.Y);
+		}
 
-            if (!isWall( new Vector2( coordinates.X, coordinates.Y - 1 ) ) &&
-                !isInSpecialZone(coordinates))
-            {
-                directionWalkable.Add( Direction.UP );
-            }
-            if ( !isWall( new Vector2( coordinates.X + 1, coordinates.Y ) ) )
-            {
-                directionWalkable.Add( Direction.RIGHT );
-            }
-            if ( !isWall( new Vector2( coordinates.X, coordinates.Y + 1 ) ) )
-            {
-                directionWalkable.Add( Direction.DOWN );
-            }
-            if ( !isWall( new Vector2( coordinates.X - 1, coordinates.Y ) ) )
-            {
-                directionWalkable.Add( Direction.LEFT );
-            }
-            return directionWalkable.ToArray();
-        }
+		/// <summary>
+		/// Convert map coordinates to window coordinates
+		/// </summary>
+		/// <param name="coordinates">map coordinates</param>
+		/// <returns>Window coordinates</returns>
+		public Vector2 MapToWin(Vector2 coordinates)
+		{
+			Vector2 result = new Vector2((int)coordinates.X, (int)coordinates.Y);
+			return result * TileSize + TileSize / 2;
+		}
+
+		public Direction[] getDirectionWalkable(Vector2 coordinates)
+		{
+			List<Direction> directionWalkable = new List<Direction>();
+
+			if (isInTunnel(coordinates))
+			{
+				directionWalkable.Add(Direction.RIGHT);
+				directionWalkable.Add(Direction.LEFT);
+				return directionWalkable.ToArray();
+			}
+
+			if (!isWall(new Vector2(coordinates.X, coordinates.Y - 1)) &&
+				!isInSpecialZone(coordinates))
+			{
+				directionWalkable.Add(Direction.UP);
+			}
+			if (!isWall(new Vector2(coordinates.X + 1, coordinates.Y)))
+			{
+				directionWalkable.Add(Direction.RIGHT);
+			}
+			if (!isWall(new Vector2(coordinates.X, coordinates.Y + 1)))
+			{
+				directionWalkable.Add(Direction.DOWN);
+			}
+			if (!isWall(new Vector2(coordinates.X - 1, coordinates.Y)))
+			{
+				directionWalkable.Add(Direction.LEFT);
+			}
+			return directionWalkable.ToArray();
+		}
 
 		public override void Initialize()
 		{
@@ -323,7 +313,7 @@ namespace pacman
 		{
 			_texture = content.Load<Texture2D>("mapTexture");
 		}
-		
+
 		public override void Update(int counter)
 		{
 			return;

@@ -20,7 +20,6 @@ namespace pacman
 			_textureOffset = new Vector2(0, 10);
 		}
 
-		//TODO
 		public override void Initialize()
 		{
 			// TODO: demander a la map
@@ -33,17 +32,18 @@ namespace pacman
 			_blinkInterval = 8;
 			_isEating = false;
 		}
-		
+
 		public override void Update(int counter)
 		{
 			KeyboardState keyboard = Keyboard.GetState();
 
-			if(keyboard.IsKeyDown(Keys.Up))
+			if (keyboard.IsKeyDown(Keys.Up))
 			{
 				if (_direction == Direction.DOWN)
 				{
 					_direction = Direction.UP;
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
 				}
 				_nextDirection = Direction.UP;
 			}
@@ -53,6 +53,7 @@ namespace pacman
 				{
 					_direction = Direction.LEFT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.X;
 				}
 				_nextDirection = Direction.LEFT;
 			}
@@ -62,6 +63,7 @@ namespace pacman
 				{
 					_direction = Direction.DOWN;
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
 				}
 				_nextDirection = Direction.DOWN;
 			}
@@ -71,6 +73,7 @@ namespace pacman
 				{
 					_direction = Direction.RIGHT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.X;
 				}
 				_nextDirection = Direction.RIGHT;
 			}
@@ -80,22 +83,24 @@ namespace pacman
 				_isEating = !_isEating;
 			}
 
+
 			if (MustMove(counter))
 			{
-
 				if (_isEating)
 				{
 					_isEating = false;
 					_map.eatGum(_map.WinToMap(_position));
 					//TODO: compter les points
-					System.Console.WriteLine("		Pill");
 				}
 				else
 				{
-					System.Console.WriteLine("Move");
 					Vector2 nextCell;
 					Vector2 nextPos;
-
+					Vector2 tp;
+					if (_map.mustTeleport(_position, out tp))
+					{
+						_position = tp;
+					}
 					Think(_nextDirection, out nextCell, out nextPos);
 					if (_thinkCounter == 0 && !_map.isWall(nextCell))
 					{
@@ -114,10 +119,9 @@ namespace pacman
 						++_drawCounter;
 						_drawCounter %= _blinkInterval;
 					}
+
 				}
 			}
-			else
-				System.Console.WriteLine("	Stay");
 		}
 
 		private void Think(Direction dir, out Vector2 nextCell, out Vector2 nextPos)
@@ -159,21 +163,15 @@ namespace pacman
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;
-			int stateOffset = 3 * _drawCounter / _blinkInterval;
+			int stateOffset = 4*_drawCounter / _blinkInterval;
 
 			Rectangle clipping = new Rectangle(
 				((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
-				((int)_textureOffset.Y + stateOffset) * (int)_spriteSize.Y,
+				((int)_textureOffset.Y + (stateOffset % 2 == 1 ? 1 : stateOffset)) * (int)_spriteSize.Y,
 				(int)_spriteSize.X,
 				(int)_spriteSize.Y);
 
 			spriteBatch.Draw(_texture, pos, clipping, Color.White);
-		}
-
-		public Direction NextDirection
-		{
-			get { return _nextDirection; }
-			set { _nextDirection = value; }
 		}
 	}
 }
