@@ -90,32 +90,34 @@ namespace pacman
 			}
 		}
 
-		public void eatGum(Vector2 coordinates)
+		public Food eatGum(Vector2 coordinates)
 		{
+			Food res = Food.NONE;
 			try
 			{
 				if (_map[(int)coordinates.Y, (int)coordinates.X] == 12) // Regular gum
 				{
-					//TODO: Increase the score
 					--_nbGum;
 					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+					res = Food.GUM;
 				}
 				else if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
 				{
-					//TODO: Set ghosts to fright mode
-					//TODO: Increase the score
+					//TODO: Set ghosts to fright mode <-- Move this to GameLoop
 					--_nbGum;
 					foreach (Ghost g in _ghosts)
 					{
 						g.Mode = GhostMode.FRIGHTENED;
 					}
 					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+					res = Food.PACGUM;
 				}
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
+			return res;
 		}
 
 		/// <summary>
@@ -252,6 +254,7 @@ namespace pacman
 		/// Allow to know if the ghost must teleport himself
 		/// </summary>
 		/// <param name="coordinates">Coordinates in the window</param>
+		/// <param name="teleportation">Destination coordinates</param>
 		/// <returns>return true if the actor must teleport himself, else false</returns>
 		public bool mustTeleport(Vector2 coordinates, out Vector2 teleportation)
 		{
@@ -367,12 +370,6 @@ namespace pacman
 					}
 				}
 			}
-		}
-
-		public Texture2D Tiles
-		{
-			get { return _tiles; }
-			set { _tiles = value; }
 		}
 
 		public Vector2 TargetIncomingMode

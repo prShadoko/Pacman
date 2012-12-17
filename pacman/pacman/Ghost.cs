@@ -478,17 +478,6 @@ namespace pacman
 		}
 
 		/// <summary>
-		/// Accessor of the map.
-		/// </summary>
-		public Map Map
-		{
-			set
-			{
-				_map = value;
-			}
-		}
-
-		/// <summary>
 		/// Initialize ghost.
 		/// </summary>
         public override void Initialize()

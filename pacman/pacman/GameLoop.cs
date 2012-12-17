@@ -11,35 +11,40 @@ using Microsoft.Xna.Framework.Media;
 
 namespace pacman
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
-    public class GameLoop : Microsoft.Xna.Framework.Game
-    {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+	public enum Food { NONE = 0, GUM = 1, PACGUM = 2, GHOST = 3, CHERRY = 4, STRAWBERRY = 5, PEACH = 6, APPLE = 7, POMEGRANATE = 8, GALAXIAN = 9, BELL = 10, KEY = 11 };
 
-        private Map _map;
-        private Pacman _pacman;
-        private Ghost[] _ghosts;
+	/// <summary>
+	/// This is the main type for your game
+	/// </summary>
+	public class GameLoop : Microsoft.Xna.Framework.Game
+	{
+		private GraphicsDeviceManager _graphics;
+		private SpriteBatch _spriteBatch;
 
-        private int _level;
+		private Map _map;
+		private Pacman _pacman;
+		private Ghost[] _ghosts;
+
+		private int _level;
 		private int _live;
 
 		private int _pause;
 
-        private int _counter;
+		private int _counter;
 
 		private int _outgoingCounter;
 
-        public GameLoop()
-        {
-            Content.RootDirectory = "Content";
+		private int _score;
+		private /*const*/ int[] _foodValue = { 0, 10, 50, 200, 100, 300, 500, 700, 1000, 2000, 3000, 5000 };
 
-            _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 448;
-            _graphics.PreferredBackBufferHeight = 576;
-            _graphics.ApplyChanges();
+		public GameLoop()
+		{
+			Content.RootDirectory = "Content";
+
+			_graphics = new GraphicsDeviceManager(this);
+			_graphics.PreferredBackBufferWidth = 448;
+			_graphics.PreferredBackBufferHeight = 576;
+			_graphics.ApplyChanges();
 
 			_ghosts = new Ghost[4];
 
@@ -60,21 +65,21 @@ namespace pacman
 			_live = 3;
 			_level = 1;
 			this.IsMouseVisible = true;
-        }
+		}
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-          //  _pacman.Position = _map.MapToWin(new Vector2(27, 14));
+		/// <summary>
+		/// Allows the game to perform any initialization it needs to before starting to run.
+		/// This is where it can query for any required services and load any non-graphic
+		/// related content.  Calling base.Initialize will enumerate through any components
+		/// and initialize them as well.
+		/// </summary>
+		protected override void Initialize()
+		{
 
 			_map.Initialize();
 
 			_pacman.Initialize();
+			_pacman.Position = _map.MapToWin(new Vector2(14, 23));
 
 			_ghosts[0].Initialize();
 			_ghosts[1].Initialize();
@@ -97,49 +102,51 @@ namespace pacman
 			_ghosts[3].level = _level;
 
 
-            _counter = 0;
+			_counter = 0;
 
 			_outgoingCounter = 0;
 
 			_pause = 0;
 
-            base.Initialize();
-        }
+			_score = 0;
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+			base.Initialize();
+		}
 
-            // loading textures
-            _map.LoadContent(Content);
-            _pacman.LoadContent(Content);
-            foreach (Ghost g in _ghosts)
-            {
-                g.LoadContent(Content);
-            }
-        }
+		/// <summary>
+		/// LoadContent will be called once per game and is the place to load
+		/// all of your content.
+		/// </summary>
+		protected override void LoadContent()
+		{
+			// Create a new SpriteBatch, which can be used to draw textures.
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            Content.Unload();
-        }
+			// loading textures
+			_map.LoadContent(Content);
+			_pacman.LoadContent(Content);
+			foreach (Ghost g in _ghosts)
+			{
+				g.LoadContent(Content);
+			}
+		}
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
+		/// <summary>
+		/// UnloadContent will be called once per game and is the place to unload
+		/// all content.
+		/// </summary>
+		protected override void UnloadContent()
+		{
+			Content.Unload();
+		}
+
+		/// <summary>
+		/// Allows the game to run logic such as updating the world,
+		/// checking for collisions, gathering input, and playing audio.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Update(GameTime gameTime)
+		{
 
 
 			KeyboardState keyboard = Keyboard.GetState();
@@ -179,15 +186,17 @@ namespace pacman
 			Console.WriteLine("");
 			Console.WriteLine("vie\t: " + _live);
 			Console.WriteLine("Niveau\t: " + _level);
+			Console.WriteLine("Score\t: " + _score);
 
-			if (_pause == 0) 
+			if (_pause == 0)
 			{
 				_pacman.Update(_counter);
+				UpdateScore();
 			}
 
 			if (_outgoingCounter < _ghosts.Length - 1)
 			{
-				if( _ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING )
+				if (_ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING)
 				{
 					++_outgoingCounter;
 					_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
@@ -240,31 +249,31 @@ namespace pacman
 			{
 				--_pause;
 			}
-            ++_counter;
-            if (_counter % 60 == 0) _counter = 0;
+			++_counter;
+			if (_counter % 60 == 0) _counter = 0;
 
-            base.Update(gameTime);
-        }
+			base.Update(gameTime);
+		}
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Black);
-            _spriteBatch.Begin();
+		/// <summary>
+		/// This is called when the game should draw itself.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Draw(GameTime gameTime)
+		{
+			GraphicsDevice.Clear(Color.Black);
+			_spriteBatch.Begin();
 
-            _map.Draw(_spriteBatch);
-            _pacman.Draw(_spriteBatch);
-            foreach (Ghost g in _ghosts)
-            {
-                g.Draw(_spriteBatch);
-            }
+			_map.Draw(_spriteBatch);
+			_pacman.Draw(_spriteBatch);
+			foreach (Ghost g in _ghosts)
+			{
+				g.Draw(_spriteBatch);
+			}
 
-            _spriteBatch.End();
-            base.Draw(gameTime);
-        }
+			_spriteBatch.End();
+			base.Draw(gameTime);
+		}
 
 		/// <summary>
 		/// Test if pacman clash ghost.
@@ -276,7 +285,7 @@ namespace pacman
 			ghostIndex = 0;
 			mode = GhostMode.SCATTER;
 
-			for(int i = 0; i<_ghosts.Length; ++i)
+			for (int i = 0; i < _ghosts.Length; ++i)
 			{
 				if (_map.WinToMap(_pacman.Position) == _map.WinToMap(_ghosts[i].Position))
 				{
@@ -305,7 +314,19 @@ namespace pacman
 			}
 			++_level;
 			Initialize();
-			
 		}
-    }
+
+		protected void UpdateScore()
+		{
+			if (_pacman.Eaten == Food.GHOST)
+			{
+				// TODO: Add the multiplier
+				_score += _foodValue[(int)_pacman.Eaten];
+			}
+			else
+				_score += _foodValue[(int)_pacman.Eaten];
+
+			_pacman.Eaten = Food.NONE;
+		}
+	}
 }

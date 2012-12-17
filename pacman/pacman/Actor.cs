@@ -47,26 +47,26 @@ namespace pacman
 			return false;
 		}
 
-        public static Direction ReverseDirection(Direction d)
-        {
-            switch (d)
-            {
-                case Direction.UP:
-                    d = Direction.DOWN;
-                    break;
-                case Direction.DOWN:
-                    d = Direction.UP;
-                    break;
-                case Direction.LEFT:
-                    d = Direction.RIGHT;
-                    break;
-                case Direction.RIGHT:
-                    d = Direction.LEFT;
-                    break;
-            }
+		public static Direction ReverseDirection(Direction d)
+		{
+			switch (d)
+			{
+				case Direction.UP:
+				d = Direction.DOWN;
+				break;
+				case Direction.DOWN:
+				d = Direction.UP;
+				break;
+				case Direction.LEFT:
+				d = Direction.RIGHT;
+				break;
+				case Direction.RIGHT:
+				d = Direction.LEFT;
+				break;
+			}
 
-            return d;
-        }
+			return d;
+		}
 
 		public override void LoadContent(ContentManager content)
 		{
@@ -94,6 +94,14 @@ namespace pacman
 		public float SpeedUnit
 		{
 			get { return _SPEEDUNIT; }
+		}
+
+		/// <summary>
+		/// Setter for the map.
+		/// </summary>
+		public Map Map
+		{
+			set { _map = value; }
 		}
 	}
 }
