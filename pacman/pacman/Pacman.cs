@@ -23,7 +23,7 @@ namespace pacman
 		public override void Initialize()
 		{
 			// TODO: demander a la map
-			_position = new Vector2(14 * 16 + 16 / 2, 23 * 16 + 16 / 2);
+			_position = new Vector2(0,0); //14 * 16 + 16 / 2, 23 * 16 + 16 / 2
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
@@ -84,7 +84,7 @@ namespace pacman
 			}
 
 
-			if (MustMove(counter))
+			if (MustMove(counter) > 0)
 			{
 				if (_isEating)
 				{

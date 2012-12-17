@@ -11,6 +11,7 @@ namespace pacman
 	{
 		private sbyte[,] _map;
 		private Texture2D _tiles;
+		private int _offset;
 
 		private Vector2 _targetIncomingMode;
 		private Vector2 _respawn;
@@ -19,12 +20,32 @@ namespace pacman
 
 		private int _nbGum;
 
+		private int _score;
+
+		private int[] _elroyDotsLeft;
+
 		public Map(Ghost[] ghosts)
 			: base(new Vector2(16, 16))
 		{
 			_ghosts = ghosts;
 
+			_offset = 3 * (int)TileSize.Y;
+
+			Score = 0;
+
+			InitializeMap();
+
+			_elroyDotsLeft = new int[] {
+				20,30,40,40,40,50,50,50,60,60,60,80,80,80,100,100,100,100,120
+			};
+			//Console.WriteLine("\t" + _map[23, 11]);
+			//Console.WriteLine(_map[23,6]);
+		}
+
+		public void InitializeMap()
+		{
 			_nbGum = 244;
+
 			_map = new sbyte[31, 28] {
                 { 8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9},
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2,  3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
@@ -58,9 +79,6 @@ namespace pacman
                 { 3, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  2},
                 {10,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 11}
             };
-
-			//Console.WriteLine("\t" + _map[23, 11]);
-			//Console.WriteLine(_map[23,6]);
 		}
 
 		public bool isWall(Vector2 coordinates)
@@ -94,22 +112,40 @@ namespace pacman
 		{
 			try
 			{
+				bool eat = false;
 				if (_map[(int)coordinates.Y, (int)coordinates.X] == 12) // Regular gum
 				{
-					//TODO: Increase the score
-					--_nbGum;
-					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+					eat = true;
+					Score += 10;
 				}
 				else if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
 				{
-					//TODO: Set ghosts to fright mode
-					//TODO: Increase the score
-					--_nbGum;
+					eat = true;
+					Score += 50;
 					foreach (Ghost g in _ghosts)
 					{
 						g.Mode = GhostMode.FRIGHTENED;
 					}
+				}
+
+				if (eat)
+				{
+					--_nbGum;
 					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
+
+					int lvl = _ghosts[0].Level - 1;
+					if (lvl >= _elroyDotsLeft.Length)
+					{
+						lvl = _elroyDotsLeft.Length - 1;
+					}
+					if (_nbGum <= _elroyDotsLeft[lvl] / 2)
+					{
+						_ghosts[0].ElroySpeed = 0.1f;
+					}
+					else if (_nbGum <= _elroyDotsLeft[lvl])
+					{
+						_ghosts[0].ElroySpeed = 0.05f;
+					}
 				}
 			}
 			catch (Exception e)
@@ -257,7 +293,7 @@ namespace pacman
 		{
 			teleportation = coordinates;
 			bool boolean = false;
-			if (coordinates.Y == 14.5f * TileSize.Y)
+			if (coordinates.Y == 17.5f * TileSize.Y)
 			{
 				if(coordinates.X == (int)(-0.5f * TileSize.X))
 				{
@@ -280,7 +316,7 @@ namespace pacman
 		/// <returns>Map coordinates</returns>
 		public Vector2 WinToMap(Vector2 coordinates)
 		{
-			return new Vector2((int)coordinates.X / (int)TileSize.X, (int)coordinates.Y / (int)TileSize.Y);
+			return new Vector2((int)coordinates.X / (int)TileSize.X, ((int)coordinates.Y - _offset) / (int)TileSize.Y);
 		}
 
 		/// <summary>
@@ -290,8 +326,11 @@ namespace pacman
 		/// <returns>Window coordinates</returns>
 		public Vector2 MapToWin(Vector2 coordinates)
 		{
+			//14 * 16 + 16 / 2, 23 * 16 + 16 / 2
 			Vector2 result = new Vector2((int)coordinates.X, (int)coordinates.Y);
-			return result * TileSize + TileSize / 2;
+			result =  result * TileSize + TileSize / 2;
+			result.Y += _offset;
+			return result;
 		}
 
 		public Direction[] getDirectionWalkable(Vector2 coordinates)
@@ -305,8 +344,8 @@ namespace pacman
 				return directionWalkable.ToArray();
 			}
 
-			if (!isWall(new Vector2(coordinates.X, coordinates.Y - 1)) &&
-				!isInSpecialZone(coordinates))
+			if (!isWall(new Vector2(coordinates.X, coordinates.Y - 1)) /*&&
+				!isInSpecialZone(coordinates)*/)
 			{
 				directionWalkable.Add(Direction.UP);
 			}
@@ -357,6 +396,7 @@ namespace pacman
 					if ((_map[y, x] < 13 && _map[y, x] >= 0) || (_map[y, x] == 13 && 2 * _drawCounter / _blinkInterval == 0))
 					{
 						Vector2 pos = new Vector2(x, y) * _spriteSize;
+						pos.Y += _offset;
 						Rectangle clipping = new Rectangle(
 							(int)(_spriteSize.X * _map[y, x]),
 							0,
@@ -388,6 +428,26 @@ namespace pacman
 			get
 			{
 				return _respawn;
+			}
+		}
+
+		public int Score
+		{
+			set
+			{
+				_score = value;
+			}
+			get
+			{
+				return _score;
+			}
+		}
+
+		public int NbGum
+		{
+			get
+			{
+				return _nbGum;
 			}
 		}
 	}
