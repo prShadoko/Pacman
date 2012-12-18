@@ -20,22 +20,18 @@ namespace pacman
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
-
 		private Map _map;
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
-
-		private int _level;
-		private int _live;
-
-		private int _pause;
-
-		private int _counter;
-
-		private int _outgoingCounter;
-
 		private int _score;
+		private int _level;
+		private int _life;
+		private int _pause;
+		private int _counter;
+		private int _outgoingCounter;
 		private /*const*/ int[] _foodValue = { 0, 10, 50, 200, 100, 300, 500, 700, 1000, 2000, 3000, 5000 };
+		private SpriteFont _scoreFont;
+
 
 		public GameLoop()
 		{
@@ -62,7 +58,7 @@ namespace pacman
 			_ghosts[3] = clyde;
 
 
-			_live = 3;
+			_life = 3;
 			_level = 1;
 			this.IsMouseVisible = true;
 		}
@@ -131,6 +127,8 @@ namespace pacman
 			{
 				g.LoadContent(Content);
 			}
+			_scoreFont = Content.Load<SpriteFont>("ScoreFont");
+			//_lifeTexture = content.Load<Texture2D>("actorsTexture");
 		}
 
 		/// <summary>
@@ -149,37 +147,8 @@ namespace pacman
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-
-
 			KeyboardState keyboard = Keyboard.GetState();
-			/*if (keyboard.IsKeyDown(Keys.F))
-			{
-				_ghosts[0].Mode = GhostMode.FRIGHTENED;
-				_ghosts[1].Mode = GhostMode.FRIGHTENED;
-				_ghosts[2].Mode = GhostMode.FRIGHTENED;
-				_ghosts[3].Mode = GhostMode.FRIGHTENED;
-			}
-			else if (keyboard.IsKeyDown(Keys.S))
-			{
-				_ghosts[0].Mode = GhostMode.SCATTER;
-				_ghosts[1].Mode = GhostMode.SCATTER;
-				_ghosts[2].Mode = GhostMode.SCATTER;
-				_ghosts[3].Mode = GhostMode.SCATTER;
-			}
-			else if (keyboard.IsKeyDown(Keys.C))
-			{
-				_ghosts[0].Mode = GhostMode.CHASE;
-				_ghosts[1].Mode = GhostMode.CHASE;
-				_ghosts[2].Mode = GhostMode.CHASE;
-				_ghosts[3].Mode = GhostMode.CHASE;
-			}
-			else if (keyboard.IsKeyDown(Keys.I))
-			{
-				_ghosts[0].Mode = GhostMode.INCOMING;
-				_ghosts[1].Mode = GhostMode.INCOMING;
-				_ghosts[2].Mode = GhostMode.INCOMING;
-				_ghosts[3].Mode = GhostMode.INCOMING;
-			}*/
+
 			Console.Clear();
 			Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 			Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
@@ -187,7 +156,7 @@ namespace pacman
 			Console.WriteLine("Clyde\t: " + _ghosts[3].Mode);
 			Console.WriteLine("");
 			Console.WriteLine("Score\t: " + _score);
-			Console.WriteLine("vie\t: " + _live);
+			Console.WriteLine("vie\t: " + _life);
 			Console.WriteLine("Niveau\t: " + _level);
 			Console.WriteLine("Gum\t: " + _map.NbGum);
 			Console.WriteLine("");
@@ -201,6 +170,15 @@ namespace pacman
 			{
 				_pacman.Update(_counter);
 				UpdateScore();
+				//TODO
+				/*
+				if (_score >= 10000 && _1up)
+				{
+					_1up = false;
+					++_life;
+				}
+				//*/
+				//ENDTODO
 			}
 
 			if (_outgoingCounter < _ghosts.Length - 1)
@@ -260,8 +238,8 @@ namespace pacman
 				}
 				else if (mode != GhostMode.INCOMING)
 				{
-					--_live;
-					if (_live <= 0)
+					_life -= 1;
+					if (_life <= 0)
 					{
 						//TODO: Game Over
 						gameOver();
@@ -299,6 +277,37 @@ namespace pacman
 			{
 				g.Draw(_spriteBatch);
 			}
+
+			/*
+			// --- affichage du texte --- //
+			Vector2 textPos = MapToWin(new Vector2(9, -3));
+			//scorePos.Y -= _spriteSize.Y / 2;
+			spriteBatch.DrawString(_scoreFont, "HIGH SCORE", textPos, Color.White);
+
+			string text = _score.ToString();
+			textPos = MapToWin(new Vector2(7 - text.Length, -2));
+			spriteBatch.DrawString(_scoreFont, _score.ToString(), textPos, Color.White);
+
+			if (_1up && _drawCounter * 2 < _blinkInterval )
+			{
+				textPos = MapToWin(new Vector2(3, -3));
+				spriteBatch.DrawString(_scoreFont, "1UP", textPos, Color.White);
+			}
+
+			// --- affichage des vies --- //
+			Rectangle lifeClipping = new Rectangle(
+							2 * (int)_ghosts[0].TileSize.X,
+							11 * (int)_ghosts[0].TileSize.Y,
+							(int)_ghosts[0].TileSize.X,
+							(int)_ghosts[0].TileSize.Y);
+			Vector2 lifePos = MapToWin(new Vector2(2,30));
+			lifePos.Y += TileSize.Y / 2;
+			for(int i = 0; i < _life; ++i)
+			{
+				spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
+				lifePos.X += TileSize.X * 2;
+			}
+			*/
 
 			_spriteBatch.End();
 			base.Draw(gameTime);

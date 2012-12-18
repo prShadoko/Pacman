@@ -32,7 +32,7 @@ namespace pacman
 			InitializeMap();
 
 			_elroyDotsLeft = new int[] {
-				20,30,40,40,40,50,50,50,60,60,60,80,80,80,100,100,100,100,120
+				20, 30, 40, 40, 40, 50, 50, 50, 60, 60, 60, 80, 80, 80, 100, 100, 100, 100, 120
 			};
 			//Console.WriteLine("\t" + _map[23, 11]);
 			//Console.WriteLine(_map[23,6]);
@@ -120,9 +120,12 @@ namespace pacman
 				{
 					//TODO: Set ghosts to fright mode <-- Move this to GameLoop
 					eat = true;
-					foreach (Ghost g in _ghosts)
+					if (_ghosts[0].Level < 19 && _ghosts[0].Level != 17)
 					{
-						g.Mode = GhostMode.FRIGHTENED;
+						foreach (Ghost g in _ghosts)
+						{
+							g.Mode = GhostMode.FRIGHTENED;
+						}
 					}
 				}
 
