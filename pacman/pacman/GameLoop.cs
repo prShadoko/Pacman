@@ -79,7 +79,13 @@ namespace pacman
 			_map.Initialize();
 
 			_pacman.Initialize();
+
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23));
+
+			_ghosts[0].Level = _level;
+			_ghosts[1].Level = _level;
+			_ghosts[2].Level = _level;
+			_ghosts[3].Level = _level;
 
 			_ghosts[0].Initialize();
 			_ghosts[1].Initialize();
@@ -96,11 +102,7 @@ namespace pacman
 			_ghosts[2].Direction = Direction.UP;
 			_ghosts[3].Direction = Direction.UP;
 
-			_ghosts[0].level = _level;
-			_ghosts[1].level = _level;
-			_ghosts[2].level = _level;
-			_ghosts[3].level = _level;
-
+			_ghosts[0].ElroySpeed = 0f;
 
 			_counter = 0;
 
@@ -184,9 +186,16 @@ namespace pacman
 			Console.WriteLine("Inky\t: " + _ghosts[2].Mode);
 			Console.WriteLine("Clyde\t: " + _ghosts[3].Mode);
 			Console.WriteLine("");
+			Console.WriteLine("Score\t: " + _score);
 			Console.WriteLine("vie\t: " + _live);
 			Console.WriteLine("Niveau\t: " + _level);
-			Console.WriteLine("Score\t: " + _score);
+			Console.WriteLine("Gum\t: " + _map.NbGum);
+			Console.WriteLine("");
+			Console.WriteLine("Speed Pacman\t: " + _pacman.Speed);
+			Console.WriteLine("Speed Blinky\t: " + _ghosts[0].Speed);
+			Console.WriteLine("Speed Pinky\t: " + _ghosts[1].Speed);
+			Console.WriteLine("Speed Inky\t: " + _ghosts[2].Speed);
+			Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 
 			if (_pause == 0)
 			{
@@ -196,7 +205,13 @@ namespace pacman
 
 			if (_outgoingCounter < _ghosts.Length - 1)
 			{
-				if (_ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING)
+				if( _ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING && (// Attention, ceci est du code très sale !!
+					_outgoingCounter == 0 ||												// pour que Blinky et Pinky ne reste pas bloqué
+					_level == 1 && _outgoingCounter == 1 && _map.NbGum <= (244 - 30) ||		// Fait sortir Inky après 30 dots au niveau 1
+					_level == 1 && _outgoingCounter == 2 && _map.NbGum <= 244 - 30 - 60 ||	// Fait sortir Clyde après Inky après 60 dots au niveau 1
+					_level == 2 && _outgoingCounter == 1 ||									// Fait sortir Inky après 0 dots au niveau 2
+					_level == 2 && _outgoingCounter == 2 && _map.NbGum <= 244 - 50 ||		// Fait sortir Clyde après 50 dots au niveau 2
+					_level > 2))															// fait sortir tout le monde au dela du niveau 2
 				{
 					++_outgoingCounter;
 					_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
@@ -208,6 +223,10 @@ namespace pacman
 				{
 					g.Update(_counter);
 					if (g.Mode == GhostMode.INCOMING)
+					{
+						g.Update(_counter);
+					}
+					else if (g.NbMovement > 1)
 					{
 						g.Update(_counter);
 					}
@@ -228,6 +247,16 @@ namespace pacman
 				{
 					_pause = 60;
 					_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
+					// Comptage des fantomes pour les points
+					int nbGhosts = 0;
+					foreach (Ghost g in _ghosts)
+					{
+						if (g.Mode != GhostMode.FRIGHTENED)
+						{
+							++nbGhosts;
+						}
+					}
+					_score += nbGhosts * 200;
 				}
 				else if (mode != GhostMode.INCOMING)
 				{
@@ -306,13 +335,14 @@ namespace pacman
 		protected void win()
 		{
 			//Console.WriteLine("win");
-			_map = new Map(_ghosts);
+			/*_map = new Map(_ghosts);
 			_pacman.Map = _map;
 			foreach (Ghost g in _ghosts)
 			{
 				g.Map = _map;
-			}
+			}*/
 			++_level;
+			_map.InitializeMap();
 			Initialize();
 		}
 

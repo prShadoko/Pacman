@@ -66,9 +66,10 @@ namespace pacman
 		private int _flashesCounter;
 		private int _flashOffset;
 
-
         private float[,] _speedByLevels;
-        
+		protected float _elroySpeed; // uniquement pour blinky, mais dans l'etat actuel du code, il est plus simple de le mettre ici que de changé la structure... Dommage on pensera mieux la prochaine fois
+		private int _nbMovement;
+
 		// --- methods --- //
 		/// <summary>
 		/// Constructor of Ghost class.
@@ -79,6 +80,10 @@ namespace pacman
             : base(map)
         {
             _pacman = pacman;
+
+
+			_level = 1;
+
             //_mode = GhostMode.FRIGHTENED;
         }
 
@@ -106,7 +111,7 @@ namespace pacman
             }
             else
             {
-                Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+				Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM] + _elroySpeed;
             }
 
             // on récupère un tableau de directions possibles
@@ -151,8 +156,10 @@ namespace pacman
 
                 foreach (Direction d in dir)
                 {
-                    // si c'est la direction dans laquelle on vient, ça sert a rien de tester on y retournera pas
-                    if (Actor.ReverseDirection(_direction) != d || _modeChanged)
+                    // si c'est la direction dans laquelle on vient, ça sert a rien de tester on y retournera pas, n'y vers le haut quand on est dans une zone spécial
+                    if ((Actor.ReverseDirection(_direction) != d || _modeChanged) && // Attention, condition potentiellement foireuse !
+						( !( d == Direction.UP && _map.isInSpecialZone(mapPosition) ) || _isFrightened )
+						)
                     {
                         int r = 3;
 
@@ -428,7 +435,7 @@ namespace pacman
 
 				if (_mode == GhostMode.SCATTER)
                 {
-                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+                    Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM] + _elroySpeed;
                     targeting();
                 }
 				else if(_mode == GhostMode.INCOMING)
@@ -443,7 +450,7 @@ namespace pacman
 				}
 				else //if (_mode == GhostMode.CHASE || _mode == GhostMode.HOUSE || _mode == GhostMode.INCOMING || _mode == GhostMode.OUTGOING)
 				{
-					Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+					Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM] + _elroySpeed;
 				}
             }
         }
@@ -455,7 +462,11 @@ namespace pacman
 		private GhostMode getCurrentMode()
 		{
 			GhostMode m;
-			if (_indexCurrentMode % 2 == 0)
+			if (_map.isHouse(_map.WinToMap(_position)))
+			{
+				m = _mode;
+			}
+			else if (_indexCurrentMode % 2 == 0)
 			{
 				m = GhostMode.SCATTER;
 			}
@@ -469,11 +480,15 @@ namespace pacman
 		/// <summary>
 		/// Accessor of ghost level.
 		/// </summary>
-		public int level
+		public int Level
 		{
 			set
 			{
 				_level = value;
+			}
+			get
+			{
+				return _level;
 			}
 		}
 
@@ -482,6 +497,7 @@ namespace pacman
 		/// </summary>
         public override void Initialize()
         {
+			_nbMovement = 0;
             _speed = 1f;
             _thinkCounter = 0;
             _canThink = true;
@@ -492,7 +508,6 @@ namespace pacman
 			_mode = GhostMode.HOUSE;
             targeting();
 
-            _level = 1;
 
             _modesTime = new int[3, 7] {
             { 420, 1200, 420, 1200, 300, 1200,  300 },
@@ -534,7 +549,8 @@ namespace pacman
                 {0.95f, 0.95f, 0.50f}
             };
 
-            Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM];
+			_elroySpeed = 0f;
+			Speed = _speedByLevels[_indexSpeedLevel, (int)GhostSpeed.NORM] + _elroySpeed;
 
 			_frightModeCounters = new int[] {
 				6,5,4,3,2,5,2,2,1,5,2,1,1,3,1,1,1
@@ -632,9 +648,9 @@ namespace pacman
 				_canThink = false;
 			}
 
-            if (MustMove(counter))
+			_nbMovement = MustMove(counter);
+			if (_nbMovement > 0)
 			{
-				//Console.Write("ok");
                 _thinkCounter += _SPEEDUNIT;
                 _canThink = true;
                 switch (_direction)
@@ -668,6 +684,7 @@ namespace pacman
                     }
                 }
             }
+
         }
 
 		/// <summary>
@@ -749,6 +766,22 @@ namespace pacman
 			{
 				return _thinkCounter;
 			}
-		}	
+		}
+
+		public float ElroySpeed
+		{
+			set
+			{
+				_elroySpeed = value;
+			}
+		}
+
+		public int NbMovement
+		{
+			get
+			{
+				return _nbMovement;
+			}
+		}
     }
 }

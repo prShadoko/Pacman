@@ -16,6 +16,8 @@ namespace pacman
 		public Blinky(Map map, Pacman pacman)
 			: base(map, pacman)
 		{
+
+			_elroySpeed = 0f;
 		}
 
 		public override void Initialize()
@@ -58,5 +60,6 @@ namespace pacman
 					}
 			}
 		}
+
 	}
 }

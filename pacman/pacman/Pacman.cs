@@ -92,7 +92,7 @@ namespace pacman
 			}
 
 			// Si Pacman doit bouger sur cette frame
-			if (MustMove(counter))
+			if (MustMove(counter) > 0)
 			{
 				// Si Pacman doit manger une gomme
 				if (_isEating)

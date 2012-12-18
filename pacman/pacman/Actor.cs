@@ -26,25 +26,36 @@ namespace pacman
 			_map = map;
 		}
 
-		public bool MustMove(int counter)
+		public int MustMove(int counter)
 		{
-
-			if (_speed == 1f ||
+			if (_speed == 1.05f)
+			{
+				if (counter % 20 == 0)
+				{
+					return 2;
+				}
+				else
+				{
+					return 1;
+				}
+			}
+			else if (_speed == 1f ||
 				_speed == 0.95f && counter % 20 != 0 ||
 				_speed == 0.90f && counter % 10 != 0 ||
 				_speed == 0.85f && (counter % 6 != 0 || counter % 60 == 0) ||
 				_speed == 0.80f && counter % 5 != 0 ||
 				_speed == 0.75f && counter % 4 != 0 ||
+				_speed == 0.6f && counter % 2 != 0 && counter % 15 != 1 ||
 				_speed == 0.55f && counter % 2 != 0 && counter % 20 != 1 ||
 				_speed == 0.5f && counter % 2 != 0 ||
 				_speed == 0.45f && counter % 5 != 0 && counter % 5 != 2 && counter % 20 != 19 ||
 				_speed == 0.4f && counter % 5 != 0 && counter % 5 != 2
 				)
 			{
-				return true;
+				return 1;
 			}
 
-			return false;
+			return 0;
 		}
 
 		public static Direction ReverseDirection(Direction d)
