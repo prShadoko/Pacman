@@ -24,7 +24,7 @@ namespace pacman
         private Ghost[] _ghosts;
 
         private int _level;
-		private int _live;
+		//private int _live;
 
 		private int _pause;
 
@@ -57,7 +57,7 @@ namespace pacman
 			_ghosts[3] = clyde;
 
 
-			_live = 3;
+			//_live = 3;
 			_level = 1;
 			this.IsMouseVisible = true;
         }
@@ -181,7 +181,7 @@ namespace pacman
 			Console.WriteLine("Clyde\t: " + _ghosts[3].Mode);
 			Console.WriteLine("");
 			Console.WriteLine("Score\t: " + _map.Score);
-			Console.WriteLine("vie\t: " + _live);
+			Console.WriteLine("vie\t: " + _map.Life);
 			Console.WriteLine("Niveau\t: " + _level);
 			Console.WriteLine("Gum\t: " + _map.NbGum);
 			Console.WriteLine("");
@@ -253,8 +253,8 @@ namespace pacman
 				}
 				else if (mode != GhostMode.INCOMING)
 				{
-					--_live;
-					if (_live <= 0)
+					_map.Life -= 1;
+					if (_map.Life <= 0)
 					{
 						//TODO: Game Over
 						gameOver();

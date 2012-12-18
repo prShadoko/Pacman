@@ -9,6 +9,8 @@ namespace pacman
 {
 	public class Map : GameElement
 	{
+		private SpriteFont _scoreFont;
+
 		private sbyte[,] _map;
 		private Texture2D _tiles;
 		private int _offset;
@@ -22,7 +24,13 @@ namespace pacman
 
 		private int _score;
 
+		private bool _1up;
+
+		private int _life;
+
 		private int[] _elroyDotsLeft;
+
+		private Texture2D _lifeTexture;
 
 		public Map(Ghost[] ghosts)
 			: base(new Vector2(16, 16))
@@ -32,6 +40,10 @@ namespace pacman
 			_offset = 3 * (int)TileSize.Y;
 
 			Score = 0;
+
+			_life = 3;
+
+			_1up = true;
 
 			InitializeMap();
 
@@ -122,9 +134,12 @@ namespace pacman
 				{
 					eat = true;
 					Score += 50;
-					foreach (Ghost g in _ghosts)
+					if (_ghosts[0].Level < 19 && _ghosts[0].Level != 17)
 					{
-						g.Mode = GhostMode.FRIGHTENED;
+						foreach (Ghost g in _ghosts)
+						{
+							g.Mode = GhostMode.FRIGHTENED;
+						}
 					}
 				}
 
@@ -145,6 +160,12 @@ namespace pacman
 					else if (_nbGum <= _elroyDotsLeft[lvl])
 					{
 						_ghosts[0].ElroySpeed = 0.05f;
+					}
+
+					if (_score >= 10000 && _1up)
+					{
+						_1up = false;
+						++_life;
 					}
 				}
 			}
@@ -377,6 +398,8 @@ namespace pacman
 		public override void LoadContent(ContentManager content)
 		{
 			_texture = content.Load<Texture2D>("mapTexture");
+			_lifeTexture = content.Load<Texture2D>("actorsTexture");
+			_scoreFont = content.Load<SpriteFont>("ScoreFont");
 		}
 
 		public override void Update(int counter)
@@ -406,6 +429,35 @@ namespace pacman
 						spriteBatch.Draw(_texture, pos, clipping, Color.White);
 					}
 				}
+			}
+
+			// --- affichage du texte --- //
+			Vector2 textPos = MapToWin(new Vector2(9, -3));
+			//scorePos.Y -= _spriteSize.Y / 2;
+			spriteBatch.DrawString(_scoreFont, "HIGH SCORE", textPos, Color.White);
+
+			string text = _score.ToString();
+			textPos = MapToWin(new Vector2(7 - text.Length, -2));
+			spriteBatch.DrawString(_scoreFont, _score.ToString(), textPos, Color.White);
+
+			if (_1up && _drawCounter * 2 < _blinkInterval )
+			{
+				textPos = MapToWin(new Vector2(3, -3));
+				spriteBatch.DrawString(_scoreFont, "1UP", textPos, Color.White);
+			}
+
+			// --- affichage des vies --- //
+			Rectangle lifeClipping = new Rectangle(
+							2 * (int)_ghosts[0].TileSize.X,
+							11 * (int)_ghosts[0].TileSize.Y,
+							(int)_ghosts[0].TileSize.X,
+							(int)_ghosts[0].TileSize.Y);
+			Vector2 lifePos = MapToWin(new Vector2(2,30));
+			lifePos.Y += TileSize.Y / 2;
+			for(int i = 0; i < _life; ++i)
+			{
+				spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
+				lifePos.X += TileSize.X * 2;
 			}
 		}
 
@@ -448,6 +500,18 @@ namespace pacman
 			get
 			{
 				return _nbGum;
+			}
+		}
+
+		public int Life
+		{
+			get
+			{
+				return _life;
+			}
+			set
+			{
+				_life = value;
 			}
 		}
 	}
