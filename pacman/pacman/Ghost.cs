@@ -70,6 +70,8 @@ namespace pacman
 		protected float _elroySpeed; // uniquement pour blinky, mais dans l'etat actuel du code, il est plus simple de le mettre ici que de changé la structure... Dommage on pensera mieux la prochaine fois
 		private int _nbMovement;
 
+		private bool _drawable;
+
 		// --- methods --- //
 		/// <summary>
 		/// Constructor of Ghost class.
@@ -503,6 +505,7 @@ namespace pacman
             _canThink = true;
 			_modeChanged = false;
 			_isFrightened = false;
+			_drawable = true;
             _drawCounter = 0;
 			_blinkInterval = 16;
 			_mode = GhostMode.HOUSE;
@@ -781,6 +784,18 @@ namespace pacman
 			get
 			{
 				return _nbMovement;
+			}
+		}
+
+		public bool Drawable
+		{
+			get
+			{
+				return _drawable;
+			}
+			set
+			{
+				_drawable = value;
 			}
 		}
     }
