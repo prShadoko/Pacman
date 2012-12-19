@@ -29,7 +29,7 @@ namespace pacman
 
 			_offset = 3 * (int)TileSize.Y;
 
-			InitializeMap();
+			ResetMap();
 
 			_elroyDotsLeft = new int[] {
 				20, 30, 40, 40, 40, 50, 50, 50, 60, 60, 60, 80, 80, 80, 100, 100, 100, 100, 120
@@ -38,7 +38,7 @@ namespace pacman
 			//Console.WriteLine(_map[23,6]);
 		}
 
-		public void InitializeMap()
+		public void ResetMap()
 		{
 			_nbGum = 244;
 
@@ -92,7 +92,6 @@ namespace pacman
 
 		public bool isGum(Vector2 coordinates)
 		{
-			//Console.WriteLine(_map[23,11]);
 			try
 			{
 				return _map[(int)coordinates.Y, (int)coordinates.X] == 12 || _map[(int)coordinates.Y, (int)coordinates.X] == 13;
@@ -118,22 +117,14 @@ namespace pacman
 				}
 				else if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
 				{
-					//TODO: Set ghosts to fright mode <-- Move this to GameLoop
 					eat = true;
-					if (_ghosts[0].Level < 19 && _ghosts[0].Level != 17)
-					{
-						foreach (Ghost g in _ghosts)
-						{
-							g.Mode = GhostMode.FRIGHTENED;
-						}
-					}
+					res = Food.PACGUM;
 				}
 
 				if (eat)
 				{
 					--_nbGum;
 					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
-					res = Food.PACGUM;
 					int lvl = _ghosts[0].Level - 1;
 					if (lvl >= _elroyDotsLeft.Length)
 					{
@@ -169,7 +160,6 @@ namespace pacman
 		{
 			try
 			{
-				//Console.WriteLine(_map[(int)coordinates.Y, (int)coordinates.X] < -1);
 				return _map[(int)coordinates.Y, (int)coordinates.X] < -1;
 			}
 			catch (Exception e)

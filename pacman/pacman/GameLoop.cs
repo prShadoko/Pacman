@@ -11,7 +11,19 @@ using Microsoft.Xna.Framework.Media;
 
 namespace pacman
 {
-	public enum Food { NONE = 0, GUM = 1, PACGUM = 2, GHOST = 3, CHERRY = 4, STRAWBERRY = 5, PEACH = 6, APPLE = 7, POMEGRANATE = 8, GALAXIAN = 9, BELL = 10, KEY = 11 };
+	public enum Food {
+		NONE = 0,
+		GUM = 1,
+		PACGUM = 2,
+		CHERRY = 3,
+		STRAWBERRY = 4,
+		PEACH = 5,
+		APPLE = 6, 
+		POMEGRANATE = 7,
+		GALAXIAN = 8,
+		BELL = 9,
+		KEY = 10
+	};
 
 	/// <summary>
 	/// This is the main type for your game
@@ -31,6 +43,7 @@ namespace pacman
 		private int _outgoingCounter;
 		private /*const*/ int[] _foodValue = { 0, 10, 50, 200, 100, 300, 500, 700, 1000, 2000, 3000, 5000 };
 		private SpriteFont _scoreFont;
+		private int _eatenGhosts;
 
 
 		public GameLoop()
@@ -108,6 +121,8 @@ namespace pacman
 
 			_score = 0;
 
+			_eatenGhosts = 0;
+
 			base.Initialize();
 		}
 
@@ -172,15 +187,15 @@ namespace pacman
 			{
 				_pacman.Update(_counter);
 				UpdateScore();
-				//TODO
-				/*
-				if (_score >= 10000 && _1up)
+				if (_pacman.Eaten == Food.PACGUM)
 				{
-					_1up = false;
-					++_life;
+					if (_level <= 17 || _level == 19)
+					{
+						SetGhostsMode(GhostMode.FRIGHTENED);
+						_eatenGhosts = 0;
+					}
 				}
-				//*/
-				//ENDTODO
+				_pacman.Eaten = Food.NONE;
 			}
 
 			if (_outgoingCounter < _ghosts.Length - 1)
@@ -225,22 +240,14 @@ namespace pacman
 			{
 				if (mode == GhostMode.FRIGHTENED)
 				{
+					++_eatenGhosts;
 					_pause = 30;
 					_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
-					// Comptage des fantomes pour les points
-					int nbGhosts = 0;
-					foreach (Ghost g in _ghosts)
-					{
-						if (g.Mode != GhostMode.FRIGHTENED)
-						{
-							++nbGhosts;
-						}
-					}
-					_score += nbGhosts * 200;
+					_score += (int)Math.Pow(2, _eatenGhosts) * 100;
 				}
 				else if (mode != GhostMode.INCOMING)
 				{
-					_life -= 1;
+					--_life;
 					if (_life <= 0)
 					{
 						//TODO: Game Over
@@ -353,21 +360,26 @@ namespace pacman
 				g.Map = _map;
 			}*/
 			++_level;
-			_map.InitializeMap();
+			_map.ResetMap();
 			Initialize();
 		}
 
 		protected void UpdateScore()
 		{
-			if (_pacman.Eaten == Food.GHOST)
+			int prevScore = _score;
+			_score += _foodValue[(int)_pacman.Eaten];
+			if (prevScore / 10000 != _score / 10000)
 			{
-				// TODO: Add the multiplier
-				_score += _foodValue[(int)_pacman.Eaten];
+				++_life;
 			}
-			else
-				_score += _foodValue[(int)_pacman.Eaten];
-
-			_pacman.Eaten = Food.NONE;
+		}
+	
+		protected void SetGhostsMode(GhostMode mode)
+		{
+			foreach (Ghost g in _ghosts)
+			{
+				g.Mode = mode;
+			}
 		}
 	}
 }
