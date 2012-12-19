@@ -10,7 +10,6 @@ namespace pacman
 	public class Map : GameElement
 	{
 		private sbyte[,] _map;
-		private Texture2D _tiles;
 		private int _offset;
 
 		private Vector2 _targetIncomingMode;
@@ -85,7 +84,6 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("isWall");
 				Console.WriteLine(e.Message);
 				return false;
 			}
@@ -99,7 +97,6 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("isGum");
 				Console.WriteLine(e.Message);
 				return false;
 			}
@@ -144,7 +141,6 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("eatGum");
 				Console.WriteLine(e.Message);
 			}
 			return res;

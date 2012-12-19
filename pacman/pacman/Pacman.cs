@@ -13,6 +13,7 @@ namespace pacman
 	{
 		private Direction _nextDirection;
 		private bool _isEating;
+		private bool _isFrightening;
 		private Food _eaten;
 
 		public Pacman(Map map)
@@ -30,6 +31,31 @@ namespace pacman
 			_drawCounter = 0;
 			_blinkInterval = 8;
 			_isEating = false;
+			_isFrightening = false;
+			_speedByLevel = new float[4, 2] {
+                {0.80f, 0.90f},
+                {0.90f, 0.95f},
+                {1.00f, 1.00f},
+                {0.90f, 0.90f}
+            };
+
+			if(_level == 1)
+			{
+				_indexSpeedLevel = 0;
+			}
+			else if (_level < 5)
+			{
+				_indexSpeedLevel = 1;
+			}
+			else if (_level < 21)
+			{
+				_indexSpeedLevel = 2;
+			}
+			else
+			{
+				_indexSpeedLevel = 3;
+			}
+			_speed = _speedByLevel[_indexSpeedLevel, 0];
 		}
 
 		public override void Update(int counter)
@@ -204,12 +230,25 @@ namespace pacman
 		}
 
 		/// <summary>
-		/// Getter for the eaten stuff
+		/// Getter and setter for the eaten stuff
 		/// </summary>
 		public Food Eaten
 		{
 			get { return _eaten; }
 			set { _eaten = value; }
+		}
+
+		/// <summary>
+		/// Getter and setter for frightening mode
+		/// </summary>
+		public bool Frightening
+		{
+			get { return _isFrightening; }
+			set
+			{
+				_isFrightening = value;
+				_speed = _speedByLevel[_indexSpeedLevel, (_isFrightening ? 1 : 0)];
+			}
 		}
 	}
 }

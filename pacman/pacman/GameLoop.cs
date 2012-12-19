@@ -91,15 +91,16 @@ namespace pacman
 
 			_map.Initialize();
 
-			_pacman.Initialize();
 
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
 
+			_pacman.Level = _level;
 			_ghosts[0].Level = _level;
 			_ghosts[1].Level = _level;
 			_ghosts[2].Level = _level;
 			_ghosts[3].Level = _level;
 
+			_pacman.Initialize();
 			_ghosts[0].Initialize();
 			_ghosts[1].Initialize();
 			_ghosts[2].Initialize();
@@ -195,7 +196,11 @@ namespace pacman
 				{
 					if (_level <= 17 || _level == 19)
 					{
-						SetGhostsMode(GhostMode.FRIGHTENED);
+						foreach (Ghost g in _ghosts)
+						{
+							g.Mode = GhostMode.FRIGHTENED;
+						}
+						_pacman.Frightening = true;
 						_eatenGhosts = 0;
 					}
 				}
@@ -249,6 +254,10 @@ namespace pacman
 						_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
 						_ghostPoint = (int)Math.Pow(2, _eatenGhosts) * 100;
 						_score += _ghostPoint;
+						if (_eatenGhosts == 4)
+						{
+							_pacman.Frightening = false;
+						}
 						/*_ghosts[ghostIndex].Drawable = false;
 
 						// Comptage des fantomes pour les points
@@ -277,7 +286,6 @@ namespace pacman
 						}
 					}
 				}
-
 			}
 
 			if (_pause > 0)
@@ -438,14 +446,6 @@ namespace pacman
 			if (prevScore / 10000 != _score / 10000)
 			{
 				++_life;
-			}
-		}
-	
-		protected void SetGhostsMode(GhostMode mode)
-		{
-			foreach (Ghost g in _ghosts)
-			{
-				g.Mode = mode;
 			}
 		}
 	}

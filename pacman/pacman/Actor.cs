@@ -19,6 +19,9 @@ namespace pacman
 		protected float _speed;
 		protected Map _map;
 		protected int _thinkCounter; // Permet de savoir quand l'acteur est au milieu d'une case
+		protected int _level; // niveau en cours
+		protected int _indexSpeedLevel; // index relatif au niveau pour le tableau des vitesses
+		protected float[,] _speedByLevel;
 
 		public Actor(Map map)
 			: base(new Vector2(28, 28))
@@ -113,6 +116,15 @@ namespace pacman
 		public Map Map
 		{
 			set { _map = value; }
+		}
+
+		/// <summary>
+		/// Accessor of ghost level.
+		/// </summary>
+		public int Level
+		{
+			set { _level = value; }
+			get { return _level; }
 		}
 	}
 }
