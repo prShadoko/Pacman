@@ -131,11 +131,11 @@ namespace pacman
 					}
 					if (_nbGum <= _elroyDotsLeft[lvl] / 2)
 					{
-						_ghosts[0].ElroySpeed = 0.1f;
+						_ghosts[0].ElroySpeed = 10;
 					}
 					else if (_nbGum <= _elroyDotsLeft[lvl])
 					{
-						_ghosts[0].ElroySpeed = 0.05f;
+						_ghosts[0].ElroySpeed = 5;
 					}
 				}
 			}

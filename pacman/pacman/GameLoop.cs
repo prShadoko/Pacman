@@ -119,7 +119,7 @@ namespace pacman
 			_ghosts[2].Direction = Direction.UP;
 			_ghosts[3].Direction = Direction.UP;
 
-			_ghosts[0].ElroySpeed = 0f;
+			_ghosts[0].ElroySpeed = 0;
 
 			_counter = 0;
 
@@ -172,7 +172,7 @@ namespace pacman
 		{
 			KeyboardState keyboard = Keyboard.GetState();
 
-			/*
+			//*
 			Console.Clear();
 			Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 			Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
@@ -345,7 +345,6 @@ namespace pacman
 				else
 				{
 					_pacman.Draw(_spriteBatch);
-
 				}
 				foreach (Ghost g in _ghosts)
 				{

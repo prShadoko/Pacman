@@ -26,17 +26,17 @@ namespace pacman
 		{
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
-			_speed = 0.80f;
+			_speed = 80;
 			_thinkCounter = (int)_map.TileSize.X / 2;
 			_drawCounter = (int)_map.TileSize.X * 3 / 4;
 			_blinkInterval = 8;
 			_isEating = false;
 			_isFrightening = false;
-			_speedByLevel = new float[4, 2] {
-                {0.80f, 0.90f},
-                {0.90f, 0.95f},
-                {1.00f, 1.00f},
-                {0.90f, 0.90f}
+			_speedByLevel = new int[4, 2] {
+                {80, 90},
+                {90, 95},
+                {100, 100},
+                {90, 90}
             };
 
 			if(_level == 1)

@@ -16,12 +16,12 @@ namespace pacman
 		protected Vector2 _position;
 		protected Direction _direction;
 		protected Vector2 _textureOffset;   // Offset in the texture map for this actor
-		protected float _speed;
+		protected int _speed;
 		protected Map _map;
 		protected int _thinkCounter; // Permet de savoir quand l'acteur est au milieu d'une case
 		protected int _level; // niveau en cours
 		protected int _indexSpeedLevel; // index relatif au niveau pour le tableau des vitesses
-		protected float[,] _speedByLevel;
+		protected int[,] _speedByLevel;
 
 		public Actor(Map map)
 			: base(new Vector2(28, 28))
@@ -31,7 +31,7 @@ namespace pacman
 
 		public int MustMove(int counter)
 		{
-			if (_speed == 1.05f)
+			if (_speed == 105)
 			{
 				if (counter % 20 == 0)
 				{
@@ -42,17 +42,17 @@ namespace pacman
 					return 1;
 				}
 			}
-			else if (_speed == 1f ||
-				_speed == 0.95f && counter % 20 != 0 ||
-				_speed == 0.90f && counter % 10 != 0 ||
-				_speed == 0.85f && (counter % 6 != 0 || counter % 60 == 0) ||
-				_speed == 0.80f && counter % 5 != 0 ||
-				_speed == 0.75f && counter % 4 != 0 ||
-				_speed == 0.6f && counter % 2 != 0 && counter % 15 != 1 ||
-				_speed == 0.55f && counter % 2 != 0 && counter % 20 != 1 ||
-				_speed == 0.5f && counter % 2 != 0 ||
-				_speed == 0.45f && counter % 5 != 0 && counter % 5 != 2 && counter % 20 != 19 ||
-				_speed == 0.4f && counter % 5 != 0 && counter % 5 != 2
+			else if (_speed == 100 ||
+				_speed == 95 && counter % 20 != 0 ||
+				_speed == 90 && counter % 10 != 0 ||
+				_speed == 85 && (counter % 6 != 0 || counter % 60 == 0) ||
+				_speed == 80 && counter % 5 != 0 ||
+				_speed == 75 && counter % 4 != 0 ||
+				_speed == 60 && counter % 2 != 0 && counter % 15 != 1 ||
+				_speed == 55 && counter % 2 != 0 && counter % 20 != 1 ||
+				_speed == 50 && counter % 2 != 0 ||
+				_speed == 45 && counter % 5 != 0 && counter % 5 != 2 && counter % 20 != 19 ||
+				_speed == 40 && counter % 5 != 0 && counter % 5 != 2
 				)
 			{
 				return 1;
@@ -99,13 +99,13 @@ namespace pacman
 			set { _direction = value; }
 		}
 
-		public float Speed
+		public int Speed
 		{
 			get { return _speed; }
 			set { _speed = value; }
 		}
 
-		public float SpeedUnit
+		public int SpeedUnit
 		{
 			get { return _SPEEDUNIT; }
 		}
