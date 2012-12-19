@@ -89,7 +89,7 @@ namespace pacman
 
 			_pacman.Initialize();
 
-			_pacman.Position = _map.MapToWin(new Vector2(14, 23));
+			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
 
 			_ghosts[0].Level = _level;
 			_ghosts[1].Level = _level;

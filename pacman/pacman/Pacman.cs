@@ -26,7 +26,7 @@ namespace pacman
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
-			_thinkCounter = 0;
+			_thinkCounter = (int)_map.TileSize.X / 2;
 			_drawCounter = 0;
 			_blinkInterval = 8;
 			_isEating = false;
@@ -34,35 +34,33 @@ namespace pacman
 
 		public override void Update(int counter)
 		{
+			bool inTunnel = _map.isInTunnel(_map.WinToMap(_position));
+
 			KeyboardState keyboard = Keyboard.GetState();
-			// Si Pacman est dans le tunnel, on ne peut pas changer de direction (evite de sortir de la carte)
-			if (!_map.isInTunnel(_map.WinToMap(_position)))
+			// Si le joueur appuie sur la touche haut
+			if (keyboard.IsKeyDown(Keys.Up))
 			{
-				// Si le joueur appuie sur la touche haut
-				if (keyboard.IsKeyDown(Keys.Up))
+				// Si pacman va vers le bas
+				if (_direction == Direction.DOWN)
 				{
-					// Si pacman va vers le bas
-					if (_direction == Direction.DOWN)
-					{
-						// On change instantanement de direction 
-						_direction = Direction.UP;
-						// On preserve une valeur coherente pour les compteurs
-						_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-						_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
-					}
-					// On tournera vers le haut des que possible
-					_nextDirection = Direction.UP;
+					// On change instantanement de direction 
+					_direction = Direction.UP;
+					// On preserve une valeur coherente pour les compteurs
+					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
 				}
-				if (keyboard.IsKeyDown(Keys.Down))
+				// On tournera vers le haut des que possible
+				_nextDirection = Direction.UP;
+			}
+			if (keyboard.IsKeyDown(Keys.Down))
+			{
+				if (_direction == Direction.UP)
 				{
-					if (_direction == Direction.UP)
-					{
-						_direction = Direction.DOWN;
-						_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-						_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
-					}
-					_nextDirection = Direction.DOWN;
+					_direction = Direction.DOWN;
+					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
 				}
+				_nextDirection = Direction.DOWN;
 			}
 			if (keyboard.IsKeyDown(Keys.Left))
 			{
@@ -86,7 +84,7 @@ namespace pacman
 			}
 
 			// Si Pacman est sur une gomme
-			if (!_isEating && _thinkCounter == 0 && _map.isGum(_map.WinToMap(_position)))
+			if (!inTunnel && !_isEating && _thinkCounter == 0 && _map.isGum(_map.WinToMap(_position)))
 			{
 				_isEating = true;
 			}
@@ -115,7 +113,7 @@ namespace pacman
 
 					// On reflechit pour tourner dans la nouvelle direction
 					Think(_nextDirection, out nextCell, out nextPos);
-					if (_thinkCounter == 0 && !_map.isWall(nextCell))
+					if (!inTunnel && _thinkCounter == 0 && !_map.isWall(nextCell))
 					{
 						// On tourne
 						_direction = _nextDirection;
@@ -128,7 +126,7 @@ namespace pacman
 
 					// Si Pacman n'est pas dans le tunnel
 					bool nextIsWall = false;
-					if (!_map.isInTunnel(_map.WinToMap(_position)))
+					if (!inTunnel)
 					{
 						// On verifie si la case suivante est un mur
 						nextIsWall = _map.isWall(nextCell);

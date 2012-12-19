@@ -85,6 +85,7 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("isWall");
 				Console.WriteLine(e.Message);
 				return false;
 			}
@@ -98,6 +99,7 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("isGum");
 				Console.WriteLine(e.Message);
 				return false;
 			}
@@ -142,6 +144,7 @@ namespace pacman
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("eatGum");
 				Console.WriteLine(e.Message);
 			}
 			return res;
