@@ -149,6 +149,7 @@ namespace pacman
 		{
 			KeyboardState keyboard = Keyboard.GetState();
 
+			/*
 			Console.Clear();
 			Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 			Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
@@ -165,6 +166,7 @@ namespace pacman
 			Console.WriteLine("Speed Pinky\t: " + _ghosts[1].Speed);
 			Console.WriteLine("Speed Inky\t: " + _ghosts[2].Speed);
 			Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
+			//*/
 
 			if (_pause == 0)
 			{
@@ -197,7 +199,7 @@ namespace pacman
 			}
 			foreach (Ghost g in _ghosts)
 			{
-				if (_pause == 0 || g.Mode == GhostMode.INCOMING)
+				if (_pause == 0)
 				{
 					g.Update(_counter);
 					if (g.Mode == GhostMode.INCOMING)
@@ -223,7 +225,7 @@ namespace pacman
 			{
 				if (mode == GhostMode.FRIGHTENED)
 				{
-					_pause = 60;
+					_pause = 30;
 					_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
 					// Comptage des fantomes pour les points
 					int nbGhosts = 0;
