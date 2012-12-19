@@ -192,6 +192,7 @@ namespace pacman
 			//*/
 
 			int prevScore = _score;
+			_pacman.UpdateDirection();
 			if (_pause == 0 && _ready == 0)
 			{
 				_pacman.Update(_counter);

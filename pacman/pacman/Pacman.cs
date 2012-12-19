@@ -58,10 +58,8 @@ namespace pacman
 			_speed = _speedByLevel[_indexSpeedLevel, 0];
 		}
 
-		public override void Update(int counter)
+		public void UpdateDirection()
 		{
-			bool inTunnel = _map.isInTunnel(_map.WinToMap(_position));
-
 			KeyboardState keyboard = Keyboard.GetState();
 			// Si le joueur appuie sur la touche haut
 			if (keyboard.IsKeyDown(Keys.Up))
@@ -108,6 +106,11 @@ namespace pacman
 				}
 				_nextDirection = Direction.RIGHT;
 			}
+		}
+
+		public override void Update(int counter)
+		{
+			bool inTunnel = _map.isInTunnel(_map.WinToMap(_position));
 
 			// Si Pacman est sur une gomme
 			if (!inTunnel && !_isEating && _thinkCounter == 0 && _map.isGum(_map.WinToMap(_position)))
