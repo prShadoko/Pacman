@@ -13,16 +13,16 @@ namespace pacman
 {
 	public enum Food {
 		NONE = 0,
-		GUM = 1,
-		PACGUM = 2,
-		CHERRY = 3,
-		STRAWBERRY = 4,
-		PEACH = 5,
-		APPLE = 6, 
-		POMEGRANATE = 7,
-		GALAXIAN = 8,
-		BELL = 9,
-		KEY = 10
+		GUM = 10,
+		PACGUM = 50,
+		CHERRY = 100,
+		STRAWBERRY = 300,
+		PEACH = 500,
+		APPLE = 700,
+		POMEGRANATE = 1000,
+		GALAXIAN = 2000,
+		BELL = 3000,
+		KEY = 5000
 	};
 
 	/// <summary>
@@ -42,7 +42,6 @@ namespace pacman
 		private int _pause;
 		private int _counter;
 		private int _outgoingCounter;
-		private /*const*/ int[] _foodValue = { 0, 10, 50, 200, 100, 300, 500, 700, 1000, 2000, 3000, 5000 };
 		private int _eatenGhosts;
 		private SpriteFont _font;
 		private int _ghostPoint;
@@ -435,7 +434,7 @@ namespace pacman
 		protected void UpdateScore()
 		{
 			int prevScore = _score;
-			_score += _foodValue[(int)_pacman.Eaten];
+			_score += (int)_pacman.Eaten;
 			if (prevScore / 10000 != _score / 10000)
 			{
 				++_life;
