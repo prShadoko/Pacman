@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.IO;
 
 namespace pacman
 {
@@ -37,6 +38,7 @@ namespace pacman
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
 		private int _score;
+		private int _highScore;
 		private int _level;
 		private int _life;
 		private int _pause;
@@ -73,6 +75,7 @@ namespace pacman
 			_ghosts[3] = clyde;
 
 			_score = 0;
+			_highScore = HighScore;
 			_ghostPoint = 0;
 			_life = 3;
 			_level = 1;
@@ -169,7 +172,7 @@ namespace pacman
 		{
 			KeyboardState keyboard = Keyboard.GetState();
 
-			//*
+			/*
 			Console.Clear();
 			Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 			Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
@@ -358,7 +361,6 @@ namespace pacman
 				textPos.X += _map.TileSize.X / 2;
 				_spriteBatch.DrawString(_font, "ready!", textPos, Color.Yellow);
 			}
-			//_spriteBatch.DrawString(_font, "ready!", textPos, Color.Yellow);
 
 			
 			
@@ -366,14 +368,22 @@ namespace pacman
 			textPos = _map.MapToWin(new Vector2(9, -3));
 			textPos.Y -= _map.TileSize.Y / 2;
 			_spriteBatch.DrawString(_font, "HIGH  SCORE", textPos, Color.White);
-			
+
 			string text = _score.ToString();
-			textPos = _map.MapToWin(new Vector2(7 - text.Length, -2));
-			_spriteBatch.DrawString(_font, _score.ToString(), textPos, Color.White);
-			
-			if (/*_1up &&*/ _counter % 30 <= 15 )
+			textPos = _map.MapToWin(new Vector2(6 - text.Length, -2));
+			_spriteBatch.DrawString(_font, text, textPos, Color.White);
+
+			text = _highScore.ToString();
+			if (_score > _highScore)
 			{
-				textPos = _map.MapToWin(new Vector2(3, -3));
+				text = _score.ToString();
+			}
+			textPos = _map.MapToWin(new Vector2(16 - text.Length, -2));
+			_spriteBatch.DrawString(_font, text, textPos, Color.White);
+			
+			if (_counter % 30 <= 15 )
+			{
+				textPos = _map.MapToWin(new Vector2(2, -3));
 				textPos.Y -= _map.TileSize.Y / 2;
 				_spriteBatch.DrawString(_font, "1UP", textPos, Color.White);
 			}
@@ -422,6 +432,10 @@ namespace pacman
 
 		protected void gameOver()
 		{
+			if (_score > _highScore)
+			{
+				HighScore = _score;
+			}
 			Exit();
 		}
 
@@ -446,6 +460,36 @@ namespace pacman
 			if (prevScore / 10000 != _score / 10000)
 			{
 				++_life;
+			}
+		}
+
+		public int HighScore
+		{
+			get
+			{
+				int score = 0;
+
+				try
+				{
+					FileStream fs = new FileStream("highscore.pac", FileMode.Open, FileAccess.Read);
+					StreamReader sr = new StreamReader(fs);
+					score = int.Parse(sr.ReadLine());
+					sr.Close();
+					fs.Close();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Erreur dans le fichier highscore.pac : " + ex.Message);
+				}
+				return score;
+			}
+			set
+			{
+				FileStream fs = new FileStream("highscore.pac", FileMode.OpenOrCreate, FileAccess.Write);
+				StreamWriter sw = new StreamWriter(fs);
+				sw.WriteLine(_score);
+				sw.Close();
+				fs.Close();
 			}
 		}
 	}
