@@ -32,6 +32,7 @@ namespace pacman
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
+		private Texture2D _lifeTexture;
 		private Map _map;
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
@@ -72,6 +73,7 @@ namespace pacman
 			_ghosts[2] = inky;
 			_ghosts[3] = clyde;
 
+			_score = 0;
 			_ghostPoint = 0;
 			_life = 3;
 			_level = 1;
@@ -122,8 +124,6 @@ namespace pacman
 
 			_pause = 0;
 
-			_score = 0;
-
 			_eatenGhosts = 0;
 
 			base.Initialize();
@@ -135,6 +135,8 @@ namespace pacman
 		/// </summary>
 		protected override void LoadContent()
 		{
+			_lifeTexture = Content.Load<Texture2D>("actorsTexture");
+
 			// Create a new SpriteBatch, which can be used to draw textures.
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -352,36 +354,37 @@ namespace pacman
 			//_spriteBatch.DrawString(_font, "ready!", textPos, Color.Yellow);
 
 			
-			/*
+			
 			// --- affichage du texte --- //
-			//scorePos.Y -= _spriteSize.Y / 2;
-			Vector2 textPos = MapToWin(new Vector2(9, -3));
-			spriteBatch.DrawString(_scoreFont, "HIGH SCORE", textPos, Color.White);
-
+			textPos = _map.MapToWin(new Vector2(9, -3));
+			textPos.Y -= _map.TileSize.Y / 2;
+			_spriteBatch.DrawString(_font, "HIGH  SCORE", textPos, Color.White);
+			
 			string text = _score.ToString();
-			textPos = MapToWin(new Vector2(7 - text.Length, -2));
-			spriteBatch.DrawString(_scoreFont, _score.ToString(), textPos, Color.White);
-
-			if (_1up && _drawCounter * 2 < _blinkInterval )
+			textPos = _map.MapToWin(new Vector2(7 - text.Length, -2));
+			_spriteBatch.DrawString(_font, _score.ToString(), textPos, Color.White);
+			
+			if (/*_1up &&*/ _counter % 30 <= 15 )
 			{
-				textPos = MapToWin(new Vector2(3, -3));
-				spriteBatch.DrawString(_scoreFont, "1UP", textPos, Color.White);
+				textPos = _map.MapToWin(new Vector2(3, -3));
+				textPos.Y -= _map.TileSize.Y / 2;
+				_spriteBatch.DrawString(_font, "1UP", textPos, Color.White);
 			}
-
+			
 			// --- affichage des vies --- //
 			Rectangle lifeClipping = new Rectangle(
 							2 * (int)_ghosts[0].TileSize.X,
 							11 * (int)_ghosts[0].TileSize.Y,
 							(int)_ghosts[0].TileSize.X,
 							(int)_ghosts[0].TileSize.Y);
-			Vector2 lifePos = MapToWin(new Vector2(2,30));
-			lifePos.Y += TileSize.Y / 2;
+			Vector2 lifePos = _map.MapToWin(new Vector2(2, 30));
+			lifePos.Y += _map.TileSize.Y / 2;
 			for(int i = 0; i < _life; ++i)
 			{
-				spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
-				lifePos.X += TileSize.X * 2;
+				_spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
+				lifePos.X += _map.TileSize.X * 2;
 			}
-			*/
+			
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
