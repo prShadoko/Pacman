@@ -28,7 +28,7 @@ namespace pacman
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
 			_thinkCounter = (int)_map.TileSize.X / 2;
-			_drawCounter = 0;
+			_drawCounter = (int)_map.TileSize.X * 3 / 4;
 			_blinkInterval = 8;
 			_isEating = false;
 			_isFrightening = false;

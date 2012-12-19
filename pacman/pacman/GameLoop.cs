@@ -191,10 +191,12 @@ namespace pacman
 			Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 			//*/
 
+			int prevScore = _score;
 			if (_pause == 0 && _ready == 0)
 			{
 				_pacman.Update(_counter);
-				UpdateScore();
+
+				_score += (int)_pacman.Eaten;
 				if (_pacman.Eaten == Food.PACGUM)
 				{
 					if (_level <= 17 || _level == 19)
@@ -309,6 +311,10 @@ namespace pacman
 			++_counter;
 			if (_counter % 60 == 0) _counter = 0;
 
+			if (prevScore / 10000 != _score / 10000)
+			{
+				++_life;
+			}
 			base.Update(gameTime);
 		}
 
@@ -451,16 +457,6 @@ namespace pacman
 			++_level;
 			_map.ResetMap();
 			Initialize();
-		}
-
-		protected void UpdateScore()
-		{
-			int prevScore = _score;
-			_score += (int)_pacman.Eaten;
-			if (prevScore / 10000 != _score / 10000)
-			{
-				++_life;
-			}
 		}
 
 		public int HighScore
