@@ -229,7 +229,7 @@ namespace pacman
 				(int)_spriteSize.X,
 				(int)_spriteSize.Y);
 
-			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+			spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
 		}
 
 		/// <summary>

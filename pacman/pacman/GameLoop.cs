@@ -178,7 +178,7 @@ namespace pacman
 		protected override void Update(GameTime gameTime)
 		{
 			KeyboardState keyboard = Keyboard.GetState();
-
+            //Console.WriteLine(_homeScreen.TextureIndex);
             if (_isOnHomeScreen)
             {
                 if (keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space))
@@ -188,6 +188,16 @@ namespace pacman
                 else if (keyboard.IsKeyDown(Keys.Escape))
                 {
                     this.Exit();
+                }
+                else if (keyboard.IsKeyDown(Keys.S) && _counter % 4 == 0)
+                {
+                    //TODO: Change index
+                    _homeScreen.TextureIndex += 1;
+                    _pacman.TextureIndex += 1;
+                    foreach (Ghost g in _ghosts)
+                    {
+                        g.TextureIndex++;
+                    }
                 }
 
                 _homeScreen.Update(_counter);

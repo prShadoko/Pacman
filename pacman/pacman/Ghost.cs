@@ -728,7 +728,7 @@ namespace pacman
 
 			Vector2 pos = _position - _spriteSize / 2;
 
-			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+			spriteBatch.Draw(Texture, pos, clipping, Color.White);
 		}
 
 		/// <summary>
