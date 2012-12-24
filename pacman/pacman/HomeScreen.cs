@@ -7,7 +7,7 @@ namespace pacman
     class HomeScreen : GameElement
     {
         // --- attributes --- //
-        private Texture2D _actorsTexture;
+        //private Texture2D _actorsTexture;
         private Texture2D _mapTexture;
         private SpriteFont _font;
 
@@ -29,7 +29,9 @@ namespace pacman
 
         public override void LoadContent(ContentManager content)
         {
-            _actorsTexture = content.Load<Texture2D>("actorsTexture");
+            _texture = new Texture2D[2];
+            _texture[0] = content.Load<Texture2D>("actorsTexture");
+            _texture[1] = content.Load<Texture2D>("actorsTextureModern");
             _mapTexture = content.Load<Texture2D>("mapTexture");
             _font = content.Load<SpriteFont>("ArcadeClassic");
         }
@@ -85,7 +87,7 @@ namespace pacman
                         28
                         );
 
-                spriteBatch.Draw(_actorsTexture, pos, clipping, Color.White);
+                spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
 
                 if (_drawCounter > 1)
                 {
@@ -110,7 +112,7 @@ namespace pacman
                         28,
                         28
                         );
-                spriteBatch.Draw(_actorsTexture, pos, clipping, Color.White);
+                spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
                 if (_drawCounter > 4)
                 {
                     spriteBatch.DrawString(_font, text, textPos, Color.Pink);
@@ -134,7 +136,7 @@ namespace pacman
                         28,
                         28
                         );
-                spriteBatch.Draw(_actorsTexture, pos, clipping, Color.White);
+                spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
                 if (_drawCounter > 7)
                 {
                     spriteBatch.DrawString(_font, text, textPos, Color.Cyan);
@@ -158,7 +160,7 @@ namespace pacman
                         28,
                         28
                         );
-                spriteBatch.Draw(_actorsTexture, pos, clipping, Color.White);
+                spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
                 if (_drawCounter > 10)
                 {
                     spriteBatch.DrawString(_font, text, textPos, Color.Orange);

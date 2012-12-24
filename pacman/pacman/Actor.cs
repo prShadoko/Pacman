@@ -84,7 +84,10 @@ namespace pacman
 
 		public override void LoadContent(ContentManager content)
 		{
-			_texture = content.Load<Texture2D>("actorsTexture");
+           // _textureIndex = 0;
+            _texture = new Texture2D[2];
+            _texture[0] = content.Load<Texture2D>("actorsTexture");
+            _texture[1] = content.Load<Texture2D>("actorsTextureModern");
 		}
 
 		public Vector2 Position
@@ -126,5 +129,6 @@ namespace pacman
 			set { _level = value; }
 			get { return _level; }
 		}
+
 	}
 }

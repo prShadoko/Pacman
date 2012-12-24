@@ -9,8 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace pacman
 {
 	public abstract class GameElement
-	{
-		protected Texture2D _texture;
+    {
+        protected Texture2D[] _texture;
+        protected int _textureIndex;
 		protected Vector2 _spriteSize;
 		protected int _drawCounter;
 		protected int _blinkInterval;
@@ -18,7 +19,7 @@ namespace pacman
 		public GameElement(Vector2 spriteSize)
 		{
 			this._spriteSize = spriteSize;
-
+            _textureIndex = 0;
 			//Initialize();
 		}
 
@@ -30,8 +31,8 @@ namespace pacman
 
 		public Texture2D Texture
 		{
-			get { return _texture; }
-			set { _texture = value; }
+			get { return _texture[_textureIndex]; }
+            //set { _texture[_textureIndex] = value; }
 		}
 
 		public Vector2 TileSize
@@ -39,5 +40,25 @@ namespace pacman
 			get { return _spriteSize; }
 			set { _spriteSize = value; }
 		}
+
+        public int TextureIndex
+        {
+            get
+            {
+                return _textureIndex;
+            }
+            set
+            {
+                if (value >= _texture.Length)
+                {
+                    //Console.WriteLine("\t"+_texture.Length);
+                    _textureIndex = 0;
+                }
+                else
+                {
+                    _textureIndex = value;
+                }
+            }
+        }
 	}
 }
