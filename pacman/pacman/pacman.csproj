@@ -114,6 +114,7 @@
     <Compile Include="Blinky.cs" />
     <Compile Include="Clyde.cs" />
     <Compile Include="GameLoop.cs" />
+    <Compile Include="HomeScreen.cs" />
     <Compile Include="Inky.cs" />
     <Compile Include="Pinky.cs" />
     <Compile Include="Ghost.cs" />

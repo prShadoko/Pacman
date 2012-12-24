@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 
 namespace pacman
 {
@@ -12,8 +13,8 @@ namespace pacman
 		{
 			using (GameLoop game = new GameLoop())
 			{
-				game.Run();
-			}
+                game.Run();
+            }
 		}
 	}
 #endif
