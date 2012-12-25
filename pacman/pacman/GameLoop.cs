@@ -52,6 +52,13 @@ namespace pacman
         private bool _isOnHomeScreen;
         private HomeScreen _homeScreen;
 
+        private SoundEffectInstance _soundOpening;
+        private SoundEffectInstance _soundEatingGhost;
+        private SoundEffectInstance _soundSiren;
+        private SoundEffectInstance _soundExtraLife;
+        private SoundEffectInstance _soundWakaWaka;
+        private SoundEffectInstance _soundDies;
+
 		public GameLoop()
 		{
 			Content.RootDirectory = "Content";
@@ -77,8 +84,8 @@ namespace pacman
 			_ghosts[3] = clyde;
 
 			_score = 0;
-			_highScore = HighScore;
-			_ghostPoint = 0;
+            _ghostPoint = 0;
+            //_highScore = HighScore;
 			_life = 3;
 			_level = 1;
 			_ready = 60 * 4;
@@ -99,9 +106,12 @@ namespace pacman
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _homeScreen.Initialize();
+            _highScore = HighScore;
 
-			_map.Initialize();
+            _homeScreen.Initialize();
+            _homeScreen.HighScore = _highScore;
+
+            _map.Initialize();
 
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
 
@@ -137,6 +147,7 @@ namespace pacman
 
 			_eatenGhosts = 0;
 
+
 			base.Initialize();
 		}
 
@@ -158,7 +169,24 @@ namespace pacman
 				g.LoadContent(Content);
 			}
 			_font = Content.Load<SpriteFont>("ArcadeClassic");
-			//_lifeTexture = content.Load<Texture2D>("actorsTexture");
+
+            SoundEffect sound = Content.Load<SoundEffect>("Opening");
+            _soundOpening = sound.CreateInstance();
+
+            sound = Content.Load<SoundEffect>("Eating_Ghost");
+            _soundEatingGhost = sound.CreateInstance();
+
+            sound = Content.Load<SoundEffect>("Siren");
+            _soundSiren = sound.CreateInstance();
+
+            sound = Content.Load<SoundEffect>("Extra_Live");
+            _soundExtraLife = sound.CreateInstance();
+
+            sound = Content.Load<SoundEffect>("Waka_Waka");
+            _soundWakaWaka = sound.CreateInstance();
+
+            sound = Content.Load<SoundEffect>("Dies");
+            _soundDies = sound.CreateInstance();
 		}
 
         /// <summary>
@@ -184,6 +212,7 @@ namespace pacman
                 if (keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space))
                 {
                     _isOnHomeScreen = false;
+                    _soundOpening.Play();
                 }
                 else if (keyboard.IsKeyDown(Keys.Escape))
                 {
@@ -230,6 +259,15 @@ namespace pacman
 				    _pacman.Update(_counter);
 
 				    _score += (int)_pacman.Eaten;
+                    if (_pacman.Eaten == Food.GUM)
+                    {
+                        _soundWakaWaka.Play();
+                        _soundSiren.Pause();
+                    }
+                    else if (_soundWakaWaka.State == SoundState.Paused || _soundWakaWaka.State == SoundState.Stopped) 
+                    {
+                        _soundSiren.Play();
+                    }
 				    if (_pacman.Eaten == Food.PACGUM)
 				    {
 					    if (_level <= 17 || _level == 19)
@@ -286,6 +324,7 @@ namespace pacman
 				    {
 					    if (mode == GhostMode.FRIGHTENED)
 					    {
+                            _soundEatingGhost.Play();
 						    ++_eatenGhosts;
 						    _pause = 30;
 						    _ghosts[ghostIndex].Drawable = false;
@@ -313,6 +352,7 @@ namespace pacman
 					    else if (mode != GhostMode.INCOMING)
 					    {
 						    --_life;
+                            _soundDies.Play();
 						    if (_life <= 0)
 						    {
 							    gameOver();
@@ -342,9 +382,10 @@ namespace pacman
 				    --_ready;
 			    }
 
-			    if (prevScore / 10000 != _score / 10000)
+			    if (prevScore / 10000 != _score / 10000 && _life < 5)
 			    {
 				    ++_life;
+                    _soundExtraLife.Play();
 			    }
 
             }
@@ -493,7 +534,7 @@ namespace pacman
             _life = 3;
             _level = 1;
             _homeScreen.HighScore = _highScore;
-
+            _ready = 60 * 4;
 
 			//Exit();
 		}
