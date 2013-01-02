@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pacman", "pacman\pacman\pacman.csproj", "{9B76E799-BBB9-4A3B-B0ED-F1C431A01EA0}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "pacmanContent", "pacman\pacmanContent\pacmanContent.contentproj", "{AB00C36C-CD2B-40F6-AA06-D6E3D2A26086}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pacmanContent", "pacman\pacmanContent\pacmanContent.contentproj", "{AB00C36C-CD2B-40F6-AA06-D6E3D2A26086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

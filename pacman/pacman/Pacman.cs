@@ -15,6 +15,7 @@ namespace pacman
 		private bool _isEating;
 		private bool _isFrightening;
 		private Food _eaten;
+		private Texture2D _deathTexture;
 
 		public Pacman(Map map)
 			: base(map)
@@ -27,9 +28,9 @@ namespace pacman
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 0.80f;
-			_thinkCounter = (int)_map.TileSize.X / 2;
-			_drawCounter = (int)_map.TileSize.X * 3 / 4;
 			_blinkInterval = 8;
+			_thinkCounter = (int)_map.TileSize.X / 2;
+			_drawCounter = 2;
 			_isEating = false;
 			_isFrightening = false;
 			_speedByLevel = new float[4, 2] {
@@ -58,6 +59,12 @@ namespace pacman
 			_speed = _speedByLevel[_indexSpeedLevel, 0];
 		}
 
+		public override void LoadContent(ContentManager content)
+		{
+			base.LoadContent(content);
+			//_deathTexture = content.Load<Texture2D>("pacmanDeathTexture");
+		}
+
 		public void UpdateDirection()
 		{
 			KeyboardState keyboard = Keyboard.GetState();
@@ -71,7 +78,7 @@ namespace pacman
 					_direction = Direction.UP;
 					// On preserve une valeur coherente pour les compteurs
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % _blinkInterval;
 				}
 				// On tournera vers le haut des que possible
 				_nextDirection = Direction.UP;
@@ -82,7 +89,7 @@ namespace pacman
 				{
 					_direction = Direction.DOWN;
 					_thinkCounter = ((int)_map.TileSize.Y - _thinkCounter) % (int)_map.TileSize.Y;
-					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.Y;
+					_drawCounter = (_blinkInterval - _drawCounter) % _blinkInterval;
 				}
 				_nextDirection = Direction.DOWN;
 			}
@@ -92,7 +99,7 @@ namespace pacman
 				{
 					_direction = Direction.LEFT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
-					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.X;
+					_drawCounter = (_blinkInterval - _drawCounter) % _blinkInterval;
 				}
 				_nextDirection = Direction.LEFT;
 			}
@@ -102,7 +109,7 @@ namespace pacman
 				{
 					_direction = Direction.RIGHT;
 					_thinkCounter = ((int)_map.TileSize.X - _thinkCounter) % (int)_map.TileSize.X;
-					_drawCounter = (_blinkInterval - _drawCounter) % (int)_map.TileSize.X;
+					_drawCounter = (_blinkInterval - _drawCounter) % _blinkInterval;
 				}
 				_nextDirection = Direction.RIGHT;
 			}
@@ -221,6 +228,34 @@ namespace pacman
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;
+			int stateOffset = (4 * _drawCounter) / _blinkInterval;
+
+			Rectangle clipping = new Rectangle(
+				((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
+				((int)_textureOffset.Y + (stateOffset % 2 == 1 ? 1 : stateOffset)) * (int)_spriteSize.Y,
+				(int)_spriteSize.X,
+				(int)_spriteSize.Y);
+
+			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+		}
+
+		public void DrawInit(SpriteBatch spriteBatch)
+		{
+			Vector2 pos = _position - _spriteSize / 2;
+
+			Rectangle clipping = new Rectangle(
+				((int)_textureOffset.X) * (int)_spriteSize.X,
+				((int)_textureOffset.Y) * (int)_spriteSize.Y,
+				(int)_spriteSize.X,
+				(int)_spriteSize.Y);
+
+			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+		}
+
+		public void DrawDeath(SpriteBatch spriteBatch)
+		{
+			/*
+			Vector2 pos = _position - _spriteSize / 2;
 			int stateOffset = 4 * _drawCounter / _blinkInterval;
 
 			Rectangle clipping = new Rectangle(
@@ -230,6 +265,7 @@ namespace pacman
 				(int)_spriteSize.Y);
 
 			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+			//*/
 		}
 
 		/// <summary>

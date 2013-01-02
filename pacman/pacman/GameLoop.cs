@@ -12,7 +12,8 @@ using System.IO;
 
 namespace pacman
 {
-	public enum Food {
+	public enum Food
+	{
 		NONE = 0,
 		GUM = 10,
 		PACGUM = 50,
@@ -48,6 +49,7 @@ namespace pacman
 		private SpriteFont _font;
 		private int _ghostPoint;
 		private int _ready;
+		private bool _dead;
 
 
 		public GameLoop()
@@ -91,10 +93,7 @@ namespace pacman
 		/// </summary>
 		protected override void Initialize()
 		{
-
 			_map.Initialize();
-
-
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
 
 			_pacman.Level = _level;
@@ -128,6 +127,8 @@ namespace pacman
 			_pause = 0;
 
 			_eatenGhosts = 0;
+
+			_dead = false;
 
 			base.Initialize();
 		}
@@ -195,41 +196,60 @@ namespace pacman
 			_pacman.UpdateDirection();
 			if (_pause == 0 && _ready == 0)
 			{
-				_pacman.Update(_counter);
-
-				_score += (int)_pacman.Eaten;
-				if (_pacman.Eaten == Food.PACGUM)
+				if (_dead)
 				{
-					if (_level <= 17 || _level == 19)
+					_dead = false;
+					if (_life <= 0)
 					{
-						foreach (Ghost g in _ghosts)
+						gameOver();
+					}
+					else
+					{
+						Initialize();
+						_ready = 60 * 2;
+					}
+				}
+				else
+				{
+
+					_pacman.Update(_counter);
+
+					_score += (int)_pacman.Eaten;
+					if (_pacman.Eaten == Food.PACGUM)
+					{
+						if (_level <= 17 || _level == 19)
 						{
-							g.Mode = GhostMode.FRIGHTENED;
+							foreach (Ghost g in _ghosts)
+							{
+								if (g.Mode != GhostMode.INCOMING)
+								{
+									g.Mode = GhostMode.FRIGHTENED;
+								}
+							}
+							_pacman.Frightening = true;
+							_eatenGhosts = 0;
 						}
-						_pacman.Frightening = true;
-						_eatenGhosts = 0;
 					}
-				}
-				_pacman.Eaten = Food.NONE;
+					_pacman.Eaten = Food.NONE;
 
-				if (_outgoingCounter < _ghosts.Length - 1)
-				{
-					if( _ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING && (// Attention, ceci est du code très sale !!
-						_outgoingCounter == 0 ||												// pour que Blinky et Pinky ne reste pas bloqué
-						_level == 1 && _outgoingCounter == 1 && _map.NbGum <= (244 - 30) ||		// Fait sortir Inky après 30 dots au niveau 1
-						_level == 1 && _outgoingCounter == 2 && _map.NbGum <= 244 - 30 - 60 ||	// Fait sortir Clyde après Inky après 60 dots au niveau 1
-						_level == 2 && _outgoingCounter == 1 ||									// Fait sortir Inky après 0 dots au niveau 2
-						_level == 2 && _outgoingCounter == 2 && _map.NbGum <= 244 - 50 ||		// Fait sortir Clyde après 50 dots au niveau 2
-						_level > 2))															// fait sortir tout le monde au dela du niveau 2
+					if (_outgoingCounter < _ghosts.Length - 1)
 					{
-						++_outgoingCounter;
-						_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
+						if (_ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING && (// Attention, ceci est du code très sale !!
+							_outgoingCounter == 0 ||												// pour que Blinky et Pinky ne reste pas bloqué
+							_level == 1 && _outgoingCounter == 1 && _map.NbGum <= (244 - 30) ||		// Fait sortir Inky après 30 dots au niveau 1
+							_level == 1 && _outgoingCounter == 2 && _map.NbGum <= 244 - 30 - 60 ||	// Fait sortir Clyde après Inky après 60 dots au niveau 1
+							_level == 2 && _outgoingCounter == 1 ||									// Fait sortir Inky après 0 dots au niveau 2
+							_level == 2 && _outgoingCounter == 2 && _map.NbGum <= 244 - 50 ||		// Fait sortir Clyde après 50 dots au niveau 2
+							_level > 2))															// fait sortir tout le monde au dela du niveau 2
+						{
+							++_outgoingCounter;
+							_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
+						}
 					}
-				}
-				foreach (Ghost g in _ghosts)
-				{
-					//if (_pause == 0)
-					//{
+					foreach (Ghost g in _ghosts)
+					{
+						//if (_pause == 0)
+						//{
 						g.Update(_counter);
 						if (g.Mode == GhostMode.INCOMING)
 						{
@@ -239,56 +259,37 @@ namespace pacman
 						{
 							g.Update(_counter);
 						}
-					//}
-				}
+						//}
+					}
 
 
-				if (_map.isEmpty())
-				{
-					win();
-				}
-
-				int ghostIndex;
-				GhostMode mode;
-				if (clash(out ghostIndex, out mode))
-				{
-					if (mode == GhostMode.FRIGHTENED)
+					if (_map.isEmpty())
 					{
-						++_eatenGhosts;
-						_pause = 30;
-						_ghosts[ghostIndex].Drawable = false;
-						_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
-						_ghostPoint = (int)Math.Pow(2, _eatenGhosts) * 100;
-						_score += _ghostPoint;
-						if (_eatenGhosts == 4)
-						{
-							_pacman.Frightening = false;
-						}
-						/*_ghosts[ghostIndex].Drawable = false;
+						win();
+					}
 
-						// Comptage des fantomes pour les points
-						int nbGhosts = 0;
-						foreach (Ghost g in _ghosts)
+					int ghostIndex;
+					GhostMode mode;
+					if (clash(out ghostIndex, out mode))
+					{
+						if (mode == GhostMode.FRIGHTENED)
 						{
-							if (g.Mode != GhostMode.FRIGHTENED)
+							++_eatenGhosts;
+							_pause = 30;
+							_ghosts[ghostIndex].Drawable = false;
+							_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
+							_ghostPoint = (int)Math.Pow(2, _eatenGhosts) * 100;
+							_score += _ghostPoint;
+							if (_eatenGhosts == 4)
 							{
-								++nbGhosts;
+								_pacman.Frightening = false;
 							}
 						}
-						_ghostPoint = nbGhosts * 200;
-						_score += nbGhosts * 200;*/
-					}
-					else if (mode != GhostMode.INCOMING)
-					{
-						--_life;
-						if (_life <= 0)
+						else if (mode != GhostMode.INCOMING)
 						{
-							gameOver();
-						}
-						else
-						{
-							Initialize();
-							_ready = 60 * 2;
+							--_life;
+							_pause = 120;
+							_dead = true;
 						}
 					}
 				}
@@ -297,25 +298,31 @@ namespace pacman
 			if (_pause > 0)
 			{
 				--_pause;
-			}
-			if (_pause == 1)
-			{
-				foreach (Ghost g in _ghosts)
+
+				if (_pause == 1)
 				{
-					g.Drawable = true;
+					foreach (Ghost g in _ghosts)
+					{
+						g.Drawable = true;
+					}
 				}
 			}
+
 			if (_ready > 0)
 			{
 				--_ready;
 			}
-			++_counter;
-			if (_counter % 60 == 0) _counter = 0;
+
+			if (++_counter % 60 == 0)
+			{
+				_counter = 0;
+			}
 
 			if (prevScore / 10000 != _score / 10000)
 			{
 				++_life;
 			}
+
 			base.Update(gameTime);
 		}
 
@@ -331,22 +338,24 @@ namespace pacman
 			_spriteBatch.Begin();
 
 			_map.Draw(_spriteBatch);
-			if (_ready < 60*2)
+			if (_ready < 60 * 2)
 			{
-				if (_pause != 0)
+				if (_pause != 0 && !_dead)
 				{
 					// --- Affichage du score quand on mange un fantome --- //
 					textPos = _pacman.Position;
 					textPos.X -= _map.TileSize.X;
 					textPos.Y -= _map.TileSize.Y / 2;
-					//_spriteBatch.DrawString(_scoreFont, _ghostPoint.ToString(), textPos, Color.Cyan);
 					_spriteBatch.DrawString(_font, _ghostPoint.ToString(), textPos, Color.Cyan, 0f, new Vector2(0, 0), 0.6f, new SpriteEffects(), 1f);
 				}
 				else
 				{
-					_pacman.Draw(_spriteBatch);
-
+					if (_ready > 0)
+						_pacman.DrawInit(_spriteBatch);
+					else
+						_pacman.Draw(_spriteBatch);
 				}
+
 				foreach (Ghost g in _ghosts)
 				{
 					if (g.Drawable)
@@ -355,22 +364,22 @@ namespace pacman
 					}
 				}
 			}
-			if (_ready >= 60*2)
+			else
 			{
 				textPos = _map.MapToWin(new Vector2(8, 10));
 				textPos.X += _map.TileSize.X / 2;
 				textPos.X += 3;
 				_spriteBatch.DrawString(_font, "player one", textPos, Color.Cyan);
 			}
+
 			if (_ready != 0)
 			{
-				textPos = _map.MapToWin(new Vector2(10,16));
+				textPos = _map.MapToWin(new Vector2(10, 16));
 				textPos.X += _map.TileSize.X / 2;
 				_spriteBatch.DrawString(_font, "ready!", textPos, Color.Yellow);
 			}
 
-			
-			
+
 			// --- affichage du texte --- //
 			textPos = _map.MapToWin(new Vector2(9, -3));
 			textPos.Y -= _map.TileSize.Y / 2;
@@ -387,14 +396,14 @@ namespace pacman
 			}
 			textPos = _map.MapToWin(new Vector2(16 - text.Length, -2));
 			_spriteBatch.DrawString(_font, text, textPos, Color.White);
-			
-			if (_counter % 30 <= 15 )
+
+			if (_counter % 30 <= 15)
 			{
 				textPos = _map.MapToWin(new Vector2(2, -3));
 				textPos.Y -= _map.TileSize.Y / 2;
 				_spriteBatch.DrawString(_font, "1UP", textPos, Color.White);
 			}
-			
+
 			// --- affichage des vies --- //
 			Rectangle lifeClipping = new Rectangle(
 							2 * (int)_ghosts[0].TileSize.X,
@@ -403,12 +412,12 @@ namespace pacman
 							(int)_ghosts[0].TileSize.Y);
 			Vector2 lifePos = _map.MapToWin(new Vector2(2, 30));
 			lifePos.Y += _map.TileSize.Y / 2;
-			for(int i = 0; i < _life; ++i)
+			for (int i = 0; i < _life; ++i)
 			{
 				_spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
 				lifePos.X += _map.TileSize.X * 2;
 			}
-			
+
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
@@ -426,7 +435,7 @@ namespace pacman
 
 			for (int i = 0; i < _ghosts.Length; ++i)
 			{
-				if (_map.WinToMap(_pacman.Position) == _map.WinToMap(_ghosts[i].Position))
+				if (_map.WinToMap(_pacman.Position) == _map.WinToMap(_ghosts[i].Position) && _ghosts[i].Mode != GhostMode.INCOMING)
 				{
 					isClashed = true;
 					ghostIndex = i;
