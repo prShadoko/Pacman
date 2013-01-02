@@ -28,10 +28,6 @@ namespace pacman
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 80;
-			/*
-			_thinkCounter = (int)_map.TileSize.X / 2;
-			_drawCounter = (int)_map.TileSize.X * 3 / 4;
-			//*/
 			_blinkInterval = 8;
 			_thinkCounter = (int)_map.TileSize.X / 2;
 			_drawCounter = 2;

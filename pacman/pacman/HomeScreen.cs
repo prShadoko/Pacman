@@ -7,7 +7,6 @@ namespace pacman
     class HomeScreen : GameElement
     {
         // --- attributes --- //
-        //private Texture2D _actorsTexture;
         private Texture2D _mapTexture;
         private SpriteFont _font;
 
@@ -55,17 +54,17 @@ namespace pacman
 
             spriteBatch.DrawString(_font, "1UP", textPos, Color.White);
 
-            textPos.X = 448 / 2 - (_score.ToString().Length + 2) * characSize;
+            textPos.X = _spriteSize.X / 2 - (_score.ToString().Length + 2) * characSize;
             spriteBatch.DrawString(_font, _score.ToString(), textPos, Color.White);
 
-            textPos.X = 448 / 2;
+            textPos.X = _spriteSize.X / 2;
             spriteBatch.DrawString(_font, "HIGH", textPos, Color.White);
 
-            textPos.X = 448 - _highScore.ToString().Length * characSize;
+            textPos.X = _spriteSize.X - _highScore.ToString().Length * characSize;
             spriteBatch.DrawString(_font, _highScore.ToString(), textPos, Color.White);
 
             text = "CHARACTER  /  NICKNAME";
-            textPos.X = 448 * 2 / 3 - text.Length * characSize / 2;
+            textPos.X = _spriteSize.X * 2 / 3 - text.Length * characSize / 2;
             textPos.Y = characSize * 4;
             spriteBatch.DrawString(_font, text, textPos, Color.White);
 
@@ -200,7 +199,7 @@ namespace pacman
 
             if (_drawCounter > 14 && _drawCounter % 2 == 1)
             {
-                text = "Press enter";
+                text = "Press  enter";
                 textPos.X = characSize * 8;
                 textPos.Y = characSize * 26;
                 spriteBatch.DrawString(_font, text, textPos, Color.White);
