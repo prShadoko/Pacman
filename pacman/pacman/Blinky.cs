@@ -17,7 +17,7 @@ namespace pacman
 			: base(map, pacman)
 		{
 
-			_elroySpeed = 0f;
+			_elroySpeed = 0;
 		}
 
 		public override void Initialize()

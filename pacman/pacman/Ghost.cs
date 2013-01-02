@@ -65,7 +65,7 @@ namespace pacman
 		private int _flashesCounter;
 		private int _flashOffset;
 
-		protected float _elroySpeed; // uniquement pour blinky, mais dans l'etat actuel du code, il est plus simple de le mettre ici que de changer la structure... Dommage on pensera mieux la prochaine fois
+		protected int _elroySpeed; // uniquement pour blinky, mais dans l'etat actuel du code, il est plus simple de le mettre ici que de changer la structure... Dommage on pensera mieux la prochaine fois
 		private int _nbMovement;
 
 		private bool _drawable;
@@ -429,7 +429,7 @@ namespace pacman
 				}
 				else if (_mode == GhostMode.INCOMING)
 				{
-					Speed = 1f;
+					Speed = 100;
 					_isFrightened = false;
 					targeting();
 				}
@@ -472,7 +472,7 @@ namespace pacman
 		public override void Initialize()
 		{
 			_nbMovement = 0;
-			_speed = 1f;
+			_speed = 100;
 			_thinkCounter = 0;
 			_canThink = true;
 			_modeChanged = false;
@@ -516,14 +516,14 @@ namespace pacman
 				++_indexSpeedLevel;
 			}
 
-			_speedByLevel = new float[4, 3] {
-                {0.75f, 0.50f, 0.40f},
-                {0.85f, 0.55f, 0.45f},
-                {0.95f, 0.60f, 0.50f},
-                {0.95f, 0.95f, 0.50f}
+			_speedByLevel = new int[4, 3] {
+                {75, 50, 40},
+                {85, 55, 45},
+                {95, 60, 50},
+                {95, 95, 50}
             };
 
-			_elroySpeed = 0f;
+			_elroySpeed = 0;
 			Speed = _speedByLevel[_indexSpeedLevel, (int)GhostSpeed.NORM] + _elroySpeed;
 
 			_frightModeCounters = new int[] {
@@ -728,7 +728,7 @@ namespace pacman
 
 			Vector2 pos = _position - _spriteSize / 2;
 
-			spriteBatch.Draw(_texture, pos, clipping, Color.White);
+			spriteBatch.Draw(Texture, pos, clipping, Color.White);
 		}
 
 		/// <summary>
@@ -740,7 +740,7 @@ namespace pacman
 			get { return _thinkCounter; }
 		}
 
-		public float ElroySpeed
+		public int ElroySpeed
 		{
 			set { _elroySpeed = value; }
 		}
