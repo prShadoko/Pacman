@@ -171,13 +171,13 @@ namespace pacman
 			}
 			_font = Content.Load<SpriteFont>("ArcadeClassic");
 
-			SoundEffect sound = Content.Load<SoundEffect>("Opening");
+			SoundEffect sound = Content.Load<SoundEffect>("Tututudulu");
 			_soundOpening = sound.CreateInstance();
 
 			sound = Content.Load<SoundEffect>("Gloup");
 			_soundEatingGhost = sound.CreateInstance();
 
-			sound = Content.Load<SoundEffect>("Extra_Live");
+			sound = Content.Load<SoundEffect>("HellYeah");
 			_soundExtraLife = sound.CreateInstance();
 
 			sound = Content.Load<SoundEffect>("MiamLulu");
