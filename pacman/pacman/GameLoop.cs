@@ -56,7 +56,6 @@ namespace pacman
 
 		private SoundEffectInstance _soundOpening;
 		private SoundEffectInstance _soundEatingGhost;
-		private SoundEffectInstance _soundWalking;
 		private SoundEffectInstance _soundExtraLife;
 		private SoundEffectInstance _soundEatingGum;
 		private SoundEffectInstance _soundDeath;
@@ -178,9 +177,6 @@ namespace pacman
 			sound = Content.Load<SoundEffect>("Gloup");
 			_soundEatingGhost = sound.CreateInstance();
 
-			sound = Content.Load<SoundEffect>("Wawa");
-			_soundWalking = sound.CreateInstance();
-
 			sound = Content.Load<SoundEffect>("Extra_Live");
 			_soundExtraLife = sound.CreateInstance();
 
@@ -211,7 +207,6 @@ namespace pacman
 		protected override void Update(GameTime gameTime)
 		{
 			KeyboardState keyboard = Keyboard.GetState();
-			//Console.WriteLine(_homeScreen.TextureIndex);
 			if (_isOnHomeScreen)
 			{
 				if (keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space))
@@ -257,10 +252,8 @@ namespace pacman
 				Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 				//*/
 
-
 				int prevScore = _score;
 				_pacman.UpdateDirection();
-
 
 				if (_pause == 1 && _dead)
 				{
@@ -284,15 +277,11 @@ namespace pacman
 					if (_pacman.Eaten == Food.GUM)
 					{
 						_soundEatingGum.Play();
-						_soundWalking.Pause();
-					}
-					else if (_soundEatingGum.State == SoundState.Paused || _soundEatingGum.State == SoundState.Stopped)
-					{
-						_soundWalking.Play();
 					}
 					else if (_pacman.Eaten == Food.PACGUM)
 					{
-						//TODO: Ajouter son sur les pac-gommes
+						_soundEatingPacGum.Play();
+
 						if (_level <= 17 || _level == 19)
 						{
 							foreach (Ghost g in _ghosts)
@@ -334,7 +323,6 @@ namespace pacman
 							g.Update(_counter);
 						}
 					}
-
 
 					if (_map.isEmpty())
 					{
@@ -547,13 +535,6 @@ namespace pacman
 
 		protected void win()
 		{
-			//Console.WriteLine("win");
-			/*_map = new Map(_ghosts);
-			_pacman.Map = _map;
-			foreach (Ghost g in _ghosts)
-			{
-				g.Map = _map;
-			}*/
 			++_level;
 			_map.ResetMap();
 			Initialize();

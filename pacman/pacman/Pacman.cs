@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace pacman
 {
@@ -16,6 +17,7 @@ namespace pacman
 		private bool _isFrightening;
 		private Food _eaten;
 		private Texture2D _deathTexture;
+		private SoundEffectInstance _soundWalking;
 
 		public Pacman(Map map)
 			: base(map)
@@ -40,7 +42,7 @@ namespace pacman
                 {90, 90}
             };
 
-			if(_level == 1)
+			if (_level == 1)
 			{
 				_indexSpeedLevel = 0;
 			}
@@ -62,6 +64,9 @@ namespace pacman
 		public override void LoadContent(ContentManager content)
 		{
 			base.LoadContent(content);
+
+			SoundEffect sound = content.Load<SoundEffect>("Wawa");
+			_soundWalking = sound.CreateInstance();
 			//_deathTexture = content.Load<Texture2D>("pacmanDeathTexture");
 		}
 
@@ -171,6 +176,10 @@ namespace pacman
 					// Si on peut avancer
 					if (!nextIsWall || _thinkCounter != 0)
 					{
+						if (_soundWalking.State != SoundState.Playing)
+						{
+							_soundWalking.Play();
+						}
 						// On avance
 						_position = nextPos;
 						// On incremente les compteurs pour la reflexion et le dessin
@@ -178,6 +187,10 @@ namespace pacman
 						_thinkCounter %= (int)_map.TileSize.X;
 						++_drawCounter;
 						_drawCounter %= _blinkInterval;
+					}
+					else
+					{
+						_soundWalking.Stop();
 					}
 				}
 			}
