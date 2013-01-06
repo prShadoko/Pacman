@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
+	/// <summary>
+	/// This class implements the Inky targeting logic.
+	/// </summary>
     class Inky : Ghost
     {
         // -- attributes --- //

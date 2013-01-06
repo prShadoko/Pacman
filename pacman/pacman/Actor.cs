@@ -8,8 +8,14 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
+	/// <summary>
+	/// Enum the different directions.
+	/// </summary>
 	public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3 };
 
+	/// <summary>
+	/// Abstract class which provide a logic to move game element in the maze.
+	/// </summary>
 	public abstract class Actor : GameElement
 	{
 		protected const int _SPEEDUNIT = 2; // Unité de déplacement
@@ -23,12 +29,21 @@ namespace pacman
 		protected int _indexSpeedLevel; // index relatif au niveau pour le tableau des vitesses
 		protected int[,] _speedByLevel;
 
+		/// <summary>
+		/// Constructor of Actor.
+		/// </summary>
+		/// <param name="map">A map representative of the pacman maze.</param>
 		public Actor(Map map)
 			: base(new Vector2(28, 28))
 		{
 			_map = map;
 		}
 
+		/// <summary>
+		/// Allows to know if actor must move at the moment of game relative to the counter.
+		/// </summary>
+		/// <param name="counter">The loop counter.</param>
+		/// <returns>Return the number of moves at this moment.</returns>
 		public int MustMove(int counter)
 		{
 			if (_speed == 105)
@@ -61,6 +76,11 @@ namespace pacman
 			return 0;
 		}
 
+		/// <summary>
+		/// Static function to get the reverse direction of a direction.
+		/// </summary>
+		/// <param name="d">A direction.</param>
+		/// <returns>The reverse direction.</returns>
 		public static Direction ReverseDirection(Direction d)
 		{
 			switch (d)
@@ -82,6 +102,10 @@ namespace pacman
 			return d;
 		}
 
+		/// <summary>
+		/// Load the content of the actor.
+		/// </summary>
+		/// <param name="content">The content manage who load the content.</param>
 		public override void LoadContent(ContentManager content)
 		{
            // _textureIndex = 0;
@@ -90,24 +114,36 @@ namespace pacman
             _texture[1] = content.Load<Texture2D>("actorsTextureModern");
 		}
 
+		/// <summary>
+		/// Property to access to the position of actor.
+		/// </summary>
 		public Vector2 Position
 		{
 			get { return _position; }
 			set { _position = value; }
 		}
 
+		/// <summary>
+		/// Property to access to the direction of actor.
+		/// </summary>
 		public Direction Direction
 		{
 			get { return _direction; }
 			set { _direction = value; }
 		}
 
+		/// <summary>
+		/// Property to access to the speed of actor.
+		/// </summary>
 		public int Speed
 		{
 			get { return _speed; }
 			set { _speed = value; }
 		}
 
+		/// <summary>
+		/// Property to access to the speed unit of actor.
+		/// </summary>
 		public int SpeedUnit
 		{
 			get { return _SPEEDUNIT; }

@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
+
+	/// <summary>
+	/// This class implements the Blinky targeting logic.
+	/// </summary>
 	class Blinky : Ghost
 	{
 		// -- attributes --- //

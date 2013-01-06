@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
+	/// <summary>
+	/// This class implements the Pinky targeting logic.
+	/// </summary>
     class Pinky : Ghost
     {
         // -- attributes --- //

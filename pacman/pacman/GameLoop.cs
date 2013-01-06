@@ -12,6 +12,9 @@ using System.IO;
 
 namespace pacman
 {
+	/// <summary>
+	/// Enum the differents foods and these points.
+	/// </summary>
 	public enum Food
 	{
 		NONE = 0,
@@ -61,6 +64,9 @@ namespace pacman
 		private SoundEffectInstance _soundDeath;
 		private SoundEffectInstance _soundEatingPacGum;
 
+		/// <summary>
+		/// Constructor of the game main loop.
+		/// </summary>
 		public GameLoop()
 		{
 			Content.RootDirectory = "Content";
@@ -516,6 +522,9 @@ namespace pacman
 			return isClashed;
 		}
 
+		/// <summary>
+		/// Function to call when there is a gameOver. It reinitilize the game to return to the home screen.
+		/// </summary>
 		protected void gameOver()
 		{
 			if (_score > _highScore)
@@ -532,7 +541,10 @@ namespace pacman
 			_homeScreen.HighScore = _highScore;
 			_ready = 60 * 4;
 		}
-
+		
+		/// <summary>
+		/// Function to call when the pacman clean a level. It initialize the next level.
+		/// </summary>
 		protected void win()
 		{
 			++_level;
@@ -540,6 +552,9 @@ namespace pacman
 			Initialize();
 		}
 
+		/// <summary>
+		/// Property to access to high score in the hard drive disk.
+		/// </summary>
 		public int HighScore
 		{
 			get
@@ -570,12 +585,5 @@ namespace pacman
 			}
 		}
 
-		public SpriteBatch SpriteBatch
-		{
-			get
-			{
-				return _spriteBatch;
-			}
-		}
 	}
 }

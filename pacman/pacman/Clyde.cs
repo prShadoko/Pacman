@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
+	/// <summary>
+	/// This class implements the Clyde targeting logic.
+	/// </summary>
     class Clyde : Ghost
     {
         // -- attributes --- //

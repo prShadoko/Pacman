@@ -4,6 +4,10 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
+
+	/// <summary>
+	/// Manage the home screen before the beginning of the game.
+	/// </summary>
     class HomeScreen : GameElement
     {
         // --- attributes --- //
