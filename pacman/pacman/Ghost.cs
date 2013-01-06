@@ -740,16 +740,25 @@ namespace pacman
 			get { return _thinkCounter; }
 		}
 
+		/// <summary>
+		/// Property to get the blinky speed when the elroy speed is active (see wiki).
+		/// </summary>
 		public int ElroySpeed
 		{
 			set { _elroySpeed = value; }
 		}
 
+		/// <summary>
+		/// Property to get the number of movement that the ghost make in the update.
+		/// </summary>
 		public int NbMovement
 		{
 			get { return _nbMovement; }
 		}
-
+		
+		/// <summary>
+		/// Allows to know if the ghost must be draw or not.
+		/// </summary>
 		public bool Drawable
 		{
 			get { return _drawable; }

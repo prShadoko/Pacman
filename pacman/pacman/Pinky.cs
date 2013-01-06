@@ -13,11 +13,20 @@ namespace pacman
         // -- attributes --- //
 
         // --- methods --- //
+		
+		/// <summary>
+		/// Constructor of Pinky.
+		/// </summary>
+		/// <param name="map">The map where Pinky evolve.</param>
+		/// <param name="pacman">The pacman to chase.</param>
         public Pinky(Map map, Pacman pacman)
             : base(map, pacman)
 		{
 		}
 
+		/// <summary>
+		/// Initialize Pinky.
+		/// </summary>
 		public override void Initialize()
         {
             _textureOffset = new Vector2(0, 2);
@@ -29,7 +38,10 @@ namespace pacman
 
             base.Initialize();
 		}
-
+		
+		/// <summary>
+		/// Define the target aim by Pinky.
+		/// </summary>
         public override void targeting()
         {
             switch (_mode)

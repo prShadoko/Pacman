@@ -12,12 +12,21 @@ namespace pacman
         Blinky _blinky;
 
         // --- methods --- //
-        public Inky(Map map, Pacman pacman, Blinky blinky)
+
+		/// <summary>
+		/// Constructor of Inky.
+		/// </summary>
+		/// <param name="map">The map where Inky evolve.</param>
+		/// <param name="pacman">The pacman to chase.</param>
+		public Inky(Map map, Pacman pacman, Blinky blinky)
             : base(map, pacman)
 		{
             _blinky = blinky;
 		}
 
+		/// <summary>
+		/// Initialize Inky.
+		/// </summary>
 		public override void Initialize()
         {
             _textureOffset = new Vector2(0, 4);
@@ -29,7 +38,10 @@ namespace pacman
 
             base.Initialize();
 		}
-
+		
+		/// <summary>
+		/// Define the target aim by Inky.
+		/// </summary>
         public override void targeting()
         {
             switch (_mode)

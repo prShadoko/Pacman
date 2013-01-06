@@ -13,6 +13,12 @@ namespace pacman
 		// -- attributes --- //
 
 		// --- methods --- //
+
+		/// <summary>
+		/// Constructor of Blinky.
+		/// </summary>
+		/// <param name="map">The map where Blinky evolve.</param>
+		/// <param name="pacman">The pacman to chase.</param>
 		public Blinky(Map map, Pacman pacman)
 			: base(map, pacman)
 		{
@@ -20,6 +26,9 @@ namespace pacman
 			_elroySpeed = 0;
 		}
 
+		/// <summary>
+		/// Initialize Blinky.
+		/// </summary>
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -34,6 +43,9 @@ namespace pacman
 			_mode = GhostMode.OUTGOING;
 		}
 
+		/// <summary>
+		/// Define the target aim by Blinky.
+		/// </summary>
 		public override void targeting()
 		{
 			switch (_mode)
