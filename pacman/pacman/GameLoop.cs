@@ -37,7 +37,7 @@ namespace pacman
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
-		private Texture2D _lifeTexture;
+		private Texture2D[] _lifeTexture;
 		private Map _map;
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
@@ -53,6 +53,7 @@ namespace pacman
 		private int _ghostPoint;
 		private int _ready;
 		private bool _dead;
+		private int _textureIndex;
 
 		private bool _isOnHomeScreen;
 		private HomeScreen _homeScreen;
@@ -63,6 +64,9 @@ namespace pacman
 		private SoundEffectInstance _soundEatingGum;
 		private SoundEffectInstance _soundDeath;
 		private SoundEffectInstance _soundEatingPacGum;
+
+		private bool _keySPressed;
+		private bool _keyEscapePressed;
 
 		/// <summary>
 		/// Constructor of the game main loop.
@@ -113,10 +117,14 @@ namespace pacman
 			// Create a new SpriteBatch, which can be used to draw textures.
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+			_keySPressed = false;
+			_keyEscapePressed = false;
+
 			_highScore = HighScore;
 
 			_homeScreen.Initialize();
 			_homeScreen.HighScore = _highScore;
+			_textureIndex = 0;
 
 			_map.Initialize();
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
@@ -166,7 +174,9 @@ namespace pacman
 		{
 			_homeScreen.LoadContent(Content);
 
-			_lifeTexture = Content.Load<Texture2D>("actorsTexture");
+			_lifeTexture = new Texture2D[2];
+			_lifeTexture[0] = Content.Load<Texture2D>("actorsTexture");
+			_lifeTexture[1] = Content.Load<Texture2D>("actorsTextureModern");
 
 			// loading textures
 			_map.LoadContent(Content);
@@ -215,24 +225,35 @@ namespace pacman
 			KeyboardState keyboard = Keyboard.GetState();
 			if (_isOnHomeScreen)
 			{
+				if (!keyboard.IsKeyDown(Keys.Escape) && _keyEscapePressed)
+				{
+					_keyEscapePressed = false;
+				}
+
 				if (keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space))
 				{
 					_isOnHomeScreen = false;
 					_soundOpening.Play();
 				}
-				else if (keyboard.IsKeyDown(Keys.Escape))
+				else if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
 				{
 					this.Exit();
 				}
-				else if (keyboard.IsKeyDown(Keys.S) && _counter % 4 == 0)
+				else if (keyboard.IsKeyDown(Keys.S) && !_keySPressed)
 				{
 					//TODO: Change index
+					_keySPressed = true;
 					_homeScreen.TextureIndex += 1;
 					_pacman.TextureIndex += 1;
+					this.TextureIndex += 1;
 					foreach (Ghost g in _ghosts)
 					{
 						g.TextureIndex++;
 					}
+				}
+				else if ( ! keyboard.IsKeyDown(Keys.S) )
+				{
+					_keySPressed = false;
 				}
 
 				_homeScreen.Update(_counter);
@@ -257,6 +278,16 @@ namespace pacman
 				Console.WriteLine("Speed Inky\t: " + _ghosts[2].Speed);
 				Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 				//*/
+
+				if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
+				{
+					gameOver();
+					_keyEscapePressed = true;
+				}
+				if (!keyboard.IsKeyDown(Keys.Escape) && _keyEscapePressed)
+				{
+					_keyEscapePressed = false;
+				}
 
 				int prevScore = _score;
 				_pacman.UpdateDirection();
@@ -427,6 +458,8 @@ namespace pacman
 					{
 						if (_ready > 0)
 							_pacman.DrawInit(_spriteBatch);
+						else if (_dead)
+							_pacman.DrawDeath(_spriteBatch);
 						else
 							_pacman.Draw(_spriteBatch);
 					}
@@ -489,7 +522,7 @@ namespace pacman
 				lifePos.Y += _map.TileSize.Y / 2;
 				for (int i = 0; i < _life; ++i)
 				{
-					_spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
+					_spriteBatch.Draw(_lifeTexture[_textureIndex], lifePos, lifeClipping, Color.White);
 					lifePos.X += _map.TileSize.X * 2;
 				}
 			}
@@ -585,5 +618,27 @@ namespace pacman
 			}
 		}
 
+		/// <summary>
+		/// Property to access to the texture index.
+		/// </summary>
+		public int TextureIndex
+		{
+			get
+			{
+				return _textureIndex;
+			}
+			set
+			{
+				if (value >= _lifeTexture.Length)
+				{
+					//Console.WriteLine("\t"+_texture.Length);
+					_textureIndex = 0;
+				}
+				else
+				{
+					_textureIndex = value;
+				}
+			}
+		}
 	}
 }

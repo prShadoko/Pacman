@@ -16,8 +16,11 @@ namespace pacman
 		private bool _isEating;
 		private bool _isFrightening;
 		private Food _eaten;
-		private Texture2D _deathTexture;
+		protected Texture2D[] _deathTexture;
 		private SoundEffectInstance _soundWalking;
+
+		private Vector2 _deathSpriteSize;
+		private int _deathCounter;
 
 		public Pacman(Map map)
 			: base(map)
@@ -27,6 +30,7 @@ namespace pacman
 
 		public override void Initialize()
 		{
+			_deathCounter = 0;
 			_direction = Direction.LEFT;
 			_nextDirection = Direction.LEFT;
 			_speed = 80;
@@ -73,7 +77,10 @@ namespace pacman
 			SoundEffect sound = content.Load<SoundEffect>("Wawa");
 			_soundWalking = sound.CreateInstance();
 			_soundWalking.IsLooped = true;
-			//_deathTexture = content.Load<Texture2D>("pacmanDeathTexture");
+			_deathTexture = new Texture2D[2];
+			_deathTexture[0] = content.Load<Texture2D>("deathTexture");
+			_deathTexture[1] = content.Load<Texture2D>("deathTextureModern");
+			_deathSpriteSize = new Vector2(42, 42);
 		}
 
 		public void UpdateDirection()
@@ -288,6 +295,18 @@ namespace pacman
 
 			spriteBatch.Draw(_texture, pos, clipping, Color.White);
 			//*/
+
+			Vector2 pos = _position - _deathSpriteSize / 2;
+			int stateOffset = _deathCounter / 8;
+			++_deathCounter;
+
+			Rectangle clipping = new Rectangle(
+				stateOffset * (int)_deathSpriteSize.X,
+				0,
+				(int)_deathSpriteSize.X,
+				(int)_deathSpriteSize.Y);
+
+			spriteBatch.Draw(_deathTexture[_textureIndex], pos, clipping, Color.White);
 		}
 
 		/// <summary>
