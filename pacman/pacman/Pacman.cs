@@ -59,6 +59,11 @@ namespace pacman
 				_indexSpeedLevel = 3;
 			}
 			_speed = _speedByLevel[_indexSpeedLevel, 0];
+
+			if (_soundWalking != null)
+			{
+				_soundWalking.Stop();
+			}
 		}
 
 		public override void LoadContent(ContentManager content)
@@ -67,6 +72,7 @@ namespace pacman
 
 			SoundEffect sound = content.Load<SoundEffect>("Wawa");
 			_soundWalking = sound.CreateInstance();
+			_soundWalking.IsLooped = true;
 			//_deathTexture = content.Load<Texture2D>("pacmanDeathTexture");
 		}
 
@@ -180,6 +186,9 @@ namespace pacman
 						{
 							_soundWalking.Play();
 						}
+						/*if ( ! _soundWalking.IsLooped )
+						{
+						}*/
 						// On avance
 						_position = nextPos;
 						// On incremente les compteurs pour la reflexion et le dessin
@@ -188,7 +197,7 @@ namespace pacman
 						++_drawCounter;
 						_drawCounter %= _blinkInterval;
 					}
-					else
+					else if(_soundWalking.IsLooped)
 					{
 						_soundWalking.Stop();
 					}
