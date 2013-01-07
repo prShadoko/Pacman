@@ -89,12 +89,12 @@ namespace pacman
 		{
 			Vector2 mapPosition = _map.WinToMap(_position);
 
-			if (_map.isInTunnel(mapPosition))
+			if (_map.IsInTunnel(mapPosition))
 			{
 				Speed = _speedByLevel[_indexSpeedLevel, (int)GhostSpeed.TUNNEL];
 
 				Vector2 teleportation;
-				if (_map.mustTeleport(_position, out teleportation))
+				if (_map.MustTeleport(_position, out teleportation))
 				{
 					_position = teleportation;
 				}
@@ -109,7 +109,7 @@ namespace pacman
 			}
 
 			// on récupère un tableau de directions possibles
-			Direction[] dir = _map.getDirectionWalkable(mapPosition);
+			Direction[] dir = _map.GetWalkableDirections(mapPosition);
 
 			/*if (_mode == GhostMode.INCOMING && _map.WinToMap(_position) == _map.TargetIncomingMode && _thinkCounter != 0)
 			{
@@ -121,7 +121,7 @@ namespace pacman
 				_direction = Direction.UP;
 				Mode = GhostMode.OUTGOING;
 			}
-			else if (dir.Length == 2 && !_modeChanged && !_map.isInSpecialZone(mapPosition)) // 2 directions et le mode ne change pas -> pas le choix on avance.
+			else if (dir.Length == 2 && !_modeChanged && !_map.IsInSpecialZone(mapPosition)) // 2 directions et le mode ne change pas -> pas le choix on avance.
 			{
 				if (Array.IndexOf(dir, Actor.ReverseDirection(_direction)) == 0)
 				{
@@ -151,7 +151,7 @@ namespace pacman
 				{
 					// si c'est la direction dans laquelle on vient, ça sert a rien de tester on y retournera pas, n'y vers le haut quand on est dans une zone spécial
 					if ((Actor.ReverseDirection(_direction) != d || _modeChanged) && // Attention, condition potentiellement foireuse !
-						(!(d == Direction.UP && _map.isInSpecialZone(mapPosition)) || _isFrightened)
+						(!(d == Direction.UP && _map.IsInSpecialZone(mapPosition)) || _isFrightened)
 						)
 					{
 						int r = 3;
@@ -231,11 +231,11 @@ namespace pacman
 		{
 			Vector2 mapPosition = _map.WinToMap(_position);
 
-			_direction = _map.getDirectionInHouse(mapPosition, _mode, _direction);
+			_direction = _map.GetDirectionInHouse(mapPosition, _mode, _direction);
 
 			if (_mode == GhostMode.OUTGOING)
 			{
-				if (_map.isInSpecialZone(mapPosition) == true)
+				if (_map.IsInSpecialZone(mapPosition) == true)
 				{
 					if (_isFrightened)
 					{
@@ -331,7 +331,7 @@ namespace pacman
 		/// </summary>
 		public void targetingFrightMode()
 		{
-			Direction[] directions = _map.getDirectionWalkable(_map.WinToMap(_position));
+			Direction[] directions = _map.GetWalkableDirections(_map.WinToMap(_position));
 			Random rand = new Random();
 			int r = rand.Next(0, 4);
 			Direction nextDirection;
@@ -451,7 +451,7 @@ namespace pacman
 		private GhostMode getCurrentMode()
 		{
 			GhostMode m;
-			if (_map.isHouse(_map.WinToMap(_position)))
+			if (_map.IsHouse(_map.WinToMap(_position)))
 			{
 				m = _mode;
 			}

@@ -18,8 +18,13 @@ namespace pacman
 		private Ghost[] _ghosts;
 
 		private int _nbGum;
+		private Vector2 _fruitPos;
+		private Food _fruit;
 
 		private int[] _elroyDotsLeft;
+
+		private Texture2D[] _fruitsTexture;
+		private int _fruitTextureOffset;
 
 		public Map(Ghost[] ghosts)
 			: base(new Vector2(16, 16))
@@ -33,6 +38,8 @@ namespace pacman
 			_elroyDotsLeft = new int[] {
 				20, 30, 40, 40, 40, 50, 50, 50, 60, 60, 60, 80, 80, 80, 100, 100, 100, 100, 120
 			};
+
+			_fruitPos = MapToWin(new Vector2(14, 17)) - new Vector2(TileSize.X / 2, 0);
 			//Console.WriteLine("\t" + _map[23, 11]);
 			//Console.WriteLine(_map[23,6]);
 		}
@@ -76,7 +83,7 @@ namespace pacman
             };
 		}
 
-		public bool isWall(Vector2 coordinates)
+		public bool IsWall(Vector2 coordinates)
 		{
 			try
 			{
@@ -89,7 +96,7 @@ namespace pacman
 			}
 		}
 
-		public bool isGum(Vector2 coordinates)
+		public bool IsGum(Vector2 coordinates)
 		{
 			try
 			{
@@ -102,46 +109,54 @@ namespace pacman
 			}
 		}
 
-		public Food eatGum(Vector2 coordinates)
+		public Food IsEatable(Vector2 coordinates)
 		{
 			Food res = Food.NONE;
-			try
+			if (coordinates == _fruitPos)
 			{
-				bool eat = false;
-				if (_map[(int)coordinates.Y, (int)coordinates.X] == 12) // Regular gum
-				{
-					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
-					res = Food.GUM;
-					eat = true;
-				}
-				else if (_map[(int)coordinates.Y, (int)coordinates.X] == 13) // Pac-gum
-				{
-					eat = true;
-					res = Food.PACGUM;
-				}
-
-				if (eat)
-				{
-					--_nbGum;
-					_map[(int)coordinates.Y, (int)coordinates.X] = 14;
-					int lvl = _ghosts[0].Level - 1;
-					if (lvl >= _elroyDotsLeft.Length)
-					{
-						lvl = _elroyDotsLeft.Length - 1;
-					}
-					if (_nbGum <= _elroyDotsLeft[lvl] / 2)
-					{
-						_ghosts[0].ElroySpeed = 10;
-					}
-					else if (_nbGum <= _elroyDotsLeft[lvl])
-					{
-						_ghosts[0].ElroySpeed = 5;
-					}
-				}
+				res = _fruit;
+				_fruit = Food.NONE;
 			}
-			catch (Exception e)
+			else
 			{
-				Console.WriteLine(e.Message);
+				try
+				{
+					Vector2 mapCoordinates = WinToMap(coordinates);
+					bool eat = false;
+					if (_map[(int)mapCoordinates.Y, (int)mapCoordinates.X] == 12) // Regular gum
+					{
+						res = Food.GUM;
+						eat = true;
+					}
+					else if (_map[(int)mapCoordinates.Y, (int)mapCoordinates.X] == 13) // Pac-gum
+					{
+						res = Food.PACGUM;
+						eat = true;
+					}
+
+					if (eat)
+					{
+						--_nbGum;
+						_map[(int)mapCoordinates.Y, (int)mapCoordinates.X] = 14;
+						int lvl = _ghosts[0].Level - 1;
+						if (lvl >= _elroyDotsLeft.Length)
+						{
+							lvl = _elroyDotsLeft.Length - 1;
+						}
+						if (_nbGum <= _elroyDotsLeft[lvl] / 2)
+						{
+							_ghosts[0].ElroySpeed = 10;
+						}
+						else if (_nbGum <= _elroyDotsLeft[lvl])
+						{
+							_ghosts[0].ElroySpeed = 5;
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+				}
 			}
 			return res;
 		}
@@ -150,12 +165,12 @@ namespace pacman
 		/// Check if the map has still gum.
 		/// </summary>
 		/// <returns>Return true if it founds gum, else return false.</returns>
-		public bool isEmpty()
+		public bool IsEmpty()
 		{
 			return _nbGum == 0;
 		}
 
-		public bool isHouse(Vector2 coordinates)
+		public bool IsHouse(Vector2 coordinates)
 		{
 			try
 			{
@@ -168,7 +183,7 @@ namespace pacman
 			}
 		}
 
-		public bool isHouseInitPosition(Vector2 coordinates)
+		public bool IsHouseInitPosition(Vector2 coordinates)
 		{
 			try
 			{
@@ -181,7 +196,7 @@ namespace pacman
 			}
 		}
 
-		public Direction getDirectionInHouse(Vector2 coordinates, GhostMode mode, Direction dir)
+		public Direction GetDirectionInHouse(Vector2 coordinates, GhostMode mode, Direction dir)
 		{
 			Direction res = dir;
 
@@ -222,7 +237,7 @@ namespace pacman
 			return res;
 		}
 
-		public Direction getDirectionOfInitPosition(Vector2 coordinates)
+		public Direction GetDirectionOfInitPosition(Vector2 coordinates)
 		{
 			try
 			{
@@ -253,7 +268,7 @@ namespace pacman
 		/// </summary>
 		/// <param name="coordinates">Coordinates in the map</param>
 		/// <returns>return true if the ghost is in the tunnel, else false</returns>
-		public bool isInTunnel(Vector2 coordinates)
+		public bool IsInTunnel(Vector2 coordinates)
 		{
 			return (int)coordinates.Y == 14 && (coordinates.X < 6 || coordinates.X > 22);
 		}
@@ -263,7 +278,7 @@ namespace pacman
 		/// </summary>
 		/// <param name="coordinates">Coordinates in the map</param>
 		/// <returns>return true if the ghost is in the special zone, else false</returns>
-		public bool isInSpecialZone(Vector2 coordinates)
+		public bool IsInSpecialZone(Vector2 coordinates)
 		{
 			if (coordinates.X > 10 &&
 				coordinates.X < 17 &&
@@ -281,18 +296,18 @@ namespace pacman
 		/// <param name="coordinates">Coordinates in the window</param>
 		/// <param name="teleportation">Destination coordinates</param>
 		/// <returns>return true if the actor must teleport himself, else false</returns>
-		public bool mustTeleport(Vector2 coordinates, out Vector2 teleportation)
+		public bool MustTeleport(Vector2 coordinates, out Vector2 teleportation)
 		{
 			teleportation = coordinates;
 			bool boolean = false;
 			if (coordinates.Y == 17.5f * TileSize.Y)
 			{
-				if(coordinates.X == (int)(-0.5f * TileSize.X))
+				if (coordinates.X == (int)(-0.5f * TileSize.X))
 				{
 					teleportation.X = (int)(28.5f * TileSize.X);
 					boolean = true;
 				}
-				else if(coordinates.X == (int)(28.5f * TileSize.X))
+				else if (coordinates.X == (int)(28.5f * TileSize.X))
 				{
 					teleportation.X = (int)(-0.5f * TileSize.X);
 					boolean = true;
@@ -320,41 +335,41 @@ namespace pacman
 		{
 			//14 * 16 + 16 / 2, 23 * 16 + 16 / 2
 			Vector2 result = new Vector2((int)coordinates.X, (int)coordinates.Y);
-			result =  result * TileSize + TileSize / 2;
+			result = result * TileSize + TileSize / 2;
 			result.Y += _offset;
 			return result;
 		}
 
-		public Direction[] getDirectionWalkable(Vector2 coordinates)
+		public Direction[] GetWalkableDirections(Vector2 coordinates)
 		{
-			List<Direction> directionWalkable = new List<Direction>();
+			List<Direction> walkableDirections = new List<Direction>();
 
-			if (isInTunnel(coordinates))
+			if (IsInTunnel(coordinates))
 			{
-				directionWalkable.Add(Direction.RIGHT);
-				directionWalkable.Add(Direction.LEFT);
-				return directionWalkable.ToArray();
+				walkableDirections.Add(Direction.RIGHT);
+				walkableDirections.Add(Direction.LEFT);
+				return walkableDirections.ToArray();
 			}
 
-			if (!isWall(new Vector2(coordinates.X, coordinates.Y - 1)) /*&&
+			if (!IsWall(new Vector2(coordinates.X, coordinates.Y - 1)) /*&&
 				!isInSpecialZone(coordinates)*/)
 			{
-				directionWalkable.Add(Direction.UP);
+				walkableDirections.Add(Direction.UP);
 			}
-			if (!isWall(new Vector2(coordinates.X + 1, coordinates.Y)))
+			if (!IsWall(new Vector2(coordinates.X + 1, coordinates.Y)))
 			{
-				directionWalkable.Add(Direction.RIGHT);
+				walkableDirections.Add(Direction.RIGHT);
 			}
-			if (!isWall(new Vector2(coordinates.X, coordinates.Y + 1)))
+			if (!IsWall(new Vector2(coordinates.X, coordinates.Y + 1)))
 			{
-				directionWalkable.Add(Direction.DOWN);
+				walkableDirections.Add(Direction.DOWN);
 			}
-			if (!isWall(new Vector2(coordinates.X - 1, coordinates.Y)))
+			if (!IsWall(new Vector2(coordinates.X - 1, coordinates.Y)))
 			{
-				directionWalkable.Add(Direction.LEFT);
+				walkableDirections.Add(Direction.LEFT);
 			}
 
-			return directionWalkable.ToArray();
+			return walkableDirections.ToArray();
 		}
 
 		public override void Initialize()
@@ -364,14 +379,20 @@ namespace pacman
 
 			_targetIncomingMode = new Vector2(14, 11);
 			_respawn = new Vector2(14, 14);
+
+			_fruit = Food.NONE;
 		}
 
 		public override void LoadContent(ContentManager content)
 		{
-            _textureIndex = 0;
-            _texture = new Texture2D[2];
-            _texture[0] = content.Load<Texture2D>("mapTexture");
-            _texture[1] = content.Load<Texture2D>("mapTexture");
+			_textureIndex = 0;
+			_texture = new Texture2D[2];
+			_texture[0] = content.Load<Texture2D>("mapTexture");
+			_texture[1] = content.Load<Texture2D>("mapTexture");
+
+			_fruitsTexture = new Texture2D[2];
+			_fruitsTexture[0] = content.Load<Texture2D>("fruitsTexture");
+			_fruitsTexture[1] = content.Load<Texture2D>("fruitsTexture");
 		}
 
 		public override void Update(int counter)
@@ -402,6 +423,18 @@ namespace pacman
 					}
 				}
 			}
+
+			if (_fruit != Food.NONE)
+			{
+				//TODO: Sprite size is different for fruits... We should avoid to hardcode its value :/
+				Rectangle clipping = new Rectangle(
+					(int)(28 * _fruitTextureOffset),
+					0,
+					(int)28,
+					(int)28);
+
+				spriteBatch.Draw(_fruitsTexture[_textureIndex], _fruitPos - new Vector2(28, 28) / 2, clipping, Color.White);
+			}
 		}
 
 		public Vector2 TargetIncomingMode
@@ -420,12 +453,84 @@ namespace pacman
 			}
 		}
 
+		public void GrowFruit(int level)
+		{
+			switch (level)
+			{
+				case 1:
+				{
+					_fruit = Food.CHERRY;
+					_fruitTextureOffset = 0;
+					break;
+				}
+				case 2:
+				{
+					_fruit = Food.STRAWBERRY;
+					_fruitTextureOffset = 1;
+					break;
+				}
+				case 3:
+				case 4:
+				{
+					_fruit = Food.PEACH;
+					_fruitTextureOffset = 2;
+					break;
+				}
+				case 5:
+				case 6:
+				{
+					_fruit = Food.APPLE;
+					_fruitTextureOffset = 3;
+					break;
+				}
+				case 7:
+				case 8:
+				{
+					_fruit = Food.POMEGRANATE;
+					_fruitTextureOffset = 4;
+					break;
+				}
+				case 9:
+				case 10:
+				{
+					_fruit = Food.GALAXIAN;
+					_fruitTextureOffset = 5;
+					break;
+				}
+				case 11:
+				case 12:
+				{
+					_fruit = Food.BELL;
+					_fruitTextureOffset = 6;
+					break;
+				}
+				default:
+				{
+					_fruit = Food.KEY;
+					_fruitTextureOffset = 7;
+					break;
+				}
+			}
+		}
+
+		public void DecayFruit()
+		{
+			_fruit = Food.NONE;
+		}
+
 		public int NbGum
 		{
-			get
-			{
-				return _nbGum;
-			}
+			get { return _nbGum; }
+		}
+
+		public Food Fruit
+		{
+			get { return _fruit; }
+		}
+
+		public Vector2 FruitPos
+		{
+			get { return _fruitPos; }
 		}
 	}
 }

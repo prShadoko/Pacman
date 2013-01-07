@@ -43,23 +43,25 @@ namespace pacman
 		private int _level;
 		private int _life;
 		private int _pause;
+		private int _ready;
 		private int _counter;
 		private int _outgoingCounter;
+		private int _fruitGrown;
 		private int _eatenGhosts;
 		private SpriteFont _font;
 		private int _ghostPoint;
-		private int _ready;
 		private bool _dead;
 
 		private bool _isOnHomeScreen;
 		private HomeScreen _homeScreen;
 
 		private SoundEffectInstance _soundOpening;
-		private SoundEffectInstance _soundEatingGhost;
-		private SoundEffectInstance _soundExtraLife;
 		private SoundEffectInstance _soundEatingGum;
-		private SoundEffectInstance _soundDeath;
 		private SoundEffectInstance _soundEatingPacGum;
+		private SoundEffectInstance _soundEatingGhost;
+		private SoundEffectInstance _soundEatingFruit;
+		private SoundEffectInstance _soundExtraLife;
+		private SoundEffectInstance _soundDeath;
 
 		public GameLoop()
 		{
@@ -145,6 +147,8 @@ namespace pacman
 
 			_pause = 0;
 
+			_fruitGrown = 0;
+
 			_eatenGhosts = 0;
 
 			_dead = false;
@@ -188,6 +192,9 @@ namespace pacman
 
 			sound = Content.Load<SoundEffect>("Haha");
 			_soundEatingPacGum = sound.CreateInstance();
+
+			sound = Content.Load<SoundEffect>("Hmm");
+			_soundEatingFruit = sound.CreateInstance();
 		}
 
 		/// <summary>
@@ -260,7 +267,7 @@ namespace pacman
 					_dead = false;
 					if (_life <= 0)
 					{
-						gameOver();
+						GameOver();
 					}
 					else
 					{
@@ -295,7 +302,18 @@ namespace pacman
 							_eatenGhosts = 0;
 						}
 					}
+					else if (_pacman.Eaten != Food.NONE) // If it is a fruit
+					{
+						_soundEatingFruit.Play();
+						_fruitGrown = 0;
+					}
 					_pacman.Eaten = Food.NONE;
+
+					if (_map.NbGum == 70 || _map.NbGum == 170)
+					{
+						_map.GrowFruit(_level);
+						_fruitGrown = 10 * 60;
+					}
 
 					if (_outgoingCounter < _ghosts.Length - 1)
 					{
@@ -311,6 +329,7 @@ namespace pacman
 							_ghosts[_outgoingCounter].Mode = GhostMode.OUTGOING;
 						}
 					}
+
 					foreach (Ghost g in _ghosts)
 					{
 						g.Update(_counter);
@@ -324,14 +343,14 @@ namespace pacman
 						}
 					}
 
-					if (_map.isEmpty())
+					if (_map.IsEmpty())
 					{
-						win();
+						Win();
 					}
 
 					int ghostIndex;
 					GhostMode mode;
-					if (clash(out ghostIndex, out mode))
+					if (Clash(out ghostIndex, out mode))
 					{
 						if (mode == GhostMode.FRIGHTENED)
 						{
@@ -358,6 +377,11 @@ namespace pacman
 							}
 							_soundDeath.Play();
 						}
+					}
+
+					if (--_fruitGrown == 0)
+					{
+						_map.DecayFruit();
 					}
 				}
 
@@ -497,7 +521,7 @@ namespace pacman
 		/// Test if pacman clash ghost.
 		/// </summary>
 		/// <returns>True if pacman clash ghost, else return false.</returns>
-		protected bool clash(out int ghostIndex, out GhostMode mode)
+		protected bool Clash(out int ghostIndex, out GhostMode mode)
 		{
 			bool isClashed = false;
 			ghostIndex = 0;
@@ -516,7 +540,7 @@ namespace pacman
 			return isClashed;
 		}
 
-		protected void gameOver()
+		protected void GameOver()
 		{
 			if (_score > _highScore)
 			{
@@ -533,7 +557,7 @@ namespace pacman
 			_ready = 60 * 4;
 		}
 
-		protected void win()
+		protected void Win()
 		{
 			++_level;
 			_map.ResetMap();

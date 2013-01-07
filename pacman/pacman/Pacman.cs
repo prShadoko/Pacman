@@ -122,10 +122,10 @@ namespace pacman
 
 		public override void Update(int counter)
 		{
-			bool inTunnel = _map.isInTunnel(_map.WinToMap(_position));
+			bool inTunnel = _map.IsInTunnel(_map.WinToMap(_position));
 
-			// Si Pacman est sur une gomme
-			if (!inTunnel && !_isEating && _thinkCounter == 0 && _map.isGum(_map.WinToMap(_position)))
+			// Si Pacman est sur une gomme ou un fruit
+			if ((!inTunnel && !_isEating && _thinkCounter == 0 && _map.IsGum(_map.WinToMap(_position))) || (_map.Fruit != Food.NONE && _position == _map.FruitPos))
 			{
 				_isEating = true;
 			}
@@ -133,11 +133,11 @@ namespace pacman
 			// Si Pacman doit bouger sur cette frame
 			if (MustMove(counter) > 0)
 			{
-				// Si Pacman doit manger une gomme
+				// Si Pacman doit manger une gomme ou un fruit
 				if (_isEating)
 				{
 					_isEating = false;
-					_eaten = _map.eatGum(_map.WinToMap(_position));
+					_eaten = _map.IsEatable(_position);
 					// Pacman n'avancera pas sur cette frame (cf. The Pacman Dossier)
 				}
 				else
@@ -147,14 +147,14 @@ namespace pacman
 					Vector2 tp;			// Destination de la teleportation par le tunnel (s'il y a lieu)
 
 					// Si Pacman doit se teleporter
-					if (_map.mustTeleport(_position, out tp))
+					if (_map.MustTeleport(_position, out tp))
 					{
 						_position = tp;
 					}
 
 					// On reflechit pour tourner dans la nouvelle direction
 					Think(_nextDirection, out nextCell, out nextPos);
-					if (!inTunnel && _thinkCounter == 0 && !_map.isWall(nextCell))
+					if (!inTunnel && _thinkCounter == 0 && !_map.IsWall(nextCell))
 					{
 						// On tourne
 						_direction = _nextDirection;
@@ -170,7 +170,7 @@ namespace pacman
 					if (!inTunnel)
 					{
 						// On verifie si la case suivante est un mur
-						nextIsWall = _map.isWall(nextCell);
+						nextIsWall = _map.IsWall(nextCell);
 					}
 
 					// Si on peut avancer
