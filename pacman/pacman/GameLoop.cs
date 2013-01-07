@@ -180,6 +180,7 @@ namespace pacman
 
 			_lifeTexture = new Texture2D[2];
 			_lifeTexture[0] = Content.Load<Texture2D>("actorsTexture");
+			_lifeTexture[0] = Content.Load<Texture2D>("actorsTextureSmooth");
 			_lifeTexture[1] = Content.Load<Texture2D>("actorsTextureModern");
 
 			// loading textures
@@ -354,12 +355,12 @@ namespace pacman
 
 					if (_outgoingCounter < _ghosts.Length - 1)
 					{
-						if (_ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING && (// Attention, ceci est du code très sale !!
-							_outgoingCounter == 0 ||												// pour que Blinky et Pinky ne reste pas bloqué
-							_level == 1 && _outgoingCounter == 1 && _map.NbGum <= (244 - 30) ||		// Fait sortir Inky après 30 dots au niveau 1
-							_level == 1 && _outgoingCounter == 2 && _map.NbGum <= 244 - 30 - 60 ||	// Fait sortir Clyde après Inky après 60 dots au niveau 1
-							_level == 2 && _outgoingCounter == 1 ||									// Fait sortir Inky après 0 dots au niveau 2
-							_level == 2 && _outgoingCounter == 2 && _map.NbGum <= 244 - 50 ||		// Fait sortir Clyde après 50 dots au niveau 2
+						if (_ghosts[_outgoingCounter].Mode != GhostMode.OUTGOING && (// Attention, ceci est du code tr\E8s sale !!
+							_outgoingCounter == 0 ||												// pour que Blinky et Pinky ne reste pas bloqu\E9
+							_level == 1 && _outgoingCounter == 1 && _map.NbGum <= (244 - 30) ||		// Fait sortir Inky apr\E8s 30 dots au niveau 1
+							_level == 1 && _outgoingCounter == 2 && _map.NbGum <= 244 - 30 - 60 ||	// Fait sortir Clyde apr\E8s Inky apr\E8s 60 dots au niveau 1
+							_level == 2 && _outgoingCounter == 1 ||									// Fait sortir Inky apr\E8s 0 dots au niveau 2
+							_level == 2 && _outgoingCounter == 2 && _map.NbGum <= 244 - 50 ||		// Fait sortir Clyde apr\E8s 50 dots au niveau 2
 							_level > 2))															// fait sortir tout le monde au dela du niveau 2
 						{
 							++_outgoingCounter;
