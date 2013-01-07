@@ -12,6 +12,9 @@ using System.IO;
 
 namespace pacman
 {
+	/// <summary>
+	/// Enum the differents foods and these points.
+	/// </summary>
 	public enum Food
 	{
 		NONE = 0,
@@ -34,7 +37,7 @@ namespace pacman
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
-		private Texture2D _lifeTexture;
+		private Texture2D[] _lifeTexture;
 		private Map _map;
 		private Pacman _pacman;
 		private Ghost[] _ghosts;
@@ -51,6 +54,7 @@ namespace pacman
 		private SpriteFont _font;
 		private int _ghostPoint;
 		private bool _dead;
+		private int _textureIndex;
 
 		private bool _isOnHomeScreen;
 		private HomeScreen _homeScreen;
@@ -63,6 +67,12 @@ namespace pacman
 		private SoundEffectInstance _soundExtraLife;
 		private SoundEffectInstance _soundDeath;
 
+		private bool _keySPressed;
+		private bool _keyEscapePressed;
+
+		/// <summary>
+		/// Constructor of the game main loop.
+		/// </summary>
 		public GameLoop()
 		{
 			Content.RootDirectory = "Content";
@@ -109,10 +119,14 @@ namespace pacman
 			// Create a new SpriteBatch, which can be used to draw textures.
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+			_keySPressed = false;
+			_keyEscapePressed = false;
+
 			_highScore = HighScore;
 
 			_homeScreen.Initialize();
 			_homeScreen.HighScore = _highScore;
+			_textureIndex = 0;
 
 			_map.Initialize();
 			_pacman.Position = _map.MapToWin(new Vector2(14, 23)) - new Vector2(_map.TileSize.X / 2, 0);
@@ -164,7 +178,9 @@ namespace pacman
 		{
 			_homeScreen.LoadContent(Content);
 
-			_lifeTexture = Content.Load<Texture2D>("actorsTexture");
+			_lifeTexture = new Texture2D[2];
+			_lifeTexture[0] = Content.Load<Texture2D>("actorsTexture");
+			_lifeTexture[1] = Content.Load<Texture2D>("actorsTextureModern");
 
 			// loading textures
 			_map.LoadContent(Content);
@@ -216,24 +232,35 @@ namespace pacman
 			KeyboardState keyboard = Keyboard.GetState();
 			if (_isOnHomeScreen)
 			{
+				if (!keyboard.IsKeyDown(Keys.Escape) && _keyEscapePressed)
+				{
+					_keyEscapePressed = false;
+				}
+
 				if (keyboard.IsKeyDown(Keys.Enter) || keyboard.IsKeyDown(Keys.Space))
 				{
 					_isOnHomeScreen = false;
 					_soundOpening.Play();
 				}
-				else if (keyboard.IsKeyDown(Keys.Escape))
+				else if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
 				{
 					this.Exit();
 				}
-				else if (keyboard.IsKeyDown(Keys.S) && _counter % 4 == 0)
+				else if (keyboard.IsKeyDown(Keys.S) && !_keySPressed)
 				{
 					//TODO: Change index
+					_keySPressed = true;
 					_homeScreen.TextureIndex += 1;
 					_pacman.TextureIndex += 1;
+					this.TextureIndex += 1;
 					foreach (Ghost g in _ghosts)
 					{
 						g.TextureIndex++;
 					}
+				}
+				else if ( ! keyboard.IsKeyDown(Keys.S) )
+				{
+					_keySPressed = false;
 				}
 
 				_homeScreen.Update(_counter);
@@ -258,6 +285,16 @@ namespace pacman
 				Console.WriteLine("Speed Inky\t: " + _ghosts[2].Speed);
 				Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 				//*/
+
+				if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
+				{
+					GameOver();
+					_keyEscapePressed = true;
+				}
+				if (!keyboard.IsKeyDown(Keys.Escape) && _keyEscapePressed)
+				{
+					_keyEscapePressed = false;
+				}
 
 				int prevScore = _score;
 				_pacman.UpdateDirection();
@@ -445,6 +482,8 @@ namespace pacman
 					{
 						if (_ready > 0)
 							_pacman.DrawInit(_spriteBatch);
+						else if (_dead)
+							_pacman.DrawDeath(_spriteBatch);
 						else
 							_pacman.Draw(_spriteBatch);
 					}
@@ -507,7 +546,7 @@ namespace pacman
 				lifePos.Y += _map.TileSize.Y / 2;
 				for (int i = 0; i < _life; ++i)
 				{
-					_spriteBatch.Draw(_lifeTexture, lifePos, lifeClipping, Color.White);
+					_spriteBatch.Draw(_lifeTexture[_textureIndex], lifePos, lifeClipping, Color.White);
 					lifePos.X += _map.TileSize.X * 2;
 				}
 			}
@@ -540,6 +579,9 @@ namespace pacman
 			return isClashed;
 		}
 
+		/// <summary>
+		/// Function to call when there is a gameOver. It reinitilize the game to return to the home screen.
+		/// </summary>
 		protected void GameOver()
 		{
 			if (_score > _highScore)
@@ -557,6 +599,9 @@ namespace pacman
 			_ready = 60 * 4;
 		}
 
+		/// <summary>
+		/// Function to call when the pacman clean a level. It initialize the next level.
+		/// </summary>
 		protected void Win()
 		{
 			++_level;
@@ -564,6 +609,9 @@ namespace pacman
 			Initialize();
 		}
 
+		/// <summary>
+		/// Property to access to high score in the hard drive disk.
+		/// </summary>
 		public int HighScore
 		{
 			get
@@ -594,11 +642,26 @@ namespace pacman
 			}
 		}
 
-		public SpriteBatch SpriteBatch
+		/// <summary>
+		/// Property to access to the texture index.
+		/// </summary>
+		public int TextureIndex
 		{
 			get
 			{
-				return _spriteBatch;
+				return _textureIndex;
+			}
+			set
+			{
+				if (value >= _lifeTexture.Length)
+				{
+					//Console.WriteLine("\t"+_texture.Length);
+					_textureIndex = 0;
+				}
+				else
+				{
+					_textureIndex = value;
+				}
 			}
 		}
 	}

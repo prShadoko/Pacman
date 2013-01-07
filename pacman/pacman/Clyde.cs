@@ -6,16 +6,28 @@ using Microsoft.Xna.Framework;
 
 namespace pacman
 {
+	/// <summary>
+	/// This class implements the Clyde targeting logic.
+	/// </summary>
     class Clyde : Ghost
     {
         // -- attributes --- //
 
         // --- methods --- //
+
+		/// <summary>
+		/// Constructor of Clyde.
+		/// </summary>
+		/// <param name="map">The map where Clyde evolve.</param>
+		/// <param name="pacman">The pacman to chase.</param>
         public Clyde(Map map, Pacman pacman)
             : base(map, pacman)
 		{
 		}
 
+		/// <summary>
+		/// Initialize CLyde.
+		/// </summary>
 		public override void Initialize()
         {
             _textureOffset = new Vector2(0, 6);
@@ -28,6 +40,9 @@ namespace pacman
             base.Initialize();
 		}
 
+		/// <summary>
+		/// Define the target aim by Clyde.
+		/// </summary>
         public override void targeting()
         {
             switch (_mode)
@@ -62,6 +77,10 @@ namespace pacman
             }
         }
 
+		/// <summary>
+		/// Calculate the euclidean distance between Pacman and Clyde. It's use for targeting.
+		/// </summary>
+		/// <returns>An integer representative the euclidean distance between Pacman and Clyde in case number.</returns>
         public int pacmanEuclideanDistance()
         {
             Vector2 vec = _map.WinToMap(_pacman.Position - _position);

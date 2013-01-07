@@ -4,6 +4,10 @@ using Microsoft.Xna.Framework.Content;
 
 namespace pacman
 {
+
+	/// <summary>
+	/// Manage the home screen before the beginning of the game.
+	/// </summary>
     class HomeScreen : GameElement
     {
         // --- attributes --- //
@@ -14,6 +18,12 @@ namespace pacman
         private int _highScore;
 
         // --- Methods --- //
+
+		/// <summary>
+		/// Constructor of HomeScreen.
+		/// </summary>
+		/// <param name="score">The player one score.</param>
+		/// <param name="highScore">The highscore.</param>
         public HomeScreen(int score, int highScore)
             : base(new Vector2(448, 576))
         {
@@ -21,11 +31,18 @@ namespace pacman
             _highScore = highScore;
         }
 
+		/// <summary>
+		/// Initialize HomeScreen.
+		/// </summary>
         public override void Initialize()
         {
             _drawCounter = -2;
         }
 
+		/// <summary>
+		/// Load all of the content that the HomeScreen has needed.
+		/// </summary>
+		/// <param name="content">The content manager used for load all the content.</param>
         public override void LoadContent(ContentManager content)
         {
             _texture = new Texture2D[2];
@@ -35,6 +52,10 @@ namespace pacman
             _font = content.Load<SpriteFont>("ArcadeClassic");
         }
 
+		/// <summary>
+		/// Update HomeScreen animation.
+		/// </summary>
+		/// <param name="counter">Loop counter (0 - 59)</param>
         public override void Update(int counter)
         {
             if(counter % 30 == 0)
@@ -44,6 +65,10 @@ namespace pacman
             }
         }
 
+		/// <summary>
+		/// Draw HomeScreen.
+		/// </summary>
+		/// <param name="spriteBatch"></param>
         public override void Draw(SpriteBatch spriteBatch)
         {
             int characSize = 18;
@@ -213,6 +238,9 @@ namespace pacman
             }
         }
 
+		/// <summary>
+		/// Property to access to the HighScore.
+		/// </summary>
         public int HighScore
         {
             set
@@ -221,6 +249,9 @@ namespace pacman
             }
         }
 
+		/// <summary>
+		/// Property to access to the score.
+		/// </summary>
         public int Score
         {
             set
