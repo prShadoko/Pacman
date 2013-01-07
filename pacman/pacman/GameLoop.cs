@@ -178,10 +178,10 @@ namespace pacman
 		{
 			_homeScreen.LoadContent(Content);
 
-			_lifeTexture = new Texture2D[2];
+			_lifeTexture = new Texture2D[3];
 			_lifeTexture[0] = Content.Load<Texture2D>("actorsTexture");
-			_lifeTexture[0] = Content.Load<Texture2D>("actorsTextureSmooth");
-			_lifeTexture[1] = Content.Load<Texture2D>("actorsTextureModern");
+			_lifeTexture[1] = Content.Load<Texture2D>("actorsTextureSmooth");
+			_lifeTexture[2] = Content.Load<Texture2D>("actorsTextureModern");
 
 			// loading textures
 			_map.LoadContent(Content);
@@ -251,9 +251,9 @@ namespace pacman
 				{
 					//TODO: Change index
 					_keySPressed = true;
-					_homeScreen.TextureIndex += 1;
-					_pacman.TextureIndex += 1;
-					this.TextureIndex += 1;
+					_homeScreen.TextureIndex++;
+					_pacman.TextureIndex++;
+					this.TextureIndex++;
 					foreach (Ghost g in _ghosts)
 					{
 						g.TextureIndex++;

@@ -109,10 +109,10 @@ namespace pacman
 		public override void LoadContent(ContentManager content)
 		{
            // _textureIndex = 0;
-            _texture = new Texture2D[2];
+            _texture = new Texture2D[3];
             _texture[0] = content.Load<Texture2D>("actorsTexture");
-            _texture[0] = content.Load<Texture2D>("actorsTextureSmooth");
-            _texture[1] = content.Load<Texture2D>("actorsTextureModern");
+            _texture[1] = content.Load<Texture2D>("actorsTextureSmooth");
+            _texture[2] = content.Load<Texture2D>("actorsTextureModern");
 		}
 
 		/// <summary>

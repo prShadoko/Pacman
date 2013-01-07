@@ -45,9 +45,10 @@ namespace pacman
 		/// <param name="content">The content manager used for load all the content.</param>
         public override void LoadContent(ContentManager content)
         {
-            _texture = new Texture2D[2];
+            _texture = new Texture2D[3];
             _texture[0] = content.Load<Texture2D>("actorsTexture");
-            _texture[1] = content.Load<Texture2D>("actorsTextureModern");
+            _texture[1] = content.Load<Texture2D>("actorsTextureSmooth");
+            _texture[2] = content.Load<Texture2D>("actorsTextureModern");
             _mapTexture = content.Load<Texture2D>("mapTexture");
             _font = content.Load<SpriteFont>("ArcadeClassic");
         }
