@@ -415,9 +415,13 @@ namespace pacman
 						}
 					}
 
-					if (--_fruitGrown == 0)
+					if (_fruitGrown == 0)
 					{
 						_map.DecayFruit();
+					}
+					else
+					{
+						--_fruitGrown;
 					}
 				}
 
