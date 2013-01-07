@@ -438,7 +438,7 @@ namespace pacman
 					--_ready;
 				}
 
-				if (prevScore / 10000 != _score / 10000 && _life < 5)
+				if (prevScore / 10000 < _score / 10000 && _life < 5)
 				{
 					++_life;
 					_soundExtraLife.Play();
