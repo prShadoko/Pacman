@@ -15,6 +15,7 @@ namespace pacman
 		private Direction _nextDirection;
 		private bool _isEating;
 		private bool _isFrightening;
+		private bool _isAlive;
 		private Food _eaten;
 		protected Texture2D[] _deathTexture;
 		private SoundEffectInstance _soundWalking;
@@ -39,6 +40,7 @@ namespace pacman
 			_drawCounter = 2;
 			_isEating = false;
 			_isFrightening = false;
+			_isAlive = true;
 			_speedByLevel = new int[4, 2] {
                 {80, 90},
                 {90, 95},
@@ -194,9 +196,6 @@ namespace pacman
 						{
 							_soundWalking.Play();
 						}
-						/*if ( ! _soundWalking.IsLooped )
-						{
-						}*/
 						// On avance
 						_position = nextPos;
 						// On incremente les compteurs pour la reflexion et le dessin
@@ -205,7 +204,7 @@ namespace pacman
 						++_drawCounter;
 						_drawCounter %= _blinkInterval;
 					}
-					else if(_soundWalking.IsLooped)
+					else
 					{
 						_soundWalking.Stop();
 					}
@@ -257,16 +256,33 @@ namespace pacman
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			Vector2 pos = _position - _spriteSize / 2;
-			int stateOffset = (4 * _drawCounter) / _blinkInterval;
+			if (_isAlive)
+			{
+				Vector2 pos = _position - _spriteSize / 2;
+				int stateOffset = (4 * _drawCounter) / _blinkInterval;
 
-			Rectangle clipping = new Rectangle(
-				((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
-				((int)_textureOffset.Y + (stateOffset % 2 == 1 ? 1 : stateOffset)) * (int)_spriteSize.Y,
-				(int)_spriteSize.X,
-				(int)_spriteSize.Y);
+				Rectangle clipping = new Rectangle(
+					((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
+					((int)_textureOffset.Y + (stateOffset % 2 == 1 ? 1 : stateOffset)) * (int)_spriteSize.Y,
+					(int)_spriteSize.X,
+					(int)_spriteSize.Y);
 
-			spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
+				spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
+			}
+			else
+			{
+				Vector2 pos = _position - _deathSpriteSize / 2;
+				int stateOffset = _deathCounter / 8;
+				++_deathCounter;
+
+				Rectangle clipping = new Rectangle(
+					stateOffset * (int)_deathSpriteSize.X,
+					0,
+					(int)_deathSpriteSize.X,
+					(int)_deathSpriteSize.Y);
+
+				spriteBatch.Draw(_deathTexture[_textureIndex], pos, clipping, Color.White);
+			}
 		}
 
 		public void DrawInit(SpriteBatch spriteBatch)
@@ -280,34 +296,6 @@ namespace pacman
 				(int)_spriteSize.Y);
 
 			spriteBatch.Draw(_texture[_textureIndex], pos, clipping, Color.White);
-		}
-
-		public void DrawDeath(SpriteBatch spriteBatch)
-		{
-			/*
-			Vector2 pos = _position - _spriteSize / 2;
-			int stateOffset = 4 * _drawCounter / _blinkInterval;
-
-			Rectangle clipping = new Rectangle(
-				((stateOffset == 0 ? 0 : (int)_direction) + (int)_textureOffset.X) * (int)_spriteSize.X,
-				((int)_textureOffset.Y + (stateOffset % 2 == 1 ? 1 : stateOffset)) * (int)_spriteSize.Y,
-				(int)_spriteSize.X,
-				(int)_spriteSize.Y);
-
-			spriteBatch.Draw(_texture, pos, clipping, Color.White);
-			//*/
-
-			Vector2 pos = _position - _deathSpriteSize / 2;
-			int stateOffset = _deathCounter / 8;
-			++_deathCounter;
-
-			Rectangle clipping = new Rectangle(
-				stateOffset * (int)_deathSpriteSize.X,
-				0,
-				(int)_deathSpriteSize.X,
-				(int)_deathSpriteSize.Y);
-
-			spriteBatch.Draw(_deathTexture[_textureIndex], pos, clipping, Color.White);
 		}
 
 		/// <summary>
@@ -329,6 +317,21 @@ namespace pacman
 			{
 				_isFrightening = value;
 				_speed = _speedByLevel[_indexSpeedLevel, (_isFrightening ? 1 : 0)];
+			}
+		}
+
+		/// <summary>
+		/// Getter and setter for pacman state.
+		/// </summary>
+		public bool Alive
+		{
+			get { return _isAlive; }
+			set { 
+				_isAlive = value;
+				if (!_isAlive)
+				{
+					_soundWalking.Stop();
+				}
 			}
 		}
 	}

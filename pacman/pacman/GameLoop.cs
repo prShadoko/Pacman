@@ -52,8 +52,7 @@ namespace pacman
 		private int _fruitGrown;
 		private int _eatenGhosts;
 		private SpriteFont _font;
-		private int _ghostPoint;
-		private bool _dead;
+		private int _eatingScore;
 		private int _textureIndex;
 
 		private bool _isOnHomeScreen;
@@ -98,7 +97,7 @@ namespace pacman
 			_ghosts[3] = clyde;
 
 			_score = 0;
-			_ghostPoint = 0;
+			_eatingScore = 0;
 			_life = 3;
 			_level = 1;
 			_ready = 60 * 4;
@@ -164,8 +163,6 @@ namespace pacman
 			_fruitGrown = 0;
 
 			_eatenGhosts = 0;
-
-			_dead = false;
 
 			base.Initialize();
 		}
@@ -249,7 +246,6 @@ namespace pacman
 				}
 				else if (keyboard.IsKeyDown(Keys.S) && !_keySPressed)
 				{
-					//TODO: Change index
 					_keySPressed = true;
 					_homeScreen.TextureIndex++;
 					_pacman.TextureIndex++;
@@ -300,9 +296,9 @@ namespace pacman
 				int prevScore = _score;
 				_pacman.UpdateDirection();
 
-				if (_pause == 1 && _dead)
+				if (_pause == 1 && !_pacman.Alive)
 				{
-					_dead = false;
+					_pacman.Alive = true;
 					if (_life <= 0)
 					{
 						GameOver();
@@ -344,6 +340,8 @@ namespace pacman
 					{
 						_soundEatingFruit.Play();
 						_fruitGrown = 0;
+						_pause = 30;
+						_eatingScore = (int)_pacman.Eaten;
 					}
 					_pacman.Eaten = Food.NONE;
 
@@ -397,8 +395,8 @@ namespace pacman
 							_pause = 30;
 							_ghosts[ghostIndex].Drawable = false;
 							_ghosts[ghostIndex].Mode = GhostMode.INCOMING;
-							_ghostPoint = (int)Math.Pow(2, _eatenGhosts) * 100;
-							_score += _ghostPoint;
+							_eatingScore = (int)Math.Pow(2, _eatenGhosts) * 100;
+							_score += _eatingScore;
 							if (_eatenGhosts == 4)
 							{
 								_pacman.Frightening = false;
@@ -407,7 +405,7 @@ namespace pacman
 						else if (mode != GhostMode.INCOMING)
 						{
 							--_life;
-							_dead = true;
+							_pacman.Alive = false;
 							_pause = 2 * 60;
 							foreach (Ghost g in _ghosts)
 							{
@@ -471,20 +469,18 @@ namespace pacman
 				_map.Draw(_spriteBatch);
 				if (_ready < 60 * 2)
 				{
-					if (_pause != 0 && !_dead)
+					if (_pause != 0 && _pacman.Alive)
 					{
-						// --- Affichage du score quand on mange un fantome --- //
+						// --- Affichage du score quand on mange un fantome ou un fruit --- //
 						textPos = _pacman.Position;
 						textPos.X -= _map.TileSize.X;
 						textPos.Y -= _map.TileSize.Y / 2;
-						_spriteBatch.DrawString(_font, _ghostPoint.ToString(), textPos, Color.Cyan, 0f, new Vector2(0, 0), 0.6f, new SpriteEffects(), 1f);
+						_spriteBatch.DrawString(_font, _eatingScore.ToString(), textPos, Color.Cyan, 0f, new Vector2(0, 0), 0.6f, new SpriteEffects(), 1f);
 					}
 					else
 					{
 						if (_ready > 0)
 							_pacman.DrawInit(_spriteBatch);
-						else if (_dead)
-							_pacman.DrawDeath(_spriteBatch);
 						else
 							_pacman.Draw(_spriteBatch);
 					}
