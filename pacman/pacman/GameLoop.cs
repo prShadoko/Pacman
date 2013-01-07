@@ -581,6 +581,14 @@ namespace pacman
 		/// </summary>
 		protected void GameOver()
 		{
+			_soundDeath.Stop();
+			_soundEatingFruit.Stop();
+			_soundEatingGum.Stop();
+			_soundEatingPacGum.Stop();
+			_soundExtraLife.Stop();
+			_soundOpening.Stop();
+			_pacman.Alive = false;
+
 			if (_score > _highScore)
 			{
 				HighScore = _score;
@@ -603,6 +611,7 @@ namespace pacman
 		{
 			++_level;
 			_map.ResetMap();
+			_ready = 60 * 4;
 			Initialize();
 		}
 
