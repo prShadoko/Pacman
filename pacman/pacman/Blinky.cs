@@ -14,9 +14,6 @@ namespace pacman
 	/// </summary>
 	class Blinky : Ghost
 	{
-		// -- attributes --- //
-
-		// --- methods --- //
 
 		/// <summary>
 		/// Constructor of Blinky.
