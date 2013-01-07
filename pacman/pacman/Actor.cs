@@ -111,6 +111,7 @@ namespace pacman
            // _textureIndex = 0;
             _texture = new Texture2D[2];
             _texture[0] = content.Load<Texture2D>("actorsTexture");
+            _texture[0] = content.Load<Texture2D>("actorsTextureSmooth");
             _texture[1] = content.Load<Texture2D>("actorsTextureModern");
 		}
 

@@ -79,6 +79,7 @@ namespace pacman
 			_soundWalking.IsLooped = true;
 			_deathTexture = new Texture2D[2];
 			_deathTexture[0] = content.Load<Texture2D>("deathTexture");
+			_deathTexture[0] = content.Load<Texture2D>("deathTextureSmooth");
 			_deathTexture[1] = content.Load<Texture2D>("deathTextureModern");
 			_deathSpriteSize = new Vector2(42, 42);
 		}
