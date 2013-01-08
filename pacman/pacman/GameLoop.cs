@@ -262,7 +262,7 @@ namespace pacman
 			}
 			else
 			{
-				//*
+				/*
 				Console.Clear();
 				Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 				Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
