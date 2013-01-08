@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace pacman
 {
+	/// <summary>
+	/// Manage the pacman played by the player.
+	/// </summary>
 	public class Pacman : Actor
 	{
 		private Direction _nextDirection;
@@ -23,12 +26,19 @@ namespace pacman
 		private Vector2 _deathSpriteSize;
 		private int _deathCounter;
 
+		/// <summary>
+		/// Constructor of pacman.
+		/// </summary>
+		/// <param name="map">The maze where the pacman evolve.</param>
 		public Pacman(Map map)
 			: base(map)
 		{
 			_textureOffset = new Vector2(0, 10);
 		}
 
+		/// <summary>
+		/// Initialize the pacman.
+		/// </summary>
 		public override void Initialize()
 		{
 			_deathCounter = 0;
@@ -72,6 +82,10 @@ namespace pacman
 			}
 		}
 
+		/// <summary>
+		/// Load the content used by pacman.
+		/// </summary>
+		/// <param name="content">The content manager which load the content.</param>
 		public override void LoadContent(ContentManager content)
 		{
 			base.LoadContent(content);
@@ -86,6 +100,9 @@ namespace pacman
 			_deathSpriteSize = new Vector2(42, 42);
 		}
 
+		/// <summary>
+		/// Update the direction of the pacman relative to thekeyboard state.
+		/// </summary>
 		public void UpdateDirection()
 		{
 			KeyboardState keyboard = Keyboard.GetState();
@@ -136,6 +153,10 @@ namespace pacman
 			}
 		}
 
+		/// <summary>
+		/// Update pacman with the game logic.
+		/// </summary>
+		/// <param name="counter">Loop counter of the game.</param>
 		public override void Update(int counter)
 		{
 			bool inTunnel = _map.IsInTunnel(_map.WinToMap(_position));
@@ -254,6 +275,10 @@ namespace pacman
 			}
 		}
 
+		/// <summary>
+		/// Draw the pacman on the window.
+		/// </summary>
+		/// <param name="spriteBatch">The spritebatch which draw the pacman.</param>
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			if (_isAlive)
@@ -285,6 +310,10 @@ namespace pacman
 			}
 		}
 
+		/// <summary>
+		/// Draw the first pacman occurence at the beginning of the game (Pacman with his closed mouth).
+		/// </summary>
+		/// <param name="spriteBatch">The spritebatch which draw the pacman.</param>
 		public void DrawInit(SpriteBatch spriteBatch)
 		{
 			Vector2 pos = _position - _spriteSize / 2;

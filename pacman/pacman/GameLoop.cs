@@ -247,12 +247,13 @@ namespace pacman
 				else if (keyboard.IsKeyDown(Keys.S) && !_keySPressed)
 				{
 					_keySPressed = true;
-					_homeScreen.TextureIndex++;
-					_pacman.TextureIndex++;
-					this.TextureIndex++;
+					_textureIndex++;
+					_homeScreen.TextureIndex = _textureIndex;
+					_pacman.TextureIndex = _textureIndex;
+					this.TextureIndex = _textureIndex;
 					foreach (Ghost g in _ghosts)
 					{
-						g.TextureIndex++;
+						g.TextureIndex = _textureIndex;
 					}
 				}
 				else if ( ! keyboard.IsKeyDown(Keys.S) )

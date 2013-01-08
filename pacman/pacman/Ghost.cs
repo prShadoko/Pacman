@@ -190,39 +190,6 @@ namespace pacman
 			_modeChanged = false;
 		}
 
-		/// <summary>
-		/// Return the only possible direction when the ghost is in the Monster House.
-		/// </summary>
-		/// <param name="coordinates">Ghost position.</param>
-		/// <param name="dir">Ghost direction.</param>
-		/// <returns>the only possible direction when the ghost is in the Monster House.</returns>
-		/*private Direction getDirectionInHouse(Vector2 coordinates, Direction dir)
-		{
-			Direction res = Direction.UP;
-
-			if (dir == Direction.UP)
-			{
-				Vector2 testPos = coordinates;
-				testPos.Y -= 1;
-				if (!_map.isHouse(testPos))
-				{
-					res = Direction.DOWN;
-				}
-			}
-			
-			else if (dir == Direction.DOWN)
-			{
-
-				Vector2 testPos = coordinates;
-				testPos.Y += 1;
-
-				if (!_map.isHouse(testPos))
-				{
-					res = Direction.UP;
-				}
-			}
-			return res;
-		}*/
 
 		/// <summary>
 		/// Allows ghost to choose a valid direction in the Monster House.
@@ -246,62 +213,11 @@ namespace pacman
 						Mode = getCurrentMode();
 					}
 
-					//Think();
 					_direction = Direction.LEFT;
 					_modeChanged = false;
 					_thinkCounter = (int)_map.TileSize.X / 2;
-					/*if (_direction == Direction.LEFT)
-					{
-						_thinkCounter -= _SPEEDUNIT;
-					}*/
 				}
 			}
-			/*if (_mode == GhostMode.HOUSE)
-			{
-				if (_direction != Direction.UP && _direction != Direction.DOWN)
-				{
-					_direction = Direction.UP;
-				}
-				// --- ------------------------------------------
-				if (_direction == Direction.UP)
-				{
-					Vector2 testPos = mapPosition;
-					testPos.Y -= 1;
-					if (!_map.isHouse(testPos))
-					{
-						_direction = Direction.DOWN;
-					}
-				}
-
-				else if (_direction == Direction.DOWN)
-				{
-
-					Vector2 testPos = mapPosition;
-					testPos.Y += 1;
-
-					if (!_map.isHouse(testPos))
-					{
-						_direction = Direction.UP;
-					}
-				}
-				// --- ----------------------------------------------
-			}
-			else if (_mode == GhostMode.OUTGOING)
-			{
-				if (_map.isInSpecialZone(mapPosition) == true)
-				{
-					_thinkCounter = (int)_map.TileSize.X / 2;
-					Mode = getCurrentMode();
-				}
-				else if (_map.isHouseInitPosition(mapPosition))
-				{
-					_direction = _map.getDirectionOfInitPosition(mapPosition);
-				}
-				else
-				{
-					_direction = getDirectionInHouse(mapPosition, _direction);
-				}
-			}*/
 		}
 
 		/// <summary>
@@ -697,7 +613,7 @@ namespace pacman
 					lvl = _frightModeCounters.Length - 1;
 				}
 
-				if (_frightModeCounter >= _frightModeCounters[lvl] - _flashesCounter * 16)
+				if (_frightModeCounter >= _frightModeCounters[lvl] - (_flashesCounter+1) * 14)
 				{
 					if (_flashOffset == 0)
 						_flashOffset = 2;
