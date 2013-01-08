@@ -50,6 +50,7 @@ namespace pacman
 		private int _counter;
 		private int _outgoingCounter;
 		private int _fruitGrown;
+		private int _eatTheFruit;
 		private int _eatenGhosts;
 		private SpriteFont _font;
 		private int _eatingScore;
@@ -155,13 +156,9 @@ namespace pacman
 			_ghosts[0].ElroySpeed = 0;
 
 			_counter = 0;
-
 			_outgoingCounter = 0;
-
 			_pause = 0;
-
 			_fruitGrown = 0;
-
 			_eatenGhosts = 0;
 
 			base.Initialize();
@@ -240,7 +237,7 @@ namespace pacman
 					_isOnHomeScreen = false;
 					_soundOpening.Play();
 				}
-				else if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
+				else if (keyboard.IsKeyDown(Keys.Escape) && !_keyEscapePressed)
 				{
 					this.Exit();
 				}
@@ -256,7 +253,7 @@ namespace pacman
 						g.TextureIndex = _textureIndex;
 					}
 				}
-				else if ( ! keyboard.IsKeyDown(Keys.S) )
+				else if (!keyboard.IsKeyDown(Keys.S))
 				{
 					_keySPressed = false;
 				}
@@ -265,7 +262,7 @@ namespace pacman
 			}
 			else
 			{
-				/*
+				//*
 				Console.Clear();
 				Console.WriteLine("Blinky\t: " + _ghosts[0].Mode);
 				Console.WriteLine("Pinky\t: " + _ghosts[1].Mode);
@@ -275,7 +272,8 @@ namespace pacman
 				Console.WriteLine("Score\t: " + _score);
 				Console.WriteLine("vie\t: " + _life);
 				Console.WriteLine("Niveau\t: " + _level);
-				Console.WriteLine("Gum\t: " + _map.NbGum);
+				Console.WriteLine("Gum restantes\t: " + _map.NbGum);
+				Console.WriteLine("Gum mangees\t: " + (_map.NbGumInitial - _map.NbGum));
 				Console.WriteLine("");
 				Console.WriteLine("Speed Pacman\t: " + _pacman.Speed);
 				Console.WriteLine("Speed Blinky\t: " + _ghosts[0].Speed);
@@ -284,7 +282,7 @@ namespace pacman
 				Console.WriteLine("Speed Clyde\t: " + _ghosts[3].Speed);
 				//*/
 
-				if (keyboard.IsKeyDown(Keys.Escape) && ! _keyEscapePressed)
+				if (keyboard.IsKeyDown(Keys.Escape) && !_keyEscapePressed)
 				{
 					GameOver();
 					_keyEscapePressed = true;
@@ -343,10 +341,12 @@ namespace pacman
 						_fruitGrown = 0;
 						_pause = 30;
 						_eatingScore = (int)_pacman.Eaten;
+						++_eatTheFruit;
 					}
 					_pacman.Eaten = Food.NONE;
 
-					if (_map.NbGum == 70 || _map.NbGum == 170)
+					int eatenGumCount = _map.NbGumInitial - _map.NbGum;
+					if ((_eatTheFruit == 0 && eatenGumCount == 70) || (_eatTheFruit == 1 && eatenGumCount == 170))
 					{
 						_map.GrowFruit(_level);
 						_fruitGrown = 10 * 60;
@@ -416,11 +416,14 @@ namespace pacman
 						}
 					}
 
-					if (_fruitGrown == 0)
+					if (_fruitGrown == 1)
 					{
 						_map.DecayFruit();
+						++_eatTheFruit;
+
 					}
-					else
+					
+					if(_fruitGrown > 0)
 					{
 						--_fruitGrown;
 					}
@@ -598,15 +601,16 @@ namespace pacman
 			{
 				HighScore = _score;
 			}
+			_level = 1;
 			Initialize();
 			_map.ResetMap();
 			_isOnHomeScreen = true;
 			_homeScreen.Score = _score;
 			_score = 0;
 			_life = 3;
-			_level = 1;
 			_homeScreen.HighScore = _highScore;
 			_ready = 60 * 4;
+			_eatTheFruit = 0;
 		}
 
 		/// <summary>
@@ -617,6 +621,7 @@ namespace pacman
 			++_level;
 			_map.ResetMap();
 			_ready = 60 * 4;
+			_eatTheFruit = 0;
 			Initialize();
 		}
 

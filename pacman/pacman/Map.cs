@@ -46,7 +46,7 @@ namespace pacman
 
 		public void ResetMap()
 		{
-			_nbGum = 244;
+			_nbGum = NbGumInitial;
 
 			_map = new sbyte[31, 28] {
                 { 8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9},
@@ -516,6 +516,11 @@ namespace pacman
 		public void DecayFruit()
 		{
 			_fruit = Food.NONE;
+		}
+
+		public int NbGumInitial
+		{
+			get { return 244; }
 		}
 
 		public int NbGum
